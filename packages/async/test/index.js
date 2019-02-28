@@ -10,7 +10,7 @@ chai.should();
 //chai.use(require('chai-arrays'));
 
 
-describe('@utilitiesasync', function () {
+describe('@utilities/async', function () {
 
   before('before', function () {
 
