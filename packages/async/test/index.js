@@ -6,8 +6,8 @@ const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
 chai.should();
-chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
-chai.use(require('chai-arrays'));
+//chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
+//chai.use(require('chai-arrays'));
 
 
 describe('@utilitiesasync', function () {
@@ -29,12 +29,44 @@ describe('@utilitiesasync', function () {
   });
 
 
-  describe('Stub test', function () {
+  describe('asyncForEach', function () {
+    let asyncForEach;
 
-    it('should have unit test', function () {
+    before('before', function () {
+      asyncForEach = require('../lib/').asyncForEach;
+    });
 
-      assert(false, 'Please add unit tests.');
+    it('should be a function', function () {
+      expect(asyncForEach).to.be.a('function');
+    });
 
+    it('simple check', async function () {
+      const data     = [ 1, 2, 3 ];
+      const expected = 6;
+      let result = 0;
+      await asyncForEach(data, async(element) => result += element );
+      expect(result).to.eql(expected);
+    });
+
+  });
+
+
+  describe('asyncMap', function () {
+    let asyncMap;
+
+    before('before', function () {
+      asyncMap = require('../lib/').asyncMap;
+    });
+
+    it('should be a function', function () {
+      expect(asyncMap).to.be.a('function');
+    });
+
+    it('simple check', async function () {
+      const data     = [ 1, 2, 3 ];
+      const expected = [ 2, 3, 4 ];
+      let result = await asyncMap(data, async(element) => element+1 );
+      expect(result).to.eql(expected);
     });
 
   });
