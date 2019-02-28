@@ -1,0 +1,13 @@
+{
+  "generator-mini-package": {
+    "promptValues": {
+      "pkgDesc": "Set of misc utilities for async/await/fibers/callbacks/...",
+      "keywords": [
+        "async",
+        "await",
+        "fibers",
+        "callback"
+      ]
+    }
+  }
+}
