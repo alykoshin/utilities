@@ -15,13 +15,11 @@
     "lint": "eslint -f unix .",
     "inspect": "jsinspect --ignore 'coverage|test'",
     "pretest": "npm run lint && npm run inspect && npm run _npm-audit && npm run _deps-check",
-    "____test": "node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/**/*",
     "_test": "nyc ./node_modules/mocha/bin/_mocha -- -R spec ./test/**/*",
-    "1test": "nyc ./node_modules/mocha/bin/_mocha -- -R spec ./test/**/*  && nyc report --reporter=text-lcov | coveralls",
-    "test": "npm run _test",
+    "_test-report": "nyc report --reporter=html && nyc report --reporter=text-lcov > coverage/coverage.lcov",
+    "test": "npm run _test && npm run _test-report",
     "__test": "echo \"Warning: no test specified\" && exit 0",
     "___test": "echo \"Error: no test specified\" && exit 1",
-    "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/**/*",
     "_commit": "git commit -am \"commit by 'npm run commit'\"",
     "_push": "git push --follow-tags",
     "commit-and-push": "npm run _commit && npm test && npm run _push",
@@ -32,12 +30,12 @@
     "patch-release": "npm test && npm run _patch-release && npm run _push",
     "minor-release": "npm test && npm run _minor-release && npm run _push",
     "__major-release": "npm test && npm run _major-release && npm run _push",
-    "-coverall": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "--coverage": "nyc report --reporter=text-lcov | coveralls",
-    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "qtest": "nyc mocha",
-    "qcoverage": "nyc report --reporter=text-lcov | coveralls"
+    "_coveralls": "cat ./coverage/coverage.lcov | ./node_modules/coveralls/bin/coveralls.js",
 
+    "travis-before-install": "",
+    "travis-before-script": "",
+    "travis-script": "npm run test",
+    "travis-after-script": "npm run _coveralls"
   },
   "keywords": [
     "async,await,fibers,callback"
