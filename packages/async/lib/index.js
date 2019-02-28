@@ -42,7 +42,7 @@ if (isNodejs()) {
 
   wrapIntoFiber = (fn, ...args) => Fibers( async () => await fn(...args) ).run();
 } else {
-  wrapIntoFiber = () => throw new Error('Fibers cannot be used at browser');
+  wrapIntoFiber = () => { throw new Error('Fibers cannot be used at browser'); }
 }
 
 
