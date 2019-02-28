@@ -4,12 +4,16 @@ const _ = require('lodash');
 
 
 const lpad = (s, size, c) => {
+  c = c || ' ';
+  if (c.length > 1) console.warn('lpad expects one padding character');
   while (s.length < size) s = c + s;
   return s;
 };
 
 
 const rpad = (s, size, c) => {
+  c = c || ' ';
+  if (c.length > 1) console.warn('rpad expects one padding character');
   while (s.length < size) s = s + c;
   return s;
 };
