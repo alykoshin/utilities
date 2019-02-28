@@ -1,5 +1,4 @@
-//const Fiber = Npm.require('fibers'); // Meteor
-const Fiber = require('fibers');
+const isNodejs = require('./isNodejs');
 
 
 const asyncForEach = async (array, callback) => {
@@ -30,7 +29,22 @@ const asyncSetInterval = async (ms) => new Promise(resolve => setIngerval(resolv
 const asyncSetTimeout = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const setTimeoutAsPromised = asyncSetTimeout;
 
-const wrapIntoFiber = (fn, ...args) => Fiber( async () => await fn(...args) ).run();
+
+
+
+// Fibers cannot be loaded at browser side
+
+let wrapIntoFiber;
+
+if (isNodejs()) {
+//const Fiber = Npm.require('fibers'); // Meteor
+  const Fibers = require('fibers');
+
+  wrapIntoFiber = (fn, ...args) => Fibers( async () => await fn(...args) ).run();
+} else {
+  wrapIntoFiber = () => throw new Error('Fibers cannot be used at browser');
+}
+
 
 
 module.exports = {
@@ -45,4 +59,9 @@ module.exports = {
 
   wrapIntoFiber
 };
+
+
+
+
+
 

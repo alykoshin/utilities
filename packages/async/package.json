@@ -1,6 +1,6 @@
 {
   "name": "@utilities/async",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Set of misc utilities for async/await/fibers/callback/...",
   "main": "./index.js",
   "engines": {
@@ -31,7 +31,6 @@
     "minor-release": "npm test && npm run _minor-release && npm run _push",
     "__major-release": "npm test && npm run _major-release && npm run _push",
     "_coveralls": "cat ./coverage/coverage.lcov | ./node_modules/coveralls/bin/coveralls.js",
-
     "travis-before-install": "",
     "travis-before-script": "",
     "travis-script": "npm run test",
@@ -64,7 +63,6 @@
     "mocha": "^6.0.1",
     "mocha-lcov-reporter": "^1.3.0",
     "mockery": "^2.1.0",
-    "nyc": "^13.3.0",
     "sinon": "^7.2.4"
   }
 }
