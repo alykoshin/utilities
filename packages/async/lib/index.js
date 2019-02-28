@@ -39,7 +39,6 @@ let wrapIntoFiber;
 if (isNodejs()) {
 //const Fiber = Npm.require('fibers'); // Meteor
   const Fibers = require('fibers');
-
   wrapIntoFiber = (fn, ...args) => Fibers( async () => await fn(...args) ).run();
 } else {
   wrapIntoFiber = () => { throw new Error('Fibers cannot be used at browser'); }
