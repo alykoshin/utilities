@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
+const urlQuery = require('./urlQuery');
 
 
 const lpad = (s, size, c) => {
@@ -54,7 +55,7 @@ const defaultTemplate = (tmpl, context) => {
   try {
     const compiled = _.template(tmpl);
     return compiled(context);
-    
+
   } catch(e) {
     const msg = 'Error processing template';
     console.error(msg, 'tmpl:', tmpl, 'context:', context);
@@ -93,7 +94,7 @@ const literalTemplate = (tmpl, context) => {
 };
 
 
-const routeSubstitute = (route, values) => {
+const routeTemplate = (route, values) => {
   //const defaultInterpolate = _.templateSettings.interpolate;
   //
   //_.templateSettings.interpolate = /:([^\/]+)/g;
@@ -110,7 +111,13 @@ module.exports = {
   lpad,
   rpad,
   lpadZeros,
+  
   splitQuoted,
-  literalTemplate,
+
+  defaultTemplate,
   customTemplate,
+  literalTemplate,
+  routeTemplate,
+
+  urlQuery: urlQuery,
 };
