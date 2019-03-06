@@ -1,0 +1,12 @@
+{
+  "generator-mini-package": {
+    "promptValues": {
+      "pkgDesc": "Set of misc utilities for arrays",
+      "keywords": [
+        "array",
+        "utility",
+        "utilities"
+      ]
+    }
+  }
+}
