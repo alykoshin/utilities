@@ -49,16 +49,30 @@ function splitQuoted(s) {
 }
 
 
-const templateLiterals = (s, context) => {
+
+const customTemplate = (tmpl, context, evaluate) => {
   const saved = _.templateSettings.evaluate;
 
-  //_.templateSettings.interpolate = /\${([\s\S]+?)}/g;
-  _.templateSettings.evaluate = /\${([\s\S]+?)}/g;
-  const compiled = _.template(s);
+  _.templateSettings.evaluate = evaluate;
+  const compiled = _.template(tmpl);
   const result   = compiled(context);
 
   _.templateSettings.evaluate = saved;
   return result;
+};
+
+
+const templateLiterals = (tmpl, context) => {
+  //const saved = _.templateSettings.evaluate;
+  //
+  ////_.templateSettings.interpolate = /\${([\s\S]+?)}/g;
+  //_.templateSettings.evaluate = /\${([\s\S]+?)}/g;
+  //const compiled = _.template(tmpl);
+  //const result   = compiled(context);
+  //
+  //_.templateSettings.evaluate = saved;
+  //return result;
+  return customTemplate(tmpl, context, /\${([\s\S]+?)}/g);
 };
 
 
@@ -68,4 +82,5 @@ module.exports = {
   lpadZeros,
   splitQuoted,
   templateLiterals,
+  customTemplate,
 };
