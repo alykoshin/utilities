@@ -10,7 +10,7 @@ chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
 chai.use(require('chai-arrays'));
 
 
-describe('@utilities/string/queryString', function () {
+describe('@utilities/string/urlQuery', function () {
   let urlQuery;
 
   before('before', function () {
@@ -35,6 +35,31 @@ describe('@utilities/string/queryString', function () {
       const query    = 'aaa=bbb&ccc=ddd';
       const expected = { aaa: 'bbb', ccc: 'ddd' };
       const result = urlQuery.parse(query);
+      expect(result).to.eql(expected);
+    });
+
+  });
+
+
+  describe('_findGetParameter', function () {
+
+    before('before', function () {
+      if (typeof location !== 'undefined') throw new Error('Expect global location to be unassigned for this test');
+      location = { query: '' };
+    });
+
+    after('after', function () {
+      delete location;
+    });
+
+    it('is a function', function () {
+      assert(typeof urlQuery._findGetParameter === 'function', 'Expect function');
+    });
+
+    it('simple check (only allowed symbols), with starting "?"', function () {
+      location = '?aaa=bbb&ccc=ddd';
+      const expected = 'bbb'
+      const result = urlQuery._findGetParameter('aaa');
       expect(result).to.eql(expected);
     });
 

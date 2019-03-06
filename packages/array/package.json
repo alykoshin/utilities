@@ -1,6 +1,6 @@
 {
   "name": "@utilities/array",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Set of misc utilities for arrays",
   "main": "./index.js",
   "engines": {

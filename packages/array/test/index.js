@@ -10,7 +10,7 @@ chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
 chai.use(require('chai-arrays'));
 
 
-describe('@utilities/string', function () {
+describe('@utilities/array', function () {
   let array;
 
   before('before', function () {
