@@ -117,17 +117,17 @@ describe('@utilities/string', function () {
   });
 
 
-  describe('templateLiterals', function () {
+  describe('literalTemplate', function () {
 
     it('must be a function', function () {
-      expect(string.templateLiterals).to.be.a('function');
+      expect(string.literalTemplate).to.be.a('function');
     });
 
     it('simple check', function () {
       const data = 'abc ${def} ghi';
       const context = { def: 'fed' };
       const expected = 'abc fed ghi';
-      const result = string.templateLiterals(data, context);
+      const result = string.literalTemplate(data, context);
       expect(result).to.be.equal(expected);
     });
 
@@ -135,7 +135,7 @@ describe('@utilities/string', function () {
       const s = '${first} ${second} ${third}';
       const context = { first: '1st', second: '2nd', third: '3rd' };
       const expected = '1st 2nd 3rd';
-      expect(string.templateLiterals(s,context)).to.equals(expected)
+      expect(string.literalTemplate(s,context)).to.equals(expected)
     });
 
   });

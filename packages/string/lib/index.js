@@ -50,19 +50,36 @@ function splitQuoted(s) {
 
 
 
+const defaultTemplate = (tmpl, context) => {
+  try {
+    const compiled = _.template(tmpl);
+    return compiled(context);
+    
+  } catch(e) {
+    const msg = 'Error processing template';
+    console.error(msg, 'tmpl:', tmpl, 'context:', context);
+    throw new Error(e);
+  }
+};
+
+
 const customTemplate = (tmpl, context, evaluate) => {
   const saved = _.templateSettings.evaluate;
-
   _.templateSettings.evaluate = evaluate;
-  const compiled = _.template(tmpl);
-  const result   = compiled(context);
 
-  _.templateSettings.evaluate = saved;
+  let result;
+  try {
+    result = defaultTemplate(tmpl, context);
+
+  } finally {
+    _.templateSettings.evaluate = saved;
+
+  }
   return result;
 };
 
 
-const templateLiterals = (tmpl, context) => {
+const literalTemplate = (tmpl, context) => {
   //const saved = _.templateSettings.evaluate;
   //
   ////_.templateSettings.interpolate = /\${([\s\S]+?)}/g;
@@ -76,11 +93,24 @@ const templateLiterals = (tmpl, context) => {
 };
 
 
+const routeSubstitute = (route, values) => {
+  //const defaultInterpolate = _.templateSettings.interpolate;
+  //
+  //_.templateSettings.interpolate = /:([^\/]+)/g;
+  //const compiled = _.template(route);
+  //const result = compiled(values);
+  //
+  //_.templateSettings.interpolate = defaultInterpolate;
+  //return result;
+  return customTemplate(route, values, /:([^\/]+)/g);
+};
+
+
 module.exports = {
   lpad,
   rpad,
   lpadZeros,
   splitQuoted,
-  templateLiterals,
+  literalTemplate,
   customTemplate,
 };
