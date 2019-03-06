@@ -69,4 +69,5 @@ function _findGetParameter(parameterName) {
 module.exports = {
   parse,
   stringify,
+  _findGetParameter,
 };

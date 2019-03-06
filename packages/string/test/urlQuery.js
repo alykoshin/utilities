@@ -1,6 +1,7 @@
 /* globals describe, before, beforeEach, after, afterEach, it */
 
-'use strict';
+// strict moed must be turned off in order to be able to delete global location variable
+// 'use strict';
 
 const chai = require('chai');
 const assert = chai.assert;
@@ -45,7 +46,7 @@ describe('@utilities/string/urlQuery', function () {
 
     before('before', function () {
       if (typeof location !== 'undefined') throw new Error('Expect global location to be unassigned for this test');
-      location = { query: '' };
+      location = { search: '' };
     });
 
     after('after', function () {
@@ -57,8 +58,8 @@ describe('@utilities/string/urlQuery', function () {
     });
 
     it('simple check (only allowed symbols), with starting "?"', function () {
-      location = '?aaa=bbb&ccc=ddd';
-      const expected = 'bbb'
+      location.search = '?aaa=bbb&ccc=ddd';
+      const expected = 'bbb';
       const result = urlQuery._findGetParameter('aaa');
       expect(result).to.eql(expected);
     });
