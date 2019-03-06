@@ -50,10 +50,15 @@ function splitQuoted(s) {
 
 
 const templateLiterals = (s, context) => {
+  const saved = _.templateSettings.evaluate;
+
   //_.templateSettings.interpolate = /\${([\s\S]+?)}/g;
   _.templateSettings.evaluate = /\${([\s\S]+?)}/g;
   const compiled = _.template(s);
-  return compiled(context);
+  const result   = compiled(context);
+
+  _.templateSettings.evaluate = saved;
+  return result;
 };
 
 
