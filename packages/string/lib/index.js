@@ -51,9 +51,9 @@ function splitQuoted(s) {
 
 
 
-const defaultTemplate = (tmpl, context) => {
+const defaultTemplate = (tmpl, context, options) => {
   try {
-    const compiled = _.template(tmpl);
+    const compiled = _.template(tmpl, options);
     return compiled(context);
 
   } catch(e) {
@@ -64,13 +64,17 @@ const defaultTemplate = (tmpl, context) => {
 };
 
 
-const customTemplate = (tmpl, context, evaluate) => {
+const customTemplate = (tmpl, context, re) => {
   const saved = _.templateSettings.evaluate;
-  _.templateSettings.evaluate = evaluate;
+  _.templateSettings.evaluate = re;
 
   let result;
   try {
-    result = defaultTemplate(tmpl, context);
+    result = defaultTemplate(
+      tmpl,
+      context,
+      { interpolate: re }
+      );
 
   } finally {
     _.templateSettings.evaluate = saved;
@@ -81,29 +85,14 @@ const customTemplate = (tmpl, context, evaluate) => {
 
 
 const literalTemplate = (tmpl, context) => {
-  //const saved = _.templateSettings.evaluate;
-  //
-  ////_.templateSettings.interpolate = /\${([\s\S]+?)}/g;
-  //_.templateSettings.evaluate = /\${([\s\S]+?)}/g;
-  //const compiled = _.template(tmpl);
-  //const result   = compiled(context);
-  //
-  //_.templateSettings.evaluate = saved;
-  //return result;
-  return customTemplate(tmpl, context, /\${([\s\S]+?)}/g);
+  const re = /\${([\s\S]+?)}/g;
+  return customTemplate(tmpl, context, re);
 };
 
 
 const routeTemplate = (route, values) => {
-  //const defaultInterpolate = _.templateSettings.interpolate;
-  //
-  //_.templateSettings.interpolate = /:([^\/]+)/g;
-  //const compiled = _.template(route);
-  //const result = compiled(values);
-  //
-  //_.templateSettings.interpolate = defaultInterpolate;
-  //return result;
-  return customTemplate(route, values, /:([^\/]+)/g);
+  const re = /:([^\/]+)/g;
+  return customTemplate(route, values, re);
 };
 
 
