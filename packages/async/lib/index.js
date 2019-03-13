@@ -47,7 +47,7 @@ const runAsync = (fn, ...args) => {
   return setTimeout(() => fn(...args) , 0);
 };
 
-const asyncSetInterval = async (ms) => new Promise(resolve => setIngerval(resolve, ms));
+const asyncSetInterval = async (ms) => new Promise(resolve => setInterval(resolve, ms));
 
 const asyncSetTimeout = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const setTimeoutAsPromised = asyncSetTimeout;
