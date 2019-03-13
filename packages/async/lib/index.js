@@ -10,6 +10,17 @@ const asyncForEach = async (array, callback) => {
   //console.log('asyncForEach: exit');
 };
 
+
+const asyncForEachReverse = async (array, callback) => {
+  //console.log('asyncForEach: enter');
+  for (let index = array.length-1; index >= 0 ; index--) {
+    //console.log('asyncForEach: index:', index);
+    await callback(array[index], index, array)
+  }
+  //console.log('asyncForEach: exit');
+};
+
+
 const asyncMap = async(array, callback) => {
   //console.log('asyncMap');
   const res = [];
@@ -19,6 +30,18 @@ const asyncMap = async(array, callback) => {
   }
   return res;
 };
+
+
+const asyncMapReverse = async(array, callback) => {
+  //console.log('asyncMap');
+  const res = [];
+  for (let index = array.length-1; index >= 0 ; index--) {
+    //console.log('asyncMap: index:', index);
+    res[index] = await callback(array[index], index, array);
+  }
+  return res;
+};
+
 
 const runAsync = (fn, ...args) => {
   return setTimeout(() => fn(...args) , 0);
@@ -48,7 +71,9 @@ if (isNodejs()) {
 
 module.exports = {
   asyncForEach,
+  asyncForEachReverse,
   asyncMap,
+  asyncMapReverse,
 
   runAsync,
 
