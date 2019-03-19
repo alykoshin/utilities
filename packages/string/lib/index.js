@@ -4,6 +4,11 @@ const _ = require('lodash');
 const urlQuery = require('./urlQuery');
 
 
+const repeat = (c, len) => {
+  return lpad('', len, c);
+};
+
+
 const lpad = (s, size, c) => {
   c = c || ' ';
   if (c.length > 1) console.warn('lpad expects one padding character');
@@ -97,6 +102,7 @@ const routeTemplate = (route, values) => {
 
 
 module.exports = {
+  repeat,
   lpad,
   rpad,
   lpadZeros,
