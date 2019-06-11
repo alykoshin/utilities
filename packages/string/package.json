@@ -56,14 +56,14 @@
     "chai": "^4.2.0",
     "chai-arrays": "^2.0.0",
     "chai-things": "^0.2.0",
-    "coveralls": "^3.0.3",
-    "eslint": "^5.15.3",
+    "coveralls": "^3.0.4",
+    "eslint": "^5.16.0",
     "jshint": "^2.10.2",
     "jsinspect": "^0.12.7",
-    "mocha": "^6.0.2",
+    "mocha": "^6.1.4",
     "mocha-lcov-reporter": "^1.3.0",
     "mockery": "^2.1.0",
-    "nyc": "^13.3.0",
-    "sinon": "^7.2.7"
+    "nyc": "^14.1.1",
+    "sinon": "^7.3.2"
   }
 }
