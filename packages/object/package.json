@@ -1,6 +1,6 @@
 {
   "name": "@utilities/object",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Set of misc utilities for objects",
   "main": "./index.js",
   "engines": {
@@ -57,7 +57,7 @@
     "chai-arrays": "^2.0.0",
     "chai-things": "^0.2.0",
     "coveralls": "^3.0.4",
-    "eslint": "^5.16.0",
+    "eslint": "^6.0.1",
     "jshint": "^2.10.2",
     "jsinspect": "^0.12.7",
     "mocha": "^6.1.4",
