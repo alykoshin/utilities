@@ -42,6 +42,42 @@ function remap(o, map, options) {
   }, {});
 }
 
+function _rename1(o, map, fromKey, options) {
+  const toKey   = map[fromKey];
+  const value = _.get(o, fromKey);
+  //console.log('fromKey:',fromKey, '; toKey:',toKey, '; value:', value)
+  if (typeof value !== 'undefined') {
+    if (toKey !== null) {
+      _.set(o, toKey, value);
+    }
+    _.unset(o, fromKey);
+  }
+  return o;
+}
+
+function rename(o, map, options) {
+  options = options || {};
+  if (options.inverted === true) map = _.invert(map);
+  //console.log('map:', map)
+  for (let mapKey in map) {
+    //console.log('mapKey:', mapKey)
+    if (_.has(o, mapKey))
+      _rename1(o, map, mapKey, options);
+  }
+  return o;
+}
+
+
+function renameIn(o, map, options) {
+  options = options || {};
+  if (options.inverted === true) map = _.invert(map);
+  for (let mapKey in map)
+    _rename1(o, map, mapKey, options);
+  return o;
+}
+
+
+
 // We need to remap object containing multilevel arrays
 // Below some approaches to this task
 
@@ -156,8 +192,41 @@ const remap_new = (o, map) => {
 
 //console.log(remap({ a: {b:1}}, { 'a.b': 'c.d' } ));
 
+/*
+const test_map_1 = {
+  'start_time':  [ 'start', uberToGoogleTime ],
+  'start_time2':  { to: 'start', map: uberToGoogleTime },
+  'end_time':    [ uberToGoogleTime, 'end' ],
+  'day_of_week': { 'day':   uberToGoogleDayOfWeek },
+  'day':         [ 'days', (obj) => [ obj.day ] ],
+};
+
+const test_map_2 = {
+  'start':  [ 'start_time',     uberToGoogleTime ],
+  'end':    [ uberToGoogleTime, 'end_time' ],
+  'day':    [ 'day_of_week',    uberToGoogleDayOfWeek ],
+  'days':   [ 'day',            (obj) => [ obj.day ] ],
+};
+
+const test_map_3 = {
+  'start':  { from: 'start_time', map: uberToGoogleTime },
+  'end':    [ uberToGoogleTime, 'end_time' ],
+  'day':    [ 'day_of_week',    uberToGoogleDayOfWeek ],
+  'days':   [ 'day',            (obj) => [ obj.day ] ],
+};
+
+const test_map_4 = [
+  { to: 'start', from: 'start_time', map: uberToGoogleTime },
+  { to: 'end',   map:  uberToGoogleTime, from: 'end_time' },
+  //'day':    [ 'day_of_week',    uberToGoogleDayOfWeek ],
+  //'days':   [ 'day',            (obj) => [ obj.day ] ],
+];
+*/
+
 
 
 module.exports = {
   remap,
+  rename,
+  renameIn,
 };
