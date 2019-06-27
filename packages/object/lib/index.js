@@ -6,7 +6,11 @@ const _ = require('lodash');
  *
  * Example
  * const source = { origin: { lat:1, lng:2 } };
- * const mapping = { 'origin.lat': 'lat', 'origin.lng': 'lng' };
+ * const mapping = {
+ *   // targetKey: sourceKey,
+ *   'lat': 'origin.lat',
+ *   'lng': 'origin.lng',
+ * };
  * // const options = { defaultCopy: true }; // not implemented yet
  *
  * result = remap(source, mapping)
@@ -14,6 +18,7 @@ const _ = require('lodash');
  * // { lat: 1, lng: 2 }
  *
  */
+
 
 /**
  *
@@ -34,26 +39,49 @@ function remap(o, map, options) {
   options = options || {};
   if (options.inverted === true) map = _.invert(map);
   return _.reduce(map, function(result, mapValue, mapKey) {
-    const fromKey = mapKey;
-    const toKey   = mapValue;
-    const value = _.get(o, fromKey);
-    if (typeof value !== 'undefined') _.set(result, toKey, value );
+    const targetKey = mapKey;
+    const sourceKey = mapValue;
+
+    const value = typeof sourceKey === 'function'
+                  ? sourceKey(o, targetKey)
+                  : _.get(o, sourceKey);
+
+    if (typeof value === 'undefined') {
+      _.unset(result, targetKey);
+
+    } else {
+      _.set(result, targetKey, value );
+    }
+
     return result;
   }, {});
 }
 
-function _rename1(o, map, fromKey, options) {
-  const toKey   = map[fromKey];
-  const value = _.get(o, fromKey);
-  //console.log('fromKey:',fromKey, '; toKey:',toKey, '; value:', value)
+
+function _rename1(o, map, mapKey, options) {
+  let mapValue = _.get(map, mapKey);
+
+  const targetKey = mapKey;
+  let sourceKey = mapValue;
+  if (typeof sourceKey === 'function') sourceKey = sourceKey(o, targetKey);
+
+  const value = sourceKey !== 'undefined'
+                ? _.get(o, sourceKey)
+                : undefined;
+
+  //console.log('targetKey:', targetKey, ', sourceKey:', sourceKey, ', value:', value);
+
   if (typeof value !== 'undefined') {
-    if (toKey !== null) {
-      _.set(o, toKey, value);
-    }
-    _.unset(o, fromKey);
+    _.set(o, targetKey, value);
   }
+
+  if (typeof sourceKey !== 'undefined') {
+    _.unset(o, sourceKey);
+  }
+
   return o;
 }
+
 
 function rename(o, map, options) {
   options = options || {};
@@ -61,7 +89,7 @@ function rename(o, map, options) {
   //console.log('map:', map)
   for (let mapKey in map) {
     //console.log('mapKey:', mapKey)
-    if (_.has(o, mapKey))
+    //if (_.has(o, mapKey))
       _rename1(o, map, mapKey, options);
   }
   return o;
@@ -71,7 +99,7 @@ function rename(o, map, options) {
 function renameIn(o, map, options) {
   options = options || {};
   if (options.inverted === true) map = _.invert(map);
-  for (let mapKey in map)
+  //for (let mapKey in map)
     _rename1(o, map, mapKey, options);
   return o;
 }
@@ -119,6 +147,7 @@ const getPartial = (o, keys, value, indexes) => {
 
   if (keys.length === 0) {
     return o[ partialKey ];
+
   } else {
     getPartial(o, nextKeys, value, indexes);
   }
