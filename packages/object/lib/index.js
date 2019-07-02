@@ -1,3 +1,5 @@
+'use strict';
+
 const _ = require('lodash');
 
 /**
@@ -35,7 +37,55 @@ const _ = require('lodash');
  * remapping the properties defined in `mapping` parameter
  *
  **/
+
+
+function remap1_({ source, target, sourceKey, targetKey, transform }) {
+
+  const sourceValue = _.get(source, sourceKey);
+  const targetValue = _.get(target, targetKey);
+
+  const finalValue = transform
+                     ? transform({ source, target, sourceKey, sourceValue, targetKey, targetValue, transform })
+                     : sourceValue;
+
+  //console.log(
+  //  'sourceKey:',   sourceKey,   ', targetKey:',   targetKey,
+  //  'sourceValue:', sourceValue, ', targetValue:', targetValue,
+  //  'finalValue:',  finalValue,
+  //);
+
+  if (typeof finalValue === 'undefined') {
+    _.unset(target, targetKey);
+
+  } else {
+    _.set(target, targetKey, finalValue);
+  }
+
+  return target;
+}
+
+
 function remap(o, map, options) {
+  options = options || {};
+  if (options.inverted === true) map = _.invert(map);
+  //console.log('remap: o:', o);
+
+  const result = _.reduce(map, function(result, mapValue, mapKey) {
+
+    const transform = typeof mapValue === 'function'
+                      ? ({ source, target, sourceKey, sourceValue, targetKey, targetValue, transform }) => sourceKey(source, targetKey)
+                      : null;
+
+    return remap1_({ source:o, target:result, sourceKey:mapValue, targetKey:mapKey, transform });
+  }, {});
+
+  //console.log('remap: result:', result);
+  return result;
+}
+
+
+/*
+function remap_(o, map, options) {
   options = options || {};
   if (options.inverted === true) map = _.invert(map);
   return _.reduce(map, function(result, mapValue, mapKey) {
@@ -56,20 +106,23 @@ function remap(o, map, options) {
     return result;
   }, {});
 }
+*/
 
 
 function _rename1(o, map, mapKey, options) {
   let mapValue = _.get(map, mapKey);
 
   const targetKey = mapKey;
-  let sourceKey = mapValue;
+  let   sourceKey = mapValue;
+  //console.log('1 targetKey:', targetKey, ', sourceKey:', sourceKey, ', typeof sourceKey:', typeof sourceKey);
+
   if (typeof sourceKey === 'function') sourceKey = sourceKey(o, targetKey);
 
   const value = sourceKey !== 'undefined'
                 ? _.get(o, sourceKey)
                 : undefined;
 
-  //console.log('targetKey:', targetKey, ', sourceKey:', sourceKey, ', value:', value);
+  //console.log('2 targetKey:', targetKey, ', sourceKey:', sourceKey, ', typeof sourceKey:', typeof sourceKey, ', value:', value);
 
   if (typeof value !== 'undefined') {
     _.set(o, targetKey, value);
@@ -90,7 +143,7 @@ function rename(o, map, options) {
   for (let mapKey in map) {
     //console.log('mapKey:', mapKey)
     //if (_.has(o, mapKey))
-      _rename1(o, map, mapKey, options);
+    _rename1(o, map, mapKey, options);
   }
   return o;
 }
@@ -100,7 +153,7 @@ function renameIn(o, map, options) {
   options = options || {};
   if (options.inverted === true) map = _.invert(map);
   //for (let mapKey in map)
-    _rename1(o, map, mapKey, options);
+  _rename1(o, map, mapKey, options);
   return o;
 }
 
@@ -130,6 +183,7 @@ const matchKeyToIdx = (key, indexes) => {
   }
   return key;
 };
+
 
 //
 
@@ -161,6 +215,7 @@ const getExtended = (o, path, defaultValue, indexes) => {
     indexes: [],
   };
 };
+
 
 //
 
@@ -252,6 +307,12 @@ const test_map_4 = [
 ];
 */
 
+//const test_map_4 = [
+//  { to: 'start', from: 'start_time', map: uberToGoogleTime },
+//  { to: 'end',   map:  uberToGoogleTime, from: 'end_time' },
+//  //'day':    [ 'day_of_week',    uberToGoogleDayOfWeek ],
+//  //'days':   [ 'day',            (obj) => [ obj.day ] ],
+//];
 
 
 module.exports = {
