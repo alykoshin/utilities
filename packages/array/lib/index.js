@@ -3,6 +3,8 @@
 const _ = require('lodash');
 
 
+const sanitizeArray = (array) => Array.isArray(array) ? array : [];
+
 
 function peek(array, offset) {
   if (typeof offset !== 'number') offset = 0;
@@ -50,6 +52,8 @@ const removeMatched = (array, filter) => {
 
 
 module.exports = {
+  sanitizeArray,
+
   peek,
 
   arrayOne,
