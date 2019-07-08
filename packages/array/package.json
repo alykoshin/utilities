@@ -49,7 +49,9 @@
     "url": "https://github.com/alykoshin/@utilities/issues"
   },
   "homepage": "https://github.com/alykoshin/@utilities",
-  "dependencies": {},
+  "dependencies": {
+    "lodash": "^4.17.11"
+  },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-arrays": "^2.0.0",
