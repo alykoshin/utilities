@@ -315,8 +315,21 @@ const test_map_4 = [
 //];
 
 
+const isEqualPartial = (o1, o2, {pick,omit}={}) => {
+  if (pick && omit) throw new Error('Only one of pick,omit values allowed');
+  let partials = [o1,o2];
+  if (pick) partials = partials.map(p => _.pick(p,pick));
+  if (omit) partials = partials.map(p => _.omit(p, omit));
+  //console.log('isEqualPartial: partials:',partials);
+  return _.isEqual(...partials);
+};
+
+
 module.exports = {
   remap,
+
   rename,
   renameIn,
+
+  isEqualPartial,
 };

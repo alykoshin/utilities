@@ -113,4 +113,60 @@ describe('@utilities/object', () => {
   });
 
 
+
+  describe('@isEqualPartial', function () {
+    let isEqualPartial;
+
+    before(() => {
+      isEqualPartial = object.isEqualPartial;
+    });
+
+    const o1 = { a:1, b:{c:3}, d:{e:4} };
+    const o2 = { a:1, b:{c:3}, d:{e:5} };
+    const pick1 = [ 'a' ];
+    const pick2 = [ 'a', 'b.c' ];
+    const pick3 = [ 'a', 'b.c', 'd.e' ];
+
+    const omit1_1 = [ 'd.e' ];
+    const omit1_2 = [ 'd' ];
+
+    const omit2_1 = [ 'a', ];
+    const omit2_2 = [      'b' ];
+    const omit2_3 = [ 'a', 'b' ];
+    const omit2_4 = [ 'a', 'b.c' ];
+
+    const omit3_1 = [ 'a',        'd.e' ];
+    const omit3_2 = [      'b',   'd.e' ];
+    const omit3_3 = [      'b.c', 'd.e' ];
+    const omit3_4 = [ 'a', 'b.c', 'd.e' ];
+
+    it('is a function', function () {
+      assert(typeof isEqualPartial === 'function');
+    });
+
+    it('pick', function () {
+      assert( isEqualPartial(o1,o2,{pick:pick1}));
+      assert( isEqualPartial(o1,o2,{pick:pick2}));
+      assert( !isEqualPartial(o1,o2,{pick:pick3}));
+    });
+
+   it('omit', function () {
+      assert( isEqualPartial(o1,o2,{omit:omit1_1}));
+      assert( isEqualPartial(o1,o2,{omit:omit1_2}));
+      
+      assert( !isEqualPartial(o1,o2,{omit:omit2_1}));
+      assert( !isEqualPartial(o1,o2,{omit:omit2_2}));
+      assert( !isEqualPartial(o1,o2,{omit:omit2_3}));
+      assert( !isEqualPartial(o1,o2,{omit:omit2_4}));
+
+     assert( isEqualPartial(o1,o2,{omit:omit3_1}));
+     assert( isEqualPartial(o1,o2,{omit:omit3_2}));
+     assert( isEqualPartial(o1,o2,{omit:omit3_3}));
+     assert( isEqualPartial(o1,o2,{omit:omit3_4}));
+   });
+
+  });
+
+
+
 });
