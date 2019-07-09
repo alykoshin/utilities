@@ -3,32 +3,45 @@
 const _ = require('lodash');
 
 
-const sanitizeArray = (array) => Array.isArray(array) ? array : [];
+
+const sanitize = (array) => {
+  if (typeof array === 'undefined') array = [];
+  if (!Array.isArray(array)) array = [array];
+  return array;
+};
 
 
-function peek(array, offset) {
+const peek = (array, offset) => {
   if (typeof offset !== 'number') offset = 0;
 
   return array[ array.length - 1 - offset ];
-}
+};
 
 
-const arrayOne = (array, options={}) => {
+const indexOf = (array, el) => {
+  return array.indexOf(el);
+};
+
+
+const hasElement = (array, el) => indexOf(array, el) >= 0;
+
+
+const getOne = (array, options={}) => {
   if (array.length < 1) throw new Error('Element not found');
-  if ( options.strict !== false &&
+  if ( options.throw !== false &&
     array.length > 1) throw new Error('More than one element found');
   return array[0];
 };
 
 
 const findMatched = (array, match) => {
-  if (typeof array === 'undefined') array = [];
-  array = Array.isArray(array) ? array : [array];
+  array = sanitize(array);
   return array.filter(_.matches(match));
 };
 
 
 const removeAt = (array, index) => {
+  array = sanitize(array);
   if (index > -1) {
     array.splice(index, 1);
   }
@@ -37,6 +50,7 @@ const removeAt = (array, index) => {
 
 
 const removeElement = (array, element) => {
+  array = sanitize(array);
   const index = array.indexOf(element);
   return removeAt(array, index);
 };
@@ -52,11 +66,15 @@ const removeMatched = (array, filter) => {
 
 
 module.exports = {
-  sanitizeArray,
+  sanitize,
+  sanitizeArray: sanitize,
 
   peek,
 
-  arrayOne,
+  indexOf,
+  hasElement,
+  getOne,
+  arrayOne: getOne,
   findMatched,
 
   removeAt,
