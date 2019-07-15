@@ -2,7 +2,8 @@
 
 const fs = require('fs');
 const _ = require('lodash');
-const debug = require('debug');
+const debug = require('debug')('object');
+const mkdirp = require('mkdirp');
 
 /**
  *
@@ -355,8 +356,9 @@ const jsonStringify = (o, options={}) => {
 
 
 const _saveTextSync = (pathname, s, options={}) => {
+  mkdirp.sync(path.dirname(pathname));
   fs.writeFileSync(pathname, s, { encoding: 'utf8' });
-  console.log(`Saved ${s.length} characters to "${pathname}"`)
+  debug(`Saved ${s.length} characters to "${pathname}"`);
 };
 
 
@@ -366,7 +368,7 @@ const saveJsonSync = (pathname, o, options={}) => {
   const { sizeThreshold } = options;
   if (s.length > sizeThreshold) console.warn(`File size is greater than sizeThreshold=${sizeThreshold}, file size=${s.length}`);
 
-  return _saveTextSync(pathname, s);
+  return _saveTextSync(pathname, s, options);
 };
 
 
