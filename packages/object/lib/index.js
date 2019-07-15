@@ -1,6 +1,8 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
+
 const _ = require('lodash');
 const debug = require('debug')('@utilities/object');
 const mkdirp = require('mkdirp');
