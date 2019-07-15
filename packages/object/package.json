@@ -50,6 +50,7 @@
   },
   "homepage": "https://github.com/alykoshin/@utilities",
   "dependencies": {
+    "debug": "^4.1.1",
     "lodash": "^4.17.14",
     "mkdirp": "^0.5.1"
   },
