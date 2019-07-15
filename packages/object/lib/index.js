@@ -1,43 +1,19 @@
 'use strict';
 
+const fs = require('fs');
 const _ = require('lodash');
+const debug = require('debug');
 
 /**
- * Allows to pick keys and map their names from one object to another
- * according to the mapping { 'fromKeyDeep': 'toKeyDeep', ... }
  *
- * Example
- * const source = { origin: { lat:1, lng:2 } };
- * const mapping = {
- *   // targetKey: sourceKey,
- *   'lat': 'origin.lat',
- *   'lng': 'origin.lng',
- * };
- * // const options = { defaultCopy: true }; // not implemented yet
- *
- * result = remap(source, mapping)
- *
- * // { lat: 1, lng: 2 }
- *
+ * @param source
+ * @param target
+ * @param sourceKey
+ * @param targetKey
+ * @param transform
+ * @returns {*}
+ * @private
  */
-
-
-/**
- *
- * `remap(source, mapping, options)`
- * - returns new object
- * - does not mutates object
- *
- * Parameres:
- * - `source` - source object to remap
- * - `mapping` - object defining property names to be remapped (renamed)
- * - `options`:
- * -- `inverted` - use mapping in reverse form: { toKey: fromKey }
- * -- ~~`defaultCopy`~~ - not implemented, may be used to copy other properties,
- * remapping the properties defined in `mapping` parameter
- *
- **/
-
 
 function remap1_({ source, target, sourceKey, targetKey, transform }) {
 
@@ -65,6 +41,49 @@ function remap1_({ source, target, sourceKey, targetKey, transform }) {
 }
 
 
+/**
+ *
+ * @param o
+ * @param map
+ * @param options
+ * @returns {*}
+ *
+ * Allows to pick keys and map their names from one object to another
+ * according to the mapping { 'fromKeyDeep': 'toKeyDeep', ... }
+ *
+ * `remap(source, mapping, options)`
+ * - returns new object
+ * - does not mutates object
+ *
+ * Parameters:
+ * ----------
+ * - `source`  - source object to remap
+ * - `mapping` - object defining property names to be remapped (renamed)
+ * - `options`:
+ * -- `inverted` - use mapping in reverse form: { toKey: fromKey }
+ * -- ~~`defaultCopy`~~ - not implemented, may be used to copy other properties,
+ * remapping the properties defined in `mapping` parameter
+ *
+ * Example:
+ * -------
+ * const source = { origin: { lat:1, lng:2 } };
+ * const mapping = {
+ *   // targetKey: sourceKey,
+ *   'lat': 'origin.lat',
+ *   'lng': 'origin.lng',
+ * };
+ * // const options = { defaultCopy: true }; // not implemented yet
+ *
+ * result = remap(source, mapping)
+ *
+ * // { lat: 1, lng: 2 }
+ *
+ **/
+
+
+/**
+ *
+ */
 function remap(o, map, options) {
   options = options || {};
   if (options.inverted === true) map = _.invert(map);
@@ -136,6 +155,9 @@ function _rename1(o, map, mapKey, options) {
 }
 
 
+//
+
+
 function rename(o, map, options) {
   options = options || {};
   if (options.inverted === true) map = _.invert(map);
@@ -186,6 +208,7 @@ const matchKeyToIdx = (key, indexes) => {
 
 
 //
+
 
 const getPartial = (o, keys, value, indexes) => {
   //console.log('setPartial:enter: o:', o, ', value:', value, ', keys:', keys);
@@ -325,6 +348,28 @@ const isEqualPartial = (o1, o2, {pick,omit}={}) => {
 };
 
 
+const jsonStringify = (o, options={}) => {
+  const { pretty=true } = options;
+  return JSON.stringify(o, null, pretty ? 2 : 0);
+};
+
+
+const _saveTextSync = (pathname, s, options={}) => {
+  fs.writeFileSync(pathname, s, { encoding: 'utf8' });
+  console.log(`Saved ${s.length} characters to "${pathname}"`)
+};
+
+
+const saveJsonSync = (pathname, o, options={}) => {
+  const s = jsonStringify(o, options);
+
+  const { sizeThreshold } = options;
+  if (s.length > sizeThreshold) console.warn(`File size is greater than sizeThreshold=${sizeThreshold}, file size=${s.length}`);
+
+  return _saveTextSync(pathname, s);
+};
+
+
 module.exports = {
   remap,
 
@@ -332,4 +377,7 @@ module.exports = {
   renameIn,
 
   isEqualPartial,
+
+  jsonStringify,
+  saveJsonSync,
 };
