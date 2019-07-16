@@ -11,6 +11,29 @@ const asyncForEach = async (array, callback) => {
 };
 
 
+//
+// https://stackoverflow.com/a/51020535/2774010
+//
+const asyncForEachParallelLimit = async (array, limit, callback) => {
+
+  async function doWork(iterator) {
+    for (let [index, item] of iterator) {
+      await callback(item, index, array);
+      //console.log(index + ': ' + item)
+    }
+  }
+
+  const iterator = array.entries();
+  const workers = new Array(limit).fill(iterator).map(doWork)
+//      ^--- starts `limit` workers sharing the same iterator
+
+  return Promise
+    .all(workers)
+    //.then((res) => { console.log('done'); return res; })
+    ;
+};
+
+
 const asyncForEachReverse = async (array, callback) => {
   //console.log('asyncForEach: enter');
   for (let index = array.length-1; index >= 0 ; index--) {
@@ -71,6 +94,8 @@ if (isNodejs()) {
 
 module.exports = {
   asyncForEach,
+  asyncForEachParallelLimit,
+
   asyncForEachReverse,
   asyncMap,
   asyncMapReverse,
