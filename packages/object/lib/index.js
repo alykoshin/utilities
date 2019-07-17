@@ -361,6 +361,7 @@ const _saveTextSync = (pathname, s, options={}) => {
   mkdirp.sync(path.dirname(pathname));
   fs.writeFileSync(pathname, s, { encoding: 'utf8' });
   debug(`Saved ${s.length} characters to "${pathname}"`);
+  return s.length;
 };
 
 
