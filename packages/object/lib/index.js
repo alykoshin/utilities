@@ -357,6 +357,19 @@ const jsonStringify = (o, options={}) => {
 };
 
 
+const _loadTextSync = (pathname, options={}) => {
+  const s = fs.readFileSync(pathname, { encoding: 'utf8' });
+  debug(`Loaded ${s.length} characters from "${pathname}"`);
+  return s;
+}
+
+
+const loadJsonSync = (pathname) => {
+  const s = _loadTextSync(pathname);
+  return JSON.parse(s);
+};
+
+
 const _saveTextSync = (pathname, s, options={}) => {
   mkdirp.sync(path.dirname(pathname));
   fs.writeFileSync(pathname, s, { encoding: 'utf8' });
@@ -383,6 +396,7 @@ module.exports = {
 
   isEqualPartial,
 
+  loadJsonSync,
   jsonStringify,
   saveJsonSync,
 };
