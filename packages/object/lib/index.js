@@ -388,6 +388,15 @@ const saveJsonSync = (pathname, o, options={}) => {
 };
 
 
+const jsonToHtml = (json, options={}) => {
+  let s = jsonStringify(o, options);
+  if (options.br   !== false) s = s.split(/\r?\n/).join('<br/>');
+  if (options.code !== false) s = `<code>${s}</code>`;
+  return s;
+};
+
+
+
 module.exports = {
   remap,
 
@@ -399,4 +408,6 @@ module.exports = {
   loadJsonSync,
   jsonStringify,
   saveJsonSync,
+
+  jsonToHtml,
 };
