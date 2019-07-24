@@ -168,5 +168,46 @@ describe('@utilities/object', () => {
   });
 
 
+  describe('@jsonToHtml', function () {
+    let jsonToHtml;
+
+    before(() => {
+      jsonToHtml = object.jsonToHtml;
+    });
+
+    const o1 = { a:1 };
+
+    it('is a function', function () {
+      assert(typeof jsonToHtml === 'function');
+    });
+
+    it('default options', function () {
+      const result = jsonToHtml(o1);
+      const expected = '<code>{<br/>  "a": 1<br/>}</code>';
+      expect( result ).to.equals(expected);
+    });
+
+   it('options.pretty=false', function () {
+      const result = jsonToHtml(o1, { pretty: false });
+      const expected = '<code>{"a":1}</code>';
+      expect( result ).to.equals(expected);
+    });
+
+   it('options.br=false', function () {
+      const result = jsonToHtml(o1, { pretty: false }).replace;
+      const expected = '<code>{"a":1}</code>';
+      expect( result ).to.equals(expected);
+    });
+
+   it('options.code=false', function () {
+      const result = jsonToHtml(o1, { pretty: false });
+      const expected = '{<br/>  "a": 1<br/>}';
+      expect( result ).to.equals(expected);
+    });
+
+
+  });
+
+
 
 });

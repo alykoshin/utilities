@@ -4,8 +4,11 @@ const fs = require('fs');
 const path = require('path');
 
 const _ = require('lodash');
-const debug = require('debug')('@utilities/object');
 const mkdirp = require('mkdirp');
+
+const debug = require('debug')('@utilities/object');
+
+const {eolToBr} = require('@utilities/string').eolToBr;
 
 /**
  *
@@ -389,8 +392,8 @@ const saveJsonSync = (pathname, o, options={}) => {
 
 
 const jsonToHtml = (json, options={}) => {
-  let s = jsonStringify(o, options);
-  if (options.br   !== false) s = s.split(/\r?\n/).join('<br/>');
+  let s = jsonStringify(json, options);
+  if (options.br   !== false) s = eolToBr(s);
   if (options.code !== false) s = `<code>${s}</code>`;
   return s;
 };
