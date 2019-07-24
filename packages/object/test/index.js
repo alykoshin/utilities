@@ -200,7 +200,7 @@ describe('@utilities/object', () => {
     });
 
    it('options.code=false', function () {
-      const result = jsonToHtml(o1, { pretty: false });
+      const result = jsonToHtml(o1, { code: false });
       const expected = '{<br/>  "a": 1<br/>}';
       expect( result ).to.equals(expected);
     });
