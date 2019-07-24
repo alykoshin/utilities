@@ -197,10 +197,10 @@ describe('@utilities/object', () => {
 
    it('options.br=false', function () {
       const result = replaceEol(
-        jsonToHtml(o1, { pretty: false }),
+        jsonToHtml(o1, { br: false }),
         '\r\n',
       );
-      const expected = '<code>{\r\n  "a":1\r\n}</code>';
+      const expected = '<code>{\r\n  "a": 1\r\n}</code>';
       expect( result ).to.equals(expected);
     });
 
