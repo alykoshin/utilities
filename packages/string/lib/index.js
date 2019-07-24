@@ -55,9 +55,7 @@ function splitQuoted(s) {
 }
 
 
-const eolToBr = (s='') => {
-  s.replace(/(?:\r\n|\r|\n)/g, '<br/>')
-};
+const eolToBr = (s='') => s.replace(/(?:\r\n|\r|\n)/g, '<br/>');
 
 
 const defaultTemplate = (tmpl, context, options) => {
