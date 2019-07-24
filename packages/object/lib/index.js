@@ -8,7 +8,7 @@ const mkdirp = require('mkdirp');
 
 const debug = require('debug')('@utilities/object');
 
-const {eolToBr} = require('@utilities/string');
+const {replaceEolWithBr} = require('@utilities/string');
 
 /**
  *
@@ -393,8 +393,7 @@ const saveJsonSync = (pathname, o, options={}) => {
 
 const jsonToHtml = (json, options={}) => {
   let s = jsonStringify(json, options);
-  console.log('eolToBr',eolToBr)
-  if (options.br   !== false) s = eolToBr(s);
+  if (options.br   !== false) s = replaceEolWithBr(s);
   if (options.code !== false) s = `<code>${s}</code>`;
   return s;
 };

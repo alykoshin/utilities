@@ -55,7 +55,15 @@ function splitQuoted(s) {
 }
 
 
-const eolToBr = (s='') => s.replace(/(?:\r\n|\r|\n)/g, '<br/>');
+const replaceEol = (s='', replacement='') => {
+  const re = /(?:\r\n|\r|\n)/g;
+  return s.replace(re, replacement);
+};
+
+
+const replaceEolWithBr = (s='') => {
+  return replaceEol(s, '<br/>');
+};
 
 
 const defaultTemplate = (tmpl, context, options) => {
@@ -110,7 +118,8 @@ module.exports = {
   lpadZeros,
   
   splitQuoted,
-  eolToBr,
+  replaceEol,
+  replaceEolWithBr,
 
   defaultTemplate,
   customTemplate,

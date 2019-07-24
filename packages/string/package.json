@@ -1,6 +1,6 @@
 {
   "name": "@utilities/string",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Set of misc utilities for strings",
   "main": "./index.js",
   "engines": {

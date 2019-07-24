@@ -11,6 +11,8 @@ chai.use(require('chai-arrays'));
 
 const _ = require('lodash');
 
+const {replaceEol} = require('@utilities/string');
+
 
 describe('@utilities/object', () => {
   let object;
@@ -194,8 +196,11 @@ describe('@utilities/object', () => {
     });
 
    it('options.br=false', function () {
-      const result = jsonToHtml(o1, { pretty: false }).replace;
-      const expected = '<code>{"a":1}</code>';
+      const result = replaceEol(
+        jsonToHtml(o1, { pretty: false }),
+        '\r\n',
+      );
+      const expected = '<code>{\r\n  "a":1\r\n}</code>';
       expect( result ).to.equals(expected);
     });
 
