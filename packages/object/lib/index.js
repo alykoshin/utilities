@@ -399,6 +399,26 @@ const jsonToHtml = (json, options={}) => {
 };
 
 
+const _assignUniqOne = (toObject, name, value) => {
+  if (toObject[ name ]) throw new Error(`toObject already has property named "${name}"`);
+  toObject[ name ] = value;
+};
+
+
+const assignUniq = (toObject, ...fromObjects) => {
+  //
+  fromObjects.forEach(from => {
+    for (let name in from) if (from.hasOwnProperty(name)) {
+      _assignUniqOne(toObject, name, from[ name ]);
+    }
+  });
+  return toObject;
+  //
+};
+
+
+
+
 
 module.exports = {
   remap,
@@ -407,6 +427,8 @@ module.exports = {
   renameIn,
 
   isEqualPartial,
+
+  assignUniq,
 
   loadJsonSync,
   jsonStringify,

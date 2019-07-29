@@ -210,9 +210,38 @@ describe('@utilities/object', () => {
       expect( result ).to.equals(expected);
     });
 
-
   });
 
+
+  describe('@assignUniq', function () {
+    let assignUniq;
+
+    before(() => {
+      assignUniq = object.assignUniq;
+    });
+
+    it('is a function', function () {
+      assert(typeof assignUniq === 'function');
+    });
+
+    it('assigns unique', function () {
+      const o1 = { prop1: 'value1' };
+      const o2 = { prop2: 'value2' };
+      const o3 = { prop3: 'value3' };
+      const result = assignUniq(o1, o2, o3);
+      const expected = _.assign({}, o1, o2, o3);
+      expect( result ).to.eql(expected);
+    });
+
+   it('throws on non-unique', function () {
+      const o1 = { prop1: 'value1' };
+      const o2 = { prop1: 'value2' };
+      expect(() => {
+        assignUniq(o1, o2);
+      }).to.throw('already has property');
+    });
+
+  });
 
 
 });
