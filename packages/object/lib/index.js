@@ -10,6 +10,22 @@ const debug = require('debug')('@utilities/object');
 
 const {replaceEolWithBr} = require('@utilities/string');
 
+
+
+const isObject = (value) => {
+  const type = typeof value;
+  return !Array.isArray(value) &&
+    value != null &&
+    (type === 'object' || type === 'function');
+
+};
+
+const sanitize = (object) => {
+  //if (typeof object === 'undefined' || object === null ) object = {}
+  if ( ! isObject(object) ) object = {};
+  return object;
+};
+
 /**
  *
  * @param source
@@ -404,7 +420,6 @@ const _assignUniqOne = (toObject, name, value) => {
   toObject[ name ] = value;
 };
 
-
 const assignUniq = (toObject, ...fromObjects) => {
   //
   fromObjects.forEach(from => {
@@ -421,6 +436,9 @@ const assignUniq = (toObject, ...fromObjects) => {
 
 
 module.exports = {
+  sanitize,
+  sanitizeObject: sanitize,
+
   remap,
 
   rename,

@@ -22,6 +22,63 @@ describe('@utilities/object', () => {
   });
 
 
+  describe('sanitize', () => {
+
+    it('is a function', () => {
+      assert(typeof object.sanitize === 'function', 'Expect function');
+    });
+
+    it('returns same object for objects', () => {
+      const o = { key: 'value' };
+      const result = object.sanitize(o);
+      expect(result).to.be.eql(o);
+    });
+
+    it('returns same object for objects - 2', () => {
+      function Foo() {
+        this.a = 1;
+      }
+      const o = new Foo();
+      const result = object.sanitize(o);
+      expect(result).to.be.eql(o);
+    });
+
+    it('returns same object for objects - 3', () => {
+      class Foo {
+        constructor() {
+          this.a = 1
+        }
+      }
+     class Foo2 extends Foo {
+        //constructor() {
+        //  this.a = 1
+        //}
+      }
+      const o = new Foo2();
+      const result = object.sanitize(o);
+      expect(result).to.be.eql(o);
+    });
+
+    it('returns empty object for non-objects', () => {
+
+
+      const values = [
+        undefined,
+        null,
+        'string',
+        123,
+        [1,2,3],
+      ];
+      const expected = {};
+      values.forEach(v => {
+        const result = object.sanitize(v);
+        expect(result).to.be.eql(expected);
+      });
+    });
+
+  });
+
+
   describe('remap', () => {
 
     it('is a function', () => {
@@ -152,20 +209,20 @@ describe('@utilities/object', () => {
       assert( !isEqualPartial(o1,o2,{pick:pick3}));
     });
 
-   it('omit', function () {
+    it('omit', function () {
       assert( isEqualPartial(o1,o2,{omit:omit1_1}));
       assert( isEqualPartial(o1,o2,{omit:omit1_2}));
-      
+
       assert( !isEqualPartial(o1,o2,{omit:omit2_1}));
       assert( !isEqualPartial(o1,o2,{omit:omit2_2}));
       assert( !isEqualPartial(o1,o2,{omit:omit2_3}));
       assert( !isEqualPartial(o1,o2,{omit:omit2_4}));
 
-     assert( isEqualPartial(o1,o2,{omit:omit3_1}));
-     assert( isEqualPartial(o1,o2,{omit:omit3_2}));
-     assert( isEqualPartial(o1,o2,{omit:omit3_3}));
-     assert( isEqualPartial(o1,o2,{omit:omit3_4}));
-   });
+      assert( isEqualPartial(o1,o2,{omit:omit3_1}));
+      assert( isEqualPartial(o1,o2,{omit:omit3_2}));
+      assert( isEqualPartial(o1,o2,{omit:omit3_3}));
+      assert( isEqualPartial(o1,o2,{omit:omit3_4}));
+    });
 
   });
 
@@ -189,13 +246,13 @@ describe('@utilities/object', () => {
       expect( result ).to.equals(expected);
     });
 
-   it('options.pretty=false', function () {
+    it('options.pretty=false', function () {
       const result = jsonToHtml(o1, { pretty: false });
       const expected = '<code>{"a":1}</code>';
       expect( result ).to.equals(expected);
     });
 
-   it('options.br=false', function () {
+    it('options.br=false', function () {
       const result = replaceEol(
         jsonToHtml(o1, { br: false }),
         '\r\n',
@@ -204,7 +261,7 @@ describe('@utilities/object', () => {
       expect( result ).to.equals(expected);
     });
 
-   it('options.code=false', function () {
+    it('options.code=false', function () {
       const result = jsonToHtml(o1, { code: false });
       const expected = '{<br/>  "a": 1<br/>}';
       expect( result ).to.equals(expected);
@@ -233,7 +290,7 @@ describe('@utilities/object', () => {
       expect( result ).to.eql(expected);
     });
 
-   it('throws on non-unique', function () {
+    it('throws on non-unique', function () {
       const o1 = { prop1: 'value1' };
       const o2 = { prop1: 'value2' };
       expect(() => {

@@ -4,23 +4,23 @@ const _ = require('lodash');
 const urlQuery = require('./urlQuery');
 
 
-const repeat = (c, len) => {
-  return lpad('', len, c);
+const repeat = (char, len) => {
+  return lpad('', len, char);
 };
 
 
-const lpad = (s, size, c) => {
-  c = c || ' ';
-  if (c.length > 1) console.warn('lpad expects one padding character');
-  while (s.length < size) s = c + s;
+const lpad = (s, size, char) => {
+  char = char || ' ';
+  if (char.length > 1) console.warn('lpad expects one padding character');
+  while (s.length < size) s = char + s;
   return s;
 };
 
 
-const rpad = (s, size, c) => {
-  c = c || ' ';
-  if (c.length > 1) console.warn('rpad expects one padding character');
-  while (s.length < size) s = s + c;
+const rpad = (s, size, char) => {
+  char = char || ' ';
+  if (char.length > 1) console.warn('rpad expects one padding character');
+  while (s.length < size) s = s + char;
   return s;
 };
 
