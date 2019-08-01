@@ -9,6 +9,7 @@ const mkdirp = require('mkdirp');
 const debug = require('debug')('@utilities/object');
 
 const {replaceEolWithBr} = require('@utilities/string');
+const {loadTextSync, saveTextSync} = require('@utilities/fs');
 
 
 
@@ -376,20 +377,13 @@ const jsonStringify = (o, options={}) => {
 };
 
 
-const _loadTextSync = (pathname, options={}) => {
-  const s = fs.readFileSync(pathname, { encoding: 'utf8' });
-  debug(`Loaded ${s.length} characters from "${pathname}"`);
-  return s;
-};
-
-
 const loadJsonSync = (pathname) => {
-  const s = _loadTextSync(pathname);
+  const s = loadTextSync(pathname);
   return JSON.parse(s);
 };
 
 
-const _saveTextSync = (pathname, s, options={}) => {
+const saveTextSync = (pathname, s, options={}) => {
   mkdirp.sync(path.dirname(pathname));
   fs.writeFileSync(pathname, s, { encoding: 'utf8' });
   debug(`Saved ${s.length} characters to "${pathname}"`);
@@ -403,7 +397,7 @@ const saveJsonSync = (pathname, o, options={}) => {
   const { sizeThreshold } = options;
   if (s.length > sizeThreshold) console.warn(`File size is greater than sizeThreshold=${sizeThreshold}, file size=${s.length}`);
 
-  return _saveTextSync(pathname, s, options);
+  return saveTextSync(pathname, s, options);
 };
 
 
