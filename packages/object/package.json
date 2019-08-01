@@ -1,6 +1,6 @@
 {
   "name": "@utilities/object",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Set of misc utilities for objects",
   "main": "./index.js",
   "engines": {
