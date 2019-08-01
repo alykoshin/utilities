@@ -8,7 +8,8 @@ var fs = require('fs');
 var utils = require('../utils');
 
 
-var _existsStatAsync = function(path, cb) {
+var _existsStatAsync = function(path, condition, cb) {
+  cb = utils.sanitizeCb(cb);
   try {
     fs.lstat(path, function (err, stats) {
       if (err) {
@@ -22,7 +23,7 @@ var _existsStatAsync = function(path, cb) {
           return cb(err);         // Some error
         }
       }
-      return cb(null, stats);  // true only if it is directory
+      return cb(null, condition(stats), stats);
     });
   } catch (e) {
     return cb(e);
@@ -31,36 +32,41 @@ var _existsStatAsync = function(path, cb) {
 
 
 var existsAsync = function(path, cb) {
-  cb = utils.sanitizeCb(cb);
-  _existsStatAsync(path, function(err, stats) {
-    if (err || typeof stats === 'boolean') { return cb(err, stats); }
-    return cb(err, stats.isFile() || stats.isDirectory());
-  });
+  return _existsStatAsync(path, (stats) => stats.isFile() || stats.isDirectory(), cb);
 };
+//var existsAsync = function(path, cb) {
+//  cb = utils.sanitizeCb(cb);
+//  return _existsStatAsync(path, function(err, stats) {
+//    if (err || typeof stats === 'boolean') { return cb(err, stats); }
+//    return cb(err, stats.isFile() || stats.isDirectory());
+//  });
+//};
 
 
 var fileExistsAsync = function(path, cb) {
-  cb = utils.sanitizeCb(cb);
-  _existsStatAsync(path, function(err, stats) {
-    if (err || typeof stats === 'boolean') { return cb(err, stats); }
-    return cb(err, stats.isFile());
-  });
+  return _existsStatAsync(path, (stats) => stats.isFile(), cb);
+  //cb = utils.sanitizeCb(cb);
+  //return _existsStatAsync(path, function(err, stats) {
+  //  if (err || typeof stats === 'boolean') { return cb(err, stats); }
+  //  return cb(err, stats.isFile());
+  //});
 };
 
 
 var dirExistsAsync = function(path, cb) {
-  cb = utils.sanitizeCb(cb);
-  _existsStatAsync(path, function(err, stats) {
-    if (err || typeof stats === 'boolean') { return cb(err, stats); }
-    return cb(err, stats.isDirectory());
-  });
+  return _existsStatAsync(path, (stats) => stats.isDirectory(), cb);
+  //cb = utils.sanitizeCb(cb);
+  //return _existsStatAsync(path, function(err, stats) {
+  //  if (err || typeof stats === 'boolean') { return cb(err, stats); }
+  //  return cb(err, stats.isDirectory());
+  //});
 };
 
 
-var _existsStatSync = function(path) {
+var _existsStatSync = function(path, condition) {
   try {
     var stats = fs.lstatSync(path);
-    return stats;
+    return condition(stats);
   }
   catch (err) {
     if (err.code === 'ENOENT') {
@@ -76,21 +82,18 @@ var _existsStatSync = function(path) {
 };
 
 var existsSync = function(path) {
-  var stats = _existsStatSync(path);
-  if (typeof stats === 'boolean') { return stats; }
-  return stats.isFile() || stats.isDirectory();
+  //var stats = _existsStatSync(path);
+  //if (typeof stats === 'boolean') { return stats; }
+  //return stats.isFile() || stats.isDirectory();
+  return _existsStatSync(path, (stats) => stats.isFile() || stats.isDirectory());
 };
 
 var fileExistsSync = function(path) {
-  var stats = _existsStatSync(path);
-  if (typeof stats === 'boolean') { return stats; }
-  return stats.isFile();
+  return _existsStatSync(path, (stats) => stats.isFile());
 };
 
 var dirExistsSync = function(path) {
-  var stats = _existsStatSync(path);
-  if (typeof stats === 'boolean') { return stats; }
-  return stats.isDirectory();
+  return _existsStatSync(path, (stats) => stats.isDirectory());
 };
 
 //
