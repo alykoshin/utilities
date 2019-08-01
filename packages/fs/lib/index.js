@@ -5,8 +5,9 @@
 'use strict';
 
 
-var exists = require('./exists');
-var copy = require('./copy');
+const exists = require('./exists');
+const copy = require('./copy');
+const textFile = require('./textFile');
 
 
 module.exports = {
@@ -25,4 +26,9 @@ module.exports = {
   copyFile:      copy.copyFile,
   copyFileSync:  copy.copyFileSync,
   copySync:      copy.copyFileSync, // for backward compatibility
+
+
+  loadTextSync: textFile.loadTextSync,
+  saveTextSync: textFile.saveTextSync,
+
 };
