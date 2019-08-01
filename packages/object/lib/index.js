@@ -380,7 +380,7 @@ const _loadTextSync = (pathname, options={}) => {
   const s = fs.readFileSync(pathname, { encoding: 'utf8' });
   debug(`Loaded ${s.length} characters from "${pathname}"`);
   return s;
-}
+};
 
 
 const loadJsonSync = (pathname) => {
