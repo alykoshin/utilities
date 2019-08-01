@@ -383,14 +383,6 @@ const loadJsonSync = (pathname) => {
 };
 
 
-const saveTextSync = (pathname, s, options={}) => {
-  mkdirp.sync(path.dirname(pathname));
-  fs.writeFileSync(pathname, s, { encoding: 'utf8' });
-  debug(`Saved ${s.length} characters to "${pathname}"`);
-  return s.length;
-};
-
-
 const saveJsonSync = (pathname, o, options={}) => {
   const s = jsonStringify(o, options);
 
