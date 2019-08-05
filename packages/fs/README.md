@@ -31,7 +31,11 @@ npm install --save @utilities/fs
 
 # Links to package pages:
 
-[github.com](https://github.com/alykoshin/itilities) &nbsp; [npmjs.com](https://www.npmjs.com/package/@utilities/fs) &nbsp; [travis-ci.org](https://travis-ci.org/alykoshin/@utilities/fs) &nbsp; [coveralls.io](https://coveralls.io/github/alykoshin/@utilities/fs) &nbsp; [inch-ci.org](https://inch-ci.org/github/alykoshin/@utilities/fs)
+[github.com](https://github.com/alykoshin/@utilities) &nbsp; 
+[npmjs.com](https://www.npmjs.com/package/@utilities/fs) &nbsp; 
+[travis-ci.org](https://travis-ci.org/alykoshin/@utilities/fs) &nbsp; 
+[coveralls.io](https://coveralls.io/github/alykoshin/@utilities/fs) &nbsp; 
+[inch-ci.org](https://inch-ci.org/github/alykoshin/@utilities/fs)
 
 
 ## License

@@ -3,10 +3,24 @@ const path = require('path');
 const _ = require('lodash');
 const mkdirp = require('mkdirp');
 
+const {fileExistsSync} = require('./exists/index');
+const {newNoSuchFileError} = require('./errors');
+
 const debug = require('debug')('@utilities/fs');
 
 
 const loadTextSync = (pathname, options={}) => {
+  const {mustExist=true} = options;
+  if (!fileExistsSync(pathname)) {
+    if (mustExist===false) {
+      debug(`File "${pathname}" does not exit, ignoring.`);
+      return '';
+    } else {
+      const extMsg = `You can disable this error by setting options.mustExist to false when calling loadTextSync()`;
+      const e = newNoSuchFileError({path: pathname}, extMsg);
+      throw e;
+    }
+  }
   const s = fs.readFileSync(pathname, { encoding: 'utf8' });
   debug(`Loaded ${s.length} characters from "${pathname}"`);
   return s;
