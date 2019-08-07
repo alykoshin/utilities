@@ -9,7 +9,7 @@ const mkdirp = require('mkdirp');
 const debug = require('debug')('@utilities/object');
 
 const {replaceEolWithBr} = require('@utilities/string');
-const {loadTextSync, saveTextSync} = require('@utilities/fs');
+const {loadTextSync, saveTextSync, dirListFilenames, dirListDirnames } = require('@utilities/fs');
 
 
 
@@ -371,16 +371,64 @@ const isEqualPartial = (o1, o2, {pick,omit}={}) => {
 };
 
 
+const jsonParse = (s, options={}) => {
+  const { validateJson=true } = options;
+  try {
+    return JSON.parse(s);
+  } catch (e) {
+    if (validateJson) throw e;
+    return {};
+  }
+};
+
+
 const jsonStringify = (o, options={}) => {
   const { pretty=true } = options;
   return JSON.stringify(o, null, pretty ? 2 : 0);
 };
 
 
-const loadJsonSync = (pathname) => {
-  const s = loadTextSync(pathname);
-  return JSON.parse(s);
+const loadJsonSync = (pathname, options) => {
+  const { mustExist } = options;
+  const s = loadTextSync(pathname, {mustExist});
+  return jsonParse(s, options);
 };
+
+
+const loadJsonDirSync = (dir, options={}) => {
+  const {recursive=true, prefix='', delimiter='.'} = options;
+  let result = [];
+
+  const files = dirListFilenames(dir, {recursive,addPath:'joinSub'});
+  debug(`files: ${JSON.stringify(files)}`);
+
+  return files.map(filename => {
+    const pathname = path.join(dir, filename);
+    debug(`Loading data from "${pathname}"`);
+
+    const data = loadJsonSync(pathname, {mustExist:true});
+    debug(`Loaded data from "${pathname}"`);
+
+    const extname  = path.extname(filename);
+    const basename = path.basename(filename, extname);
+    const dirname  = path.dirname(filename);
+    const name = path.join(dirname,basename).split(path.sep).join(delimiter);
+
+    return {
+      //  name: addfix(basename, {prefix, delimiter}),
+      name,
+      data,
+      _file: {
+        pathname,
+        baseDir: dir,
+        subDir: dirname,
+        basename,
+        extname,
+      }
+    };
+  });
+};
+
 
 
 const saveJsonSync = (pathname, o, options={}) => {
@@ -434,8 +482,11 @@ module.exports = {
 
   assignUniq,
 
-  loadJsonSync,
+  jsonParse,
   jsonStringify,
+
+  loadJsonSync,
+  loadJsonDirSync,
   saveJsonSync,
 
   jsonToHtml,
