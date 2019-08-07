@@ -1,21 +1,43 @@
 const fs = require('fs');
 const path = require('path');
+
 const debug = require('debug')('@utilities/fs');
 
 
-const _dirList = (dir, filter={}, {addPath='',nameOnly=true}={}) => {
-  return fs
-    .readdirSync(dir, { withFileTypes: true })
+const ADD_PATH_VALUES = ['joinBase', 'joinSub', 'resolve'];
+
+const _dirList = (baseDir, filter={}, options={}) => {
+  const { addPath='', nameOnly=true, recursive=false, _subDir='' } = options;
+  if (recursive && ADD_PATH_VALUES.indexOf(addPath)<0) throw new Error(`When recursive=true, addPath must be set to one of following: [${ADD_PATH_VALUES.join(',')}], found: "${addPath}" instead`);
+
+  debug(`_dirList: baseDir: "${baseDir}", _subDir: "${_subDir}"`);
+
+  const fullList = fs
+    .readdirSync(path.join(baseDir, _subDir), { withFileTypes: true })
+  ;
+
+  let filesInThisDir = fullList
     .filter(dirent => (
       (filter.isFile && dirent.isFile()) ||
       ((filter.isDir || filter.isDirectory) && dirent.isDirectory())
     ))
     .map(dirent => {
-      if (addPath==='join') dirent.name = path.join( dir, dirent.name );
-      else if (addPath==='resolve') dirent.name = path.resolve( dir, dirent.name );
+      if (addPath==='joinBase') dirent.name = path.join( baseDir, dirent.name );
+      else if (addPath==='joinSub') dirent.name = path.join( _subDir, dirent.name );
+      else if (addPath==='resolve') dirent.name = path.resolve( baseDir, dirent.name );
+      else if (addPath) throw new Error(`addPath must be empty or set to one of following: [${ADD_PATH_VALUES.join(',')}], found: "${addPath}" instead`);
       return nameOnly ? dirent.name : dirent;
     })
-    ;
+  ;
+
+  return fullList
+    .filter(dirent => dirent.isDirectory())
+    .reduce((accumulator_allFiles, currentValue_dirent) => {
+      const subdir = currentValue_dirent.name;
+      return accumulator_allFiles.concat(
+        _dirList(baseDir, filter, {...options, _subDir: path.join(_subDir, subdir)})
+      );
+    }, filesInThisDir);
 }
 
 const dirListFilenames = (dir, options) => {
@@ -23,7 +45,7 @@ const dirListFilenames = (dir, options) => {
 }
 
 const dirListDirnames = (dir, options) => {
-  return dirList(dir, { isFile:true }, options);
+  return _dirList(dir, { isDir:true }, options);
 }
 
 const _listLocalFiles = (localDir) => {
