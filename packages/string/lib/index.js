@@ -110,7 +110,10 @@ const routeTemplate = (route, values) => {
   return customTemplate(route, values, re);
 };
 
-
+// addfix('AAA', {prefix:'111', suffix:'222'})
+// => 111.AAA.222
+// addfix('AAA', {prefix:'', suffix:''})
+// => AAA
 const addfix = (s, { prefix='', delimiter='.', suffix=''}) => {
   return (
     (prefix ? prefix+delimiter : '') +
@@ -120,6 +123,10 @@ const addfix = (s, { prefix='', delimiter='.', suffix=''}) => {
 };
 
 
+// joinNonEmpty(['111','AAA','222'], '-')
+// => 111-AAA-222
+// joinNonEmpty(['','AAA',''], '-')
+// => AAA
 const joinNonEmpty = (arrayOfStrings, delimiter='.') => {
   return arrayOfStrings
     .filter(s => !!s)
