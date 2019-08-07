@@ -427,6 +427,32 @@ const loadJsonDirSync = (dir, options={}) => {
       }
     };
   });
+/*
+[
+  {
+    name: 'ubereats_with_breakfast',
+    data: { sections: [Array] },
+    _file: {
+      pathname: 'data/in/menu/ubereats_with_breakfast.json',
+      baseDir: './data/in/menu',
+      subDir: '.',
+      basename: 'ubereats_with_breakfast',
+      extname: '.json'
+    }
+  },
+  {
+    name: 'test.test2.northbridge',
+    data: { sections: [Array] },
+    _file: {
+      pathname: 'data/in/menu/test/test2/northbridge.json',
+      baseDir: './data/in/menu',
+      subDir: 'test/test2',
+      basename: 'northbridge',
+      extname: '.json'
+    }
+  }
+]
+*/
 };
 
 
