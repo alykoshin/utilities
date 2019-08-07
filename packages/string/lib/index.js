@@ -4,23 +4,23 @@ const _ = require('lodash');
 const urlQuery = require('./urlQuery');
 
 
-const repeat = (char, len) => {
-  return lpad('', len, char);
+const repeat = (c, len) => {
+  return lpad('', len, c);
 };
 
 
-const lpad = (s, size, char) => {
-  char = char || ' ';
-  if (char.length > 1) console.warn('lpad expects one padding character');
-  while (s.length < size) s = char + s;
+const lpad = (s, size, c) => {
+  c = c || ' ';
+  if (c.length > 1) console.warn('lpad expects one padding character');
+  while (s.length < size) s = c + s;
   return s;
 };
 
 
-const rpad = (s, size, char) => {
-  char = char || ' ';
-  if (char.length > 1) console.warn('rpad expects one padding character');
-  while (s.length < size) s = s + char;
+const rpad = (s, size, c) => {
+  c = c || ' ';
+  if (c.length > 1) console.warn('rpad expects one padding character');
+  while (s.length < size) s = s + c;
   return s;
 };
 
@@ -89,7 +89,7 @@ const customTemplate = (tmpl, context, re) => {
       tmpl,
       context,
       { interpolate: re }
-      );
+    );
 
   } finally {
     _.templateSettings.evaluate = saved;
@@ -111,12 +111,29 @@ const routeTemplate = (route, values) => {
 };
 
 
+const addfix = (s, { prefix='', delimiter='.', suffix=''}) => {
+  return (
+    (prefix ? prefix+delimiter : '') +
+    s +
+    (suffix ? delimiter+prefix : '')
+  );
+};
+
+
+const joinNonEmpty = (arrayOfStrings, delimiter='.') => {
+  return arrayOfStrings
+    .filter(s => !!s)
+    .join(delimiter);
+};
+
+
+
 module.exports = {
   repeat,
   lpad,
   rpad,
   lpadZeros,
-  
+
   splitQuoted,
   replaceEol,
   replaceEolWithBr,
@@ -127,4 +144,7 @@ module.exports = {
   routeTemplate,
 
   urlQuery: urlQuery,
+
+  addfix,
+  joinNonEmpty,
 };
