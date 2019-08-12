@@ -25,6 +25,7 @@ npm install --save @utilities/string
 ```
 
 ## Usage
+#####Expect
 
 
 ## Credits

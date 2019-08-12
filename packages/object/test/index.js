@@ -49,7 +49,7 @@ describe('@utilities/object', () => {
           this.a = 1
         }
       }
-     class Foo2 extends Foo {
+      class Foo2 extends Foo {
         //constructor() {
         //  this.a = 1
         //}
@@ -171,6 +171,44 @@ describe('@utilities/object', () => {
 
   });
 
+
+  // describe('renameIn', function () {
+  //   it('is a function', function () {
+  //     assert(typeof object.renameIn === 'function', 'Expect function');
+  //   });
+  //
+  //   describe('simple check', () => {
+  //     let source, mapping, expected;
+  //     beforeEach(() => {
+  //       source = {
+  //         a: 1,
+  //         b: { c: 2 },
+  //         d: { e: 3, f: 4 },
+  //         g: 5,
+  //       };
+  //       mapping = {
+  //         'aa':    'a',
+  //         'bb.cc': 'b.c',
+  //         'dd.ee': 'd.e',
+  //         'gg':    (o,key) => 'g',
+  //       };
+  //       expected = {
+  //         'aa': 1,
+  //         'b':  {}, // parent property will not be deleted
+  //         'bb': { 'cc': 2 },
+  //         'dd': { 'ee': 3 },
+  //         'd':  { 'f':  4 },
+  //         'g': 5,
+  //       };
+  //     });
+  //
+  //     it('return o', function () {
+  //       mapping['gg'] = 'LL';
+  //       const result = object.renameIn(source, _.invert(mapping), {inverted: true});
+  //       expect(result).to.be.eql(expected);
+  //     });
+  //   });
+  // });
 
 
   describe('@isEqualPartial', function () {

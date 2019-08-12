@@ -178,9 +178,6 @@ function _rename1(o, map, mapKey, options) {
 }
 
 
-//
-
-
 function rename(o, map, options) {
   options = options || {};
   if (options.inverted === true) map = _.invert(map);
@@ -194,11 +191,11 @@ function rename(o, map, options) {
 }
 
 
-function renameIn(o, map, options) {
+function renameIn(o, map,  options) {
   options = options || {};
   if (options.inverted === true) map = _.invert(map);
   //for (let mapKey in map)
-  _rename1(o, map, mapKey, options);
+  _rename1(o, map, mapKey, options); /*mapKey*/
   return o;
 }
 

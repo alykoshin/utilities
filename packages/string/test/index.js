@@ -46,16 +46,6 @@ describe('@utilities/string', function () {
       const result = string.repeat( c, 10);
       expect(result).to.be.equals(expected);
     });
-    //НЕ ПОЛУЧИЛОСЬ!!! КАК ВЫВОДИТЬ ВАРНИНГИ???
-    // it('return console.warn', function () {
-    //   const s = '5'; // 5 chars
-    //   const c = '123';
-    //
-    //   const err = new TypeError('lpad expects one padding character');
-    //
-    //   const result = string.lpad( s, 10, c);
-    //   expect(result).to.throw(err);
-    // });
   });
 
 
@@ -109,7 +99,12 @@ describe('@utilities/string', function () {
       expect(result).to.be.equalTo(expected);
     });
 
-
+    it('error \'Expected string\'', function () {
+      const s = 45;
+      expect(function () {
+        string.splitQuoted(s);
+      }).throw();
+    });
 
     it('splits unquoted strings as `split(/\\s+/)`', function () {
       const data = ' abc def    ghi ';
@@ -141,45 +136,100 @@ describe('@utilities/string', function () {
   });
 
 
-  // describe('literalTemplate', function () {
-  //
-  //   it('must be a function', function () {
-  //     expect(string.literalTemplate).to.be.a('function');
-  //   });
-  //
-  //   it('simple check', function () {
-  //     const template = 'abc ${def} ghi';
-  //     const context = { def: 'fed' };
-  //     const expected = 'abc fed ghi';
-  //     const result = string.literalTemplate(template, context);
-  //     expect(result).to.be.equal(expected);
-  //   });
-  //
-  //   it('another simple check', function () {
-  //     const template = '${first} ${ second } ${third}';
-  //     const context = { first: '1st', second: '2nd', third: '3rd' };
-  //     const expected = '1st 2nd 3rd';
-  //     expect(string.literalTemplate(template,context)).to.equals(expected)
-  //   });
-  //
-  // });
-  //
-  //
-  // describe('routeTemplate', function () {
-  //
-  //   it('must be a function', function () {
-  //     expect(string.routeTemplate).to.be.a('function');
-  //   });
-  //
-  //   it('simple check', function () {
-  //     const template = '/profiles/:_id/profile/';
-  //     const context = { _id: 'value' };
-  //     const expected = '/profiles/value/profile/';
-  //     const result = string.routeTemplate(template, context);
-  //     expect(result).to.be.equal(expected);
-  //   });
-  //
-  // });
+  describe('replaceEol', function () {
+    it('must be a function', function () {
+      expect(string.replaceEol).to.be.a('function');
+    });
+
+    it('replace in replaceEol', function () {
+      const replacement = '1';
+      const s = '\n\r';
+      const expected = '11';
+      const result = string.replaceEol(s, replacement);
+      expect(result).to.be.equal(expected);
+    });
+  });
 
 
+  describe('replaceEolWithBr', function () {
+    it('must be a function', function () {
+      expect(string.replaceEolWithBr).to.be.a('function');
+    });
+
+    it('replace in replaceEolWithBr', function () {
+      const s = '\n\r';
+      const expected = '<br/><br/>';
+      const result = string.replaceEolWithBr(s);
+      expect(result).to.be.equal(expected);
+    });
+  });
+
+
+  describe('literalTemplate', function () {
+
+    it('must be a function', function () {
+      expect(string.literalTemplate).to.be.a('function');
+    });
+
+    it('simple check', function () {
+      const template = 'abc ${def} ghi';
+      const context = { def: 'fed' };
+      const expected = 'abc fed ghi';
+      const result = string.literalTemplate(template, context);
+      expect(result).to.be.equal(expected);
+    });
+
+    it('another simple check', function () {
+      const template = '${first} ${ second } ${third}';
+      const context = { first: '1st', second: '2nd', third: '3rd' };
+      const expected = '1st 2nd 3rd';
+      expect(string.literalTemplate(template,context)).to.equals(expected)
+    });
+
+  });
+
+
+  describe('routeTemplate', function () {
+
+    it('must be a function', function () {
+      expect(string.routeTemplate).to.be.a('function');
+    });
+
+    it('simple check', function () {
+      const template = '/profiles/:_id/profile/';
+      const context = { _id: 'value' };
+      const expected = '/profiles/value/profile/';
+      const result = string.routeTemplate(template, context);
+      expect(result).to.be.equal(expected);
+    });
+  });
+
+
+
+  describe('addfix', function () {
+    it('must be function', function(){
+      expect(string.addfix).to.be.a('function');
+    });
+
+    it('return addfix', function () {
+      const s = 'text';
+      const prefix = 'www';
+      const suffix = 'com';
+      const result = 'www.text.com';
+      expect(string.addfix(s, {prefix, suffix})).to.be.equal(result);
+    });
+  });
+
+
+  describe('joinNonEmpty', function () {
+    it('must be function', function () {
+      expect(string.joinNonEmpty).to.be.a('function');
+    });
+
+    it('return joinNonEmpty', function () {
+      const arrayOfStrings = ['RABBIT', 'BIRD'];
+      const result = 'RABBIT.BIRD';
+      expect(string.joinNonEmpty(arrayOfStrings)).to.be.equal(result);
+    });
+  });
 });
