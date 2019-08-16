@@ -388,8 +388,8 @@ const jsonStringify = (o, options={}) => {
 };
 
 
-const loadJsonSync = (pathname, options) => {
-  const { mustExist } = options;
+const loadJsonSync = (pathname, options={}) => {
+  const { mustExist=true } = options;
   const s = loadTextSync(pathname, {mustExist});
   return jsonParse(s, options);
 };
