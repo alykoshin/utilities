@@ -142,10 +142,11 @@ describe('@utilities/array', function () {
     // it('find one element and print it typeOf', function () {
     //   const myArray = [5,4,3,2,1];
     //   const el = 1;
-    //   const result = array.getOne(myArray, el);
     //   const expected = 4;
     //
-    //   expect(result).to.be.eql(expected);
+    //   expect(function () {
+    //     array.getOne(myArray, el)
+    //   }).throw(expected);
     // });
 
   });
