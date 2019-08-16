@@ -28,10 +28,6 @@ const hasElement = (array, el) => indexOf(array, el) >= 0;
 
 const getOne = (array, options={}) => {
   if (array.length < 1) throw new Error('Element not found');
-
-  console.log('options.throw', options.throw);
-  console.log('array', array);
-
   if ( options.throw !== true &&
     array.length > 1) throw new Error('More than one element found');
   return array[0];
