@@ -13,7 +13,7 @@ const loadTextSync = (pathname, options={}) => {
   const {mustExist=true} = options;
   if (!fileExistsSync(pathname)) {
     if (mustExist===false) {
-      debug(`File "${pathname}" does not exit, ignoring.`);
+      debug(`File "${pathname}" does not exist, ignoring.`);
       return '';
     } else {
       const extMsg = `You can disable this error by setting options.mustExist to false when calling loadTextSync()`;
