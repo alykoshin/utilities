@@ -25,17 +25,21 @@ const indexOf = (array, el) => {
 
 const hasElement = (array, el) => indexOf(array, el) >= 0;
 
-
+//ТЕСТ НЕ ПРОХОДИТ ВЕРНУТЬСЯ!!!??
 const getOne = (array, options={}) => {
   if (array.length < 1) throw new Error('Element not found');
+  console.log('options.throw', options.throw);
+  console.log('array', array);
+
   if ( options.throw !== false &&
     array.length > 1) throw new Error('More than one element found');
   return array[0];
 };
 
-
 const findMatched = (array, match) => {
   array = sanitize(array);
+  // console.log('match', match);
+  // return _.filter(array,_.matches(match));
   return array.filter(_.matches(match));
 };
 
@@ -58,7 +62,12 @@ const removeElement = (array, element) => {
 
 const removeMatched = (array, filter) => {
   const elementsToDelete = findMatched(array, filter);
+  // console.log('array', array);
+  // console.log('elementsToDelete.length', elementsToDelete.length);
+  // console.log('elementsToDelete', elementsToDelete);
   elementsToDelete.forEach( el => _.pull(array, el) );
+  // console.log('array', array);
+
   return elementsToDelete.length;
 };
 
