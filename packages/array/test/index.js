@@ -125,7 +125,7 @@ describe('@utilities/array', function () {
     });
 
     it('if error \'More than one element found\'', function () {
-      const myArray = [5,4,3,3,3,2,1];
+      const myArray = [5,4,3,2,1];
       const el = 3;
       expect(function () {
         array.getOne(myArray, el);
@@ -139,15 +139,12 @@ describe('@utilities/array', function () {
       }).throw('More than one element found');
     });
 
-    // it('find one element and print it typeOf', function () {
-    //   const myArray = [5,4,3,2,1];
-    //   const el = 1;
-    //   const expected = 4;
-    //
-    //   expect(function () {
-    //     array.getOne(myArray, el)
-    //   }).throw(expected);
-    // });
+    it('find one element and print it typeOf', function () {
+      const myArray = [5];
+      const result = array.getOne(myArray);
+      const expected = 5;
+      expect(result).to.be.eql(expected);
+    });
 
   });
 
