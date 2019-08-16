@@ -59,16 +59,9 @@ const removeElement = (array, element) => {
 
 const removeMatched = (array, filter) => {
   const elementsToDelete = findMatched(array, filter);
-  // console.log('array', array);
-  // console.log('elementsToDelete.length', elementsToDelete.length);
-  // console.log('elementsToDelete', elementsToDelete);
   elementsToDelete.forEach( el => _.pull(array, el) );
-  // console.log('array', array);
-
   return elementsToDelete.length;
 };
-
-
 
 
 module.exports = {
