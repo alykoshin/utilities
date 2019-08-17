@@ -21,16 +21,18 @@ const loadTextSync = (pathname, options={}) => {
       throw e;
     }
   }
+  debug(`loadTextSync(): Loading from "${pathname}"`);
   const s = fs.readFileSync(pathname, { encoding: 'utf8' });
-  debug(`Loaded ${s.length} characters from "${pathname}"`);
+  debug(`loadTextSync(): Loaded ${s.length} characters`);
   return s;
 };
 
 
 const saveTextSync = (pathname, s, options={}) => {
+  debug(`saveTextSync: Saving ${s.length} characters to "${pathname}"`);
   mkdirp.sync(path.dirname(pathname));
   fs.writeFileSync(pathname, s, { encoding: 'utf8' });
-  debug(`Saved ${s.length} characters to "${pathname}"`);
+  debug(`saveTextSync: Done"`);
   return s.length;
 };
 
