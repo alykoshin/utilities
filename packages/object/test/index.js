@@ -49,7 +49,7 @@ describe('@utilities/object', () => {
           this.a = 1
         }
       }
-     class Foo2 extends Foo {
+      class Foo2 extends Foo {
         //constructor() {
         //  this.a = 1
         //}
@@ -125,7 +125,7 @@ describe('@utilities/object', () => {
     });
 
     describe('simple check', () => {
-      let source, mapping, expected, result;
+      let source, mapping, expected;
 
       beforeEach(() => {
         source = {
@@ -147,6 +147,7 @@ describe('@utilities/object', () => {
           'dd': { 'ee': 3 },
           'd':  { 'f':  4 },
           'gg': 5,
+
         };
       });
 
@@ -170,7 +171,6 @@ describe('@utilities/object', () => {
     });
 
   });
-
 
 
   describe('@isEqualPartial', function () {
@@ -203,6 +203,13 @@ describe('@utilities/object', () => {
       assert(typeof isEqualPartial === 'function');
     });
 
+    it('is an error in isEqualPartial',function () {
+      const s = { pick: pick1, omit: omit1_1};
+      expect(function () {
+        object.isEqualPartial(o1, o2, s);
+      }).throw();
+    });
+
     it('pick', function () {
       assert( isEqualPartial(o1,o2,{pick:pick1}));
       assert( isEqualPartial(o1,o2,{pick:pick2}));
@@ -222,6 +229,67 @@ describe('@utilities/object', () => {
       assert( isEqualPartial(o1,o2,{omit:omit3_2}));
       assert( isEqualPartial(o1,o2,{omit:omit3_3}));
       assert( isEqualPartial(o1,o2,{omit:omit3_4}));
+    });
+
+  });
+
+
+  describe('@loadJsonSync', function () {
+    let loadJsonSync;
+
+    before(() => {
+      loadJsonSync = object.loadJsonSync;
+    });
+
+    it('is a function', function () {
+      assert(typeof loadJsonSync === 'function');
+    });
+
+    //пуууть
+    // it('have options', function () {
+    //   const pathname = 'joinSub';
+    //   const options = '';
+    //   const result = loadJsonSync(pathname, options);
+    //   const expected = '';
+    //   expect( result ).to.equals(expected);
+    // });
+
+  });
+
+  describe('@jsonParse', function () {
+    let jsonParse;
+    // let jsonParseObj;
+
+    before(() => {
+      jsonParse = object.jsonParse;
+      // jsonParseObj = object.jsonParse.option(false);
+    });
+
+    it('is a function', function () {
+      assert(typeof jsonParse === 'function');
+    });
+
+    it('return JSON.parse(s)', function () {
+      const s = '123';
+      const result = jsonParse(s);
+      const expected = 123;
+      expect( result ).to.equals(expected);
+    });
+
+    it('error jsonParse', function () {
+      const s = '';
+      const options = true;
+      expect(function () {
+        object.jsonParse(s, options);
+      }).throw();
+    });
+
+    it('return {}, jsonParse', function () {
+      const s = 'a';
+      const ret = expect(function () {
+        object.jsonParse(s, false);
+      }).throw();
+      console.log('return {}: ', ret);
     });
 
   });
@@ -291,7 +359,7 @@ describe('@utilities/object', () => {
     });
 
     it('throws on non-unique', function () {
-      const o1 = { prop1: 'value1' };
+      const o1 = { prop1: 'value1'};
       const o2 = { prop1: 'value2' };
       expect(() => {
         assignUniq(o1, o2);
@@ -300,5 +368,20 @@ describe('@utilities/object', () => {
 
   });
 
+  describe('loadJsonDirSync', function () {
+
+    it('is a function', function () {
+      assert(typeof object.remap === 'function', 'Expect function');
+    });
+
+    // it('stringify loadJsonDirSync', function () {
+    //   const dir = '';
+    //   const options = '123';
+    //   const  result = object.loadJsonDirSync(dir, options);
+    //   const expected = 123;
+    //   expect( result ).to.equals(expected);
+    // });
+
+  });
 
 });

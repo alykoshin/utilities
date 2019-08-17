@@ -178,15 +178,12 @@ function _rename1(o, map, mapKey, options) {
 }
 
 
-//
-
-
 function rename(o, map, options) {
   options = options || {};
   if (options.inverted === true) map = _.invert(map);
   //console.log('map:', map)
   for (let mapKey in map) {
-    //console.log('mapKey:', mapKey)
+    // console.log('mapKey:', mapKey);
     //if (_.has(o, mapKey))
     _rename1(o, map, mapKey, options);
   }
@@ -194,14 +191,14 @@ function rename(o, map, options) {
 }
 
 
-function renameIn(o, map, options) {
-  options = options || {};
-  if (options.inverted === true) map = _.invert(map);
-  //for (let mapKey in map)
-  _rename1(o, map, mapKey, options);
-  return o;
-}
-
+// function renameIn(o, map,  options) {
+//   options = options || {};
+//   if (options.inverted === true) map = _.invert(map);
+//
+//   //for (let mapKey in map)
+//   _rename1(o, map, mapKey, options); /*mapKey*/
+//   return o;
+// }
 
 
 // We need to remap object containing multilevel arrays
@@ -361,7 +358,7 @@ const test_map_4 = [
 //];
 
 
-const isEqualPartial = (o1, o2, {pick,omit}={}) => {
+const isEqualPartial = (o1, o2, {pick,omit} = {}) => {
   if (pick && omit) throw new Error('Only one of pick,omit values allowed');
   let partials = [o1,o2];
   if (pick) partials = partials.map(p => _.pick(p,pick));
@@ -372,7 +369,10 @@ const isEqualPartial = (o1, o2, {pick,omit}={}) => {
 
 
 const jsonParse = (s, options={}) => {
-  const { validateJson=true } = options;
+  // console.log('options',options );
+  const { validateJson = true } = options;
+  // console.log('options',options );
+  // console.log('validateJSON',validateJson );
   try {
     return JSON.parse(s);
   } catch (e) {
@@ -396,10 +396,10 @@ const loadJsonSync = (pathname, options={}) => {
 
 
 const loadJsonDirSync = (dir, options={}) => {
-  const {recursive=true, prefix='', delimiter='.'} = options;
+  const {recursive=true, prefix ='', delimiter='.'} = options;
   let result = [];
 
-  const files = dirListFilenames(dir, {recursive,addPath:'joinSub'});
+  const files = dirListFilenames(dir, {recursive, addPath:'joinSub'});
   debug(`files: ${JSON.stringify(files)}`);
 
   return files.map(filename => {
@@ -502,7 +502,7 @@ module.exports = {
   remap,
 
   rename,
-  renameIn,
+  // renameIn,
 
   isEqualPartial,
 
