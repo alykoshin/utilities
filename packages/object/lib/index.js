@@ -458,7 +458,6 @@ const loadJsonDirSync = (dir, options={}) => {
 
 
 const saveJsonSync = (pathname, o, options={}) => {
-  if (typeof pathname !== 'string') throw new Error('saveJsonSync: first argument must be string pathname');
   if (typeof o !== 'object') throw new Error('saveJsonSync: second argument must be object to save');
 
   const s = jsonStringify(o, options);
