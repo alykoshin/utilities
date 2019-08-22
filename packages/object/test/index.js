@@ -319,7 +319,7 @@ describe('@utilities/object', () => {
 
   });
 
-  describe.only('@saveJsonSync', function () {
+  describe('@saveJsonSync', function () {
     let saveJsonSync;
     let testDir = path.join(baseTestDir,'saveJsonSync');
     let testFile = path.join(testDir,'test');
