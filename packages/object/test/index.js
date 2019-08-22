@@ -302,6 +302,30 @@ describe('@utilities/object', () => {
   });
 
 
+  describe('saveJsonSync', function () {
+    let saveJsonSync;
+
+    before(()=>{
+      saveJsonSync = object.saveJsonSync;
+    });
+
+    it('is a function', () => {
+      assert(typeof saveJsonSync === 'function');
+    });
+
+    it('"o" must be object to save', function () {
+     const o = 'string';
+     const pathname = '';
+     const options =  false;
+
+     expect(function () {
+       object.saveJsonSync(pathname, o, options);
+     }).throw();
+    });
+
+  });
+
+
   describe('@loadJsonSync', function () {
     let loadJsonSync;
 
