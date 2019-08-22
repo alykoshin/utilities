@@ -10,7 +10,7 @@ const _dirList = (baseDir, filter={}, options={}) => {
   const { addPath='', nameOnly=true, recursive=false, _subDir='' } = options;
   if (recursive && ADD_PATH_VALUES.indexOf(addPath)<0) throw new Error(`When recursive=true, addPath must be set to one of following: [${ADD_PATH_VALUES.join(',')}], found: "${addPath}" instead`);
 
-  debug(`_dirList: baseDir: "${baseDir}", _subDir: "${_subDir}"`);
+  debug(`_dirList: baseDir: "${baseDir}", _subDir: "${_subDir}", recursive: ${recursive}`);
 
   const fullList = fs
     .readdirSync(path.join(baseDir, _subDir), { withFileTypes: true })
@@ -30,14 +30,17 @@ const _dirList = (baseDir, filter={}, options={}) => {
     })
   ;
 
-  return fullList
-    .filter(dirent => dirent.isDirectory())
-    .reduce((accumulator_allFiles, currentValue_dirent) => {
-      const subdir = currentValue_dirent.name;
-      return accumulator_allFiles.concat(
-        _dirList(baseDir, filter, {...options, _subDir: path.join(_subDir, subdir)})
-      );
-    }, filesInThisDir);
+  return recursive
+         ? fullList
+           .filter(dirent => dirent.isDirectory())
+           .reduce((accumulator_allFiles, currentValue_dirent) => {
+             const subdir = currentValue_dirent.name;
+             return accumulator_allFiles.concat(
+               _dirList(baseDir, filter, {...options, _subDir: path.join(_subDir, subdir)})
+             );
+           }, filesInThisDir)
+         : filesInThisDir
+    ;
 }
 
 const dirListFilenames = (dir, options) => {

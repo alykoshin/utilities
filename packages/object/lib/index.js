@@ -473,10 +473,12 @@ const loadJsonDirSync = (dir, options={}) => {
 
 
 const saveJsonSync = (pathname, o, options={}) => {
+  if (typeof o !== 'object') throw new Error('saveJsonSync: second argument must be object to save');
+
   const s = jsonStringify(o, options);
 
   const { sizeThreshold } = options;
-  if (s.length > sizeThreshold) console.warn(`File size is greater than sizeThreshold=${sizeThreshold}, file size=${s.length}`);
+  if (typeof sizeThreshold === 'number' && s.length > sizeThreshold) console.warn(`File size is greater than sizeThreshold=${sizeThreshold}, file size=${s.length}`);
 
   return saveTextSync(pathname, s, options);
 };
