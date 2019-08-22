@@ -21,13 +21,14 @@ const asyncForEachParallelLimit = async (array, limit, callback) => {
       const result = await callback(item, index, array);
       if (result === false) { // if worker returne false, remove everything in the iterator
         for (let [index, item] of iterator);
+        console.log(index + '(result===false): ' + item);
       }
-      //console.log(index + ': ' + item)
+     console.log(index + ': ' + item + ': ' +array);
     }
   }
 
   const iterator = array.entries();
-  const workers = new Array(limit).fill(iterator).map(doWork)
+  const workers = new Array(limit).fill(iterator).map(doWork);
 //      ^--- starts `limit` workers sharing the same iterator
 
   return Promise
@@ -41,7 +42,7 @@ const asyncForEachReverse = async (array, callback) => {
   //console.log('asyncForEach: enter');
   for (let index = array.length-1; index >= 0 ; index--) {
     //console.log('asyncForEach: index:', index);
-    await callback(array[index], index, array)
+    await callback(array[index], index, array);
   }
   //console.log('asyncForEach: exit');
 };

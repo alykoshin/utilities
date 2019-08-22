@@ -51,6 +51,29 @@ describe('@utilities/async', function () {
   });
 
 
+  describe('asyncForEachParallelLimit', function () {
+    let asyncForEachParallelLimit;
+
+    before('before', function () {
+      asyncForEachParallelLimit = require('../lib/').asyncForEachParallelLimit;
+    });
+
+    it('should be a function', function () {
+      expect( asyncForEachParallelLimit).to.be.a('function');
+    });
+
+    // it('@asyncForEachParallelLimit', async function () {
+    //   const myArray = [ 1, 2, 3, 5, 8 , 14];
+    //   const limit = 2;
+    //   const expected = [1, 2];
+    //
+    //   let result = await asyncForEachParallelLimit( myArray, limit, async(element) => element);
+    //
+    //   expect(result).to.eql(expected);
+    // });
+  });
+
+
   describe('asyncMap', function () {
     let asyncMap;
 

@@ -107,6 +107,7 @@ describe('@utilities/array', function () {
       const result = array.hasElement(myArray, 5);
       expect(result).to.be.eql(expected);
     });
+
   });
 
 
@@ -205,6 +206,7 @@ describe('@utilities/array', function () {
 
       expect(result).to.be.eql(expected);
     });
+
   });
 
 
@@ -286,11 +288,14 @@ describe('@utilities/array', function () {
         {'a': 5, 'b':6, 'c':7},
         {'a': 5, 'd': 8, 'e':9, 'f':0},
         {'a': 5, 'k': 2, 'c':7, 'm':4}
-        ];
+      ];
       const match = {'a': 5, 'c': 7};
       const result = array.removeMatched(myArray, match);
       const expected = 2;
       expect(result).to.be.eql(expected);
     });
+
   });
+
+
 });

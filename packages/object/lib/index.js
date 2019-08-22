@@ -206,18 +206,18 @@ function rename(o, map, options) {
 
 const matchKey = (key) => {
   //const re = /^\$(\d*)$/;
-  const re = /^\$(:?(\d*)|(\[\d+\]))$/;
+  const re =  /^\$(?:(\d*)|(\[\d+\]))$/;
   return key.match(re);
 };
 
-const matchKeyToIdx = (key, indexes) => {
+const matchKeyToIdx = (key) => {
   const match = matchKey(key);
   if (match) {
     if (typeof match[ 2 ] !== 'undefined') {
       const i = match[ 2 ] ? match[ 2 ] : 0;
-      return indexes[ i ];
-    } else if (typeof match[ 3 ] !== 'undefined') {
-      const i = match[ 3 ] ? match[ 3 ] : 0;
+      return i ;
+    } else if (typeof match[ 1 ] !== 'undefined') {
+      const i = match[ 1 ] ? match[ 1 ] : 0;
       return i;
     } else {
       throw new Error('Invalid key definition: "'+key+'"');
@@ -226,7 +226,22 @@ const matchKeyToIdx = (key, indexes) => {
   return key;
 };
 
-
+/*const matchKeyToIdx = (key,indexes) => {
+  const match = matchKey(key);
+  if (match) {
+    if (typeof match[ 2 ] !== 'undefined') {
+      const i = match[ 2 ] ? match[ 2 ] : 0;
+      console.log('i:', i);
+      return indexes[i];
+    } else if (typeof match[ 3] !== 'undefined') {
+      const i = match[ 3] ? match[ 3 ] : 0;
+      return i;
+    } else {
+      throw new Error('Invalid key definition: "'+key+'"');
+    }
+  }
+  return key;
+};*/
 //
 
 
@@ -396,7 +411,7 @@ const loadJsonSync = (pathname, options={}) => {
 
 
 const loadJsonDirSync = (dir, options={}) => {
-  const {recursive=true, prefix ='', delimiter='.'} = options;
+  const {recursive = true, prefix = '', delimiter = '.'} = options;
   let result = [];
 
   const files = dirListFilenames(dir, {recursive, addPath:'joinSub'});
@@ -498,6 +513,9 @@ const assignUniq = (toObject, ...fromObjects) => {
 module.exports = {
   sanitize,
   sanitizeObject: sanitize,
+
+  matchKey,
+  matchKeyToIdx,
 
   remap,
 

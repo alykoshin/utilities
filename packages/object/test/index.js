@@ -173,6 +173,74 @@ describe('@utilities/object', () => {
   });
 
 
+
+  describe('matchKey', () => {
+    let matchKey;
+
+    before(() => {
+      matchKey = object.matchKey;
+    });
+
+    it('is a function',  () => {
+      assert(typeof object.matchKey === 'function');
+    });
+
+    it(' try matchKey', () => {
+      const myKey =  '$[512]';
+      const result = object.matchKey(myKey);
+      const expected = [ '$[512]', undefined, '[512]' ];
+
+      expect(result).to.eql(expected);
+    });
+
+    it(' try2 matchKey', () => {
+      const myKey =  '$512';
+      const result = object.matchKey(myKey);
+      const expected = [ '$512', '512', undefined];
+
+      expect(result).to.eql(expected);
+    });
+
+  });
+
+
+  describe('matchKeyToIdx', function () {
+    let matchKeyToIdx;
+
+    before(()=> {
+      matchKeyToIdx= object.matchKeyToIdx;
+    });
+
+    it('is a function', function () {
+      assert(typeof matchKeyToIdx === 'function');
+    });
+
+    it('this is Group [1] matchKeyToIdx', function () {
+      const myKey = '$512';
+      const result = object.matchKeyToIdx(myKey);
+      const expected = '512';
+
+      expect(result).to.eql(expected);
+    });
+
+    it('this is Group [2] matchKeyToIdx', function () {
+      const myKey = '$[512]';
+      const result = object.matchKeyToIdx(myKey);
+      const expected = '[512]';
+
+      expect(result).to.eql(expected);
+    });
+
+    it('invalid key matchKeyToIdx', function () {
+      const myKey = 123;
+      expect(function () {
+        object.matchKeyToIdx(myKey);
+      }).throw();
+    });
+
+  });
+
+
   describe('@isEqualPartial', function () {
     let isEqualPartial;
 
@@ -245,15 +313,6 @@ describe('@utilities/object', () => {
       assert(typeof loadJsonSync === 'function');
     });
 
-    //пуууть
-    // it('have options', function () {
-    //   const pathname = 'joinSub';
-    //   const options = '';
-    //   const result = loadJsonSync(pathname, options);
-    //   const expected = '';
-    //   expect( result ).to.equals(expected);
-    // });
-
   });
 
   describe('@jsonParse', function () {
@@ -289,7 +348,7 @@ describe('@utilities/object', () => {
       const ret = expect(function () {
         object.jsonParse(s, false);
       }).throw();
-      console.log('return {}: ', ret);
+      // console.log('return {}: ', ret);
     });
 
   });
@@ -369,9 +428,15 @@ describe('@utilities/object', () => {
   });
 
   describe('loadJsonDirSync', function () {
+    let loadJsonDirSync;
+
+    before(() => {
+      loadJsonDirSync = object.loadJsonDirSync;
+      // jsonParseObj = object.jsonParse.option(false);
+    });
 
     it('is a function', function () {
-      assert(typeof object.remap === 'function', 'Expect function');
+      assert(typeof object.loadJsonDirSync === 'function', 'Expect function');
     });
 
     // it('stringify loadJsonDirSync', function () {
@@ -383,5 +448,7 @@ describe('@utilities/object', () => {
     // });
 
   });
+
+
 
 });
