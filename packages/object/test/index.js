@@ -10,6 +10,10 @@ chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
 chai.use(require('chai-arrays'));
 
 const _ = require('lodash');
+const path = require('path');
+const mkdirp = require('mkdirp');
+
+const baseTestDir = path.join(process.cwd(), 'test-data');
 
 const {replaceEol} = require('@utilities/string');
 
@@ -311,6 +315,38 @@ describe('@utilities/object', () => {
 
     it('is a function', function () {
       assert(typeof loadJsonSync === 'function');
+    });
+
+  });
+
+  describe.only('@saveJsonSync', function () {
+    let saveJsonSync;
+    let testDir = path.join(baseTestDir,'saveJsonSync');
+    let testFile = path.join(testDir,'test');
+
+    before(() => {
+      saveJsonSync = object.saveJsonSync;
+      mkdirp(testDir);
+    });
+
+   before(() => {
+
+      // !!!
+      //
+      //
+      // need to delete old file if exists
+      //
+      //
+
+    });
+
+    it('is a function', function () {
+      assert(typeof saveJsonSync === 'function');
+    });
+
+    it('saves the file', function () {
+      const obj = { a: 1 };
+      saveJsonSync(testFile, obj);
     });
 
   });
