@@ -50,7 +50,7 @@ describe('@utilities/object', () => {
     it('returns same object for objects - 3', () => {
       class Foo {
         constructor() {
-          this.a = 1
+          this.a = 1;
         }
       }
       class Foo2 extends Foo {
@@ -306,28 +306,28 @@ describe('@utilities/object', () => {
   });
 
 
-  describe('saveJsonSync', function () {
-    let saveJsonSync;
-
-    before(()=>{
-      saveJsonSync = object.saveJsonSync;
-    });
-
-    it('is a function', () => {
-      assert(typeof saveJsonSync === 'function');
-    });
-
-    it('"o" must be object to save', function () {
-     const o = 'string';
-     const pathname = '';
-     const options =  false;
-
-     expect(function () {
-       object.saveJsonSync(pathname, o, options);
-     }).throw();
-    });
-
-  });
+  // describe('saveJsonSync', function () {
+  //   let saveJsonSync;
+  //
+  //   before(()=>{
+  //     saveJsonSync = object.saveJsonSync;
+  //   });
+  //
+  //   it('is a function', () => {
+  //     assert(typeof saveJsonSync === 'function');
+  //   });
+  //
+  //   it('"o" must be object to save', function () {
+  //    const o = 'string';
+  //    const pathname = '';
+  //    const options =  false;
+  //
+  //    expect(function () {
+  //      object.saveJsonSync(pathname, o, options);
+  //    }).throw();
+  //   });
+  //
+  // });
 
 
   describe('@loadJsonSync', function () {
@@ -343,7 +343,7 @@ describe('@utilities/object', () => {
 
   });
 
-  describe.only('@saveJsonSync', function () {
+  describe('@saveJsonSync', function () {
     let saveJsonSync;
     let testDir = path.join(baseTestDir,'saveJsonSync');
     let testFile = path.join(testDir,'test');
@@ -353,24 +353,27 @@ describe('@utilities/object', () => {
       mkdirp(testDir);
     });
 
-   before(() => {
-
-      // !!!
-      //
-      //
-      // need to delete old file if exists
-      //
-      //
-
-    });
 
     it('is a function', function () {
       assert(typeof saveJsonSync === 'function');
     });
 
+    it('"o" must be object to save', function () {
+      const o = 'string';
+      const pathname = '';
+      const options =  false;
+
+      expect(function () {
+        object.saveJsonSync(pathname, o, options);
+      }).throw();
+    });
+
     it('saves the file', function () {
-      const obj = { a: 1 };
-      saveJsonSync(testFile, obj);
+      const obj = {f:5};
+      const options = 5;
+      const result =   saveJsonSync(testFile, obj, options);
+      const expected = 5;
+      expect(result).to.eql(expected);
     });
 
   });
@@ -486,29 +489,6 @@ describe('@utilities/object', () => {
     });
 
   });
-
-  describe('loadJsonDirSync', function () {
-    let loadJsonDirSync;
-
-    before(() => {
-      loadJsonDirSync = object.loadJsonDirSync;
-      // jsonParseObj = object.jsonParse.option(false);
-    });
-
-    it('is a function', function () {
-      assert(typeof object.loadJsonDirSync === 'function', 'Expect function');
-    });
-
-    // it('stringify loadJsonDirSync', function () {
-    //   const dir = '';
-    //   const options = '123';
-    //   const  result = object.loadJsonDirSync(dir, options);
-    //   const expected = 123;
-    //   expect( result ).to.equals(expected);
-    // });
-
-  });
-
 
 
 });

@@ -480,7 +480,7 @@ const saveJsonSync = (pathname, o, options={}) => {
 
   const { sizeThreshold } = options;
   if (typeof sizeThreshold === 'number' && s.length > sizeThreshold) console.warn(`File size is greater than sizeThreshold=${sizeThreshold}, file size=${s.length}`);
-
+console.log('-----', saveTextSync(pathname, s, options));
   return saveTextSync(pathname, s, options);
 };
 
