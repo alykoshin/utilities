@@ -6,8 +6,10 @@ const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
 chai.should();
-chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
-chai.use(require('chai-arrays'));
+//chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
+//chai.use(require('chai-arrays'));
+
+const _ = require('lodash');
 
 
 describe('@utilities/array', function () {
@@ -297,5 +299,44 @@ describe('@utilities/array', function () {
 
   });
 
+
+  describe('@compareArraysNonOrdered', function () {
+    let compareArraysNonOrdered;
+
+    before(() => {
+      compareArraysNonOrdered = array.compareArraysNonOrdered;
+    });
+
+    it('is a function', function () {
+      assert(typeof compareArraysNonOrdered === 'function');
+    });
+
+    it('@primitives', function () {
+      const compare = (e1,e2) => (e1===e2);
+
+      const a1 = [ 1, 'a' ];
+      const a2 = [ 1, 'a' ];
+      const a3 = [ 'a', 1 ];
+      const b1 = [ 2, 'a' ];
+      expect( compareArraysNonOrdered(a1, a2, {compare} ) ).to.be.true;
+      expect( compareArraysNonOrdered(a1, a3, {compare} ) ).to.be.true;
+      expect( compareArraysNonOrdered(a1, b1, {compare} ) ).to.be.false;
+      expect( compareArraysNonOrdered(a3, b1, {compare} ) ).to.be.false;
+    });
+
+    it('@objects', function () {
+      const a1 = [ 1, 'a', { a: { b: 2 } } ];
+      const a2 = [ 1, 'a', { a: { b: 2 } } ];
+      const a3 = [ { a: { b: 2 } }, 1, 'a' ];
+      const b1 = [ { a: { b: 2 } }, 2, 'a' ];
+      const b2 = [ { a: { b: 2 } }, 2, 'a' ];
+
+      expect( compareArraysNonOrdered(a1, a2, {compare: _.isEqual} ) ).to.be.true;
+      expect( compareArraysNonOrdered(a1, a3, {compare: _.isEqual} ) ).to.be.true;
+      expect( compareArraysNonOrdered(a1, b1, {compare: _.isEqual} ) ).to.be.false;
+      expect( compareArraysNonOrdered(a1, b2, {compare: _.isEqual} ) ).to.be.false;
+    });
+
+  });
 
 });

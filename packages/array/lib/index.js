@@ -64,6 +64,31 @@ const removeMatched = (array, filter) => {
 };
 
 
+const compareArraysNonOrdered = (arr1, arr2, {filter,compare}) => {
+  if (typeof compare !== 'function') throw new Error('Expecting compare function');
+  if (filter) {
+    arr1 = arr1.filter(_.matches(filter));
+    arr2 = arr2.filter(_.matches(filter));
+  }
+  const len1 = arr1.length;
+  const len2 = arr2.length;
+  //logger.debug('len1:', len1, ', len2:', len2);
+  if (len1 !== len2) return false;
+
+  //logger.debug('compareArraysNonOrdered:', arr1.length, arr2.length);
+  //logger.debug('compareArraysNonOrdered:', JSON.stringify(arr1), JSON.stringify(arr2));
+
+  const intersect = _.intersectionWith(
+    arr1,
+    arr2,
+    compare
+  );
+  //logger.debug('intersect:', intersect);
+  //logger.debug('intersect.length:', intersect.length);
+  return intersect.length === len1;
+};
+
+
 module.exports = {
   sanitize,
   sanitizeArray: sanitize,
@@ -79,4 +104,6 @@ module.exports = {
   removeAt,
   removeElement,
   removeMatched,
+
+  compareArraysNonOrdered,
 };
