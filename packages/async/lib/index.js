@@ -95,6 +95,25 @@ if (isNodejs()) {
 }
 
 
+//
+
+function processNextTick(fn /* arguments */) {
+  const args = [].slice.call(arguments, 1);
+  const self = this;
+  process.nextTick(function() {
+    fn.apply(self, args);
+  });
+}
+
+
+function setTimeout0(fn /* arguments */) {
+  const args = [].slice.call(arguments, 1);
+  const self = this;
+  setTimeout(() => {
+    fn.apply(self, args);
+  }, 0);
+}
+
 
 module.exports = {
   asyncForEach,
@@ -110,7 +129,10 @@ module.exports = {
   asyncSetTimeout,
   setTimeoutAsPromised,
 
-  wrapIntoFiber
+  wrapIntoFiber,
+
+  processNextTick,
+  setTimeout0,
 };
 
 
