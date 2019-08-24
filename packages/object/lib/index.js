@@ -442,32 +442,32 @@ const loadJsonDirSync = (dir, options={}) => {
       }
     };
   });
-/*
-[
-  {
-    name: 'ubereats_with_breakfast',
-    data: { sections: [Array] },
-    _file: {
-      pathname: 'data/in/menu/ubereats_with_breakfast.json',
-      baseDir: './data/in/menu',
-      subDir: '.',
-      basename: 'ubereats_with_breakfast',
-      extname: '.json'
+  /*
+  [
+    {
+      name: 'ubereats_with_breakfast',
+      data: { sections: [Array] },
+      _file: {
+        pathname: 'data/in/menu/ubereats_with_breakfast.json',
+        baseDir: './data/in/menu',
+        subDir: '.',
+        basename: 'ubereats_with_breakfast',
+        extname: '.json'
+      }
+    },
+    {
+      name: 'test.test2.northbridge',
+      data: { sections: [Array] },
+      _file: {
+        pathname: 'data/in/menu/test/test2/northbridge.json',
+        baseDir: './data/in/menu',
+        subDir: 'test/test2',
+        basename: 'northbridge',
+        extname: '.json'
+      }
     }
-  },
-  {
-    name: 'test.test2.northbridge',
-    data: { sections: [Array] },
-    _file: {
-      pathname: 'data/in/menu/test/test2/northbridge.json',
-      baseDir: './data/in/menu',
-      subDir: 'test/test2',
-      basename: 'northbridge',
-      extname: '.json'
-    }
-  }
-]
-*/
+  ]
+  */
 };
 
 
@@ -509,7 +509,44 @@ const assignUniq = (toObject, ...fromObjects) => {
 };
 
 
+const getMethods = (obj, options={}) => {
+  if (typeof options.depth === 'undefined') options.depth = -1;
+  //
+  // https://stackoverflow.com/a/31055217/2774010
+  //
+  let props = [];
+  let i = 0;
+  let o = obj;
+  do {
+    props = props.concat(Object.getOwnPropertyNames(o));
+    //console.log('getMethods: i:', i, 'props', props, ', options.depth:', options.depth);
+  } while (
+    (o = Object.getPrototypeOf(o)) &&
+    (options.depth < 0 || i++ < options.depth)
+    );
 
+  //console.log('getMethods: props:', props);
+
+  const result = props
+    .sort()
+    .filter(function(e, i, arr) {
+      //console.log('>>>', i, e, typeof obj[e], obj[e]);
+      if (e !== arr[i+1] && typeof obj[e] === 'function') return true;
+    })
+  ;
+
+  //console.log('result', result);
+  return result;
+
+  //const keys          = Object.getOwnPropertyNames(Object.getPrototypeOf(obj));
+  //const actualMethods = keys.filter(k => typeof obj[ k ] === 'function');
+};
+
+
+const getOwnMethods   = (obj) => getMethods(obj, { depth: 0 });
+
+
+const getClassMethods = (obj) => getMethods(obj, { depth: 1 });
 
 
 module.exports = {
@@ -536,4 +573,8 @@ module.exports = {
   saveJsonSync,
 
   jsonToHtml,
+
+  getMethods,
+  getOwnMethods,
+  getClassMethods,
 };

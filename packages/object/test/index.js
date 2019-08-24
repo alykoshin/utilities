@@ -6,8 +6,8 @@ const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
 chai.should();
-chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
-chai.use(require('chai-arrays'));
+//chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
+//chai.use(require('chai-arrays'));
 
 const _ = require('lodash');
 const path = require('path');
@@ -485,6 +485,83 @@ describe('@utilities/object', () => {
 
   });
 
+
+  describe('# getMethods', function () {
+    let getMethods, obj;
+
+    before(() => {
+      getMethods = object.getMethods;
+      // jsonParseObj = object.jsonParse.option(false);
+
+      class GrandParent {
+        grandParentMethod () {}
+        sameNameMethod () {}
+      }
+      GrandParent.prototype.grandParentProtoMethod = () => {};
+      GrandParent.prototype.grandParentProtoStr = 'parentProtoStr';
+      GrandParent.prototype.grandParentProtoNum = 1;
+
+
+      class Parent extends GrandParent {
+        constructor () {
+          super();
+        }
+        parentMethod () {}
+        sameNameMethod () {}
+      }
+      Parent.prototype.parentProtoMethod = () => {};
+      Parent.prototype.parentProtoStr = 'protoStr';
+      Parent.prototype.parentProtoNum = 1;
+
+      obj = new Parent();
+      obj.ownMethod = () => {};
+      obj.ownStr = 'ownStr';
+      obj.ownNum = 0;
+
+    });
+
+    it('is a function', function () {
+      assert(typeof getMethods === 'function', 'Expect function');
+    });
+
+    it('# depth = 0', function () {
+      const expected = [
+        'ownMethod',
+      ];
+      const result = getMethods(obj, { depth: 0 });
+      console.log('getMethods:  depth = 0:', result);
+      expect(result).to.eql(expected);
+    });
+
+    it('# depth = 1', function () {
+      const expected = [
+        'constructor',
+        'ownMethod',
+        'parentMethod',
+        'parentProtoMethod',
+        'sameNameMethod',
+      ];
+      const result = getMethods(obj, { depth: 1 });
+      console.log('getMethods:  depth = 1', result);
+      expect(result).to.eql(expected);
+    });
+
+    it('# depth = 2', function () {
+      const expected = [
+        'constructor',
+        'grandParentMethod',
+        'grandParentProtoMethod',
+        'ownMethod',
+        'parentMethod',
+        'parentProtoMethod',
+        'sameNameMethod',
+      ];
+      const result = getMethods(obj, { depth: 2 });
+      console.log('getMethods:  depth = 2', result);
+      expect(result).to.eql(expected);
+    });
+
+  });
 
 
 });
