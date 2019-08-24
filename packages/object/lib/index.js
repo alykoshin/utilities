@@ -510,33 +510,39 @@ const assignUniq = (toObject, ...fromObjects) => {
 
 
 const getMethods = (obj, options={}) => {
-  if (typeof options.depth === 'undefined') options.depth = -1;
+  const {depth=-1,excludeConstructor=false} = options;
   //
-  // https://stackoverflow.com/a/31055217/2774010
+  // Based on https://stackoverflow.com/a/31055217/2774010
   //
   let props = [];
   let i = 0;
   let o = obj;
   do {
     props = props.concat(Object.getOwnPropertyNames(o));
-    //console.log('getMethods: i:', i, 'props', props, ', options.depth:', options.depth);
+    //console.log('getMethods: i:', i, 'props', props, ', depth:', depth);
   } while (
     (o = Object.getPrototypeOf(o)) &&
-    (options.depth < 0 || i++ < options.depth)
+    (depth < 0 || i++ < depth)
     );
 
   //console.log('getMethods: props:', props);
 
   const result = props
-    .sort()
-    .filter(function(e, i, arr) {
-      //console.log('>>>', i, e, typeof obj[e], obj[e]);
-      if (e !== arr[i+1] && typeof obj[e] === 'function') return true;
+    //.sort()
+    .filter((e, i, arr) => {
+      //
+      // this changes the order of methods, so'll sort later though less effective:
+      //return (e !== arr[i+1] && typeof obj[e] === 'function');
+      //
+      return (typeof obj[e] === 'function');
+    })
+    .filter((e,i,arr) => {
+      return !(excludeConstructor && e==='constructor');
     })
   ;
+  return _.uniq(result);
 
   //console.log('result', result);
-  return result;
 
   //const keys          = Object.getOwnPropertyNames(Object.getPrototypeOf(obj));
   //const actualMethods = keys.filter(k => typeof obj[ k ] === 'function');

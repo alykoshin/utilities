@@ -329,7 +329,7 @@ describe('@utilities/object', () => {
       mkdirp(testDir);
     });
 
-   before(() => {
+    before(() => {
 
       // !!!
       //
@@ -488,6 +488,7 @@ describe('@utilities/object', () => {
 
   describe('# getMethods', function () {
     let getMethods, obj;
+    let /*constructorMethods,*/ grandParentMethods, parentMethods, ownMethods;
 
     before(() => {
       getMethods = object.getMethods;
@@ -501,6 +502,15 @@ describe('@utilities/object', () => {
       GrandParent.prototype.grandParentProtoStr = 'parentProtoStr';
       GrandParent.prototype.grandParentProtoNum = 1;
 
+      //constructorMethods = [
+      //  'constructor',
+      //];
+      grandParentMethods = [
+        'constructor',
+        'grandParentMethod',
+        'sameNameMethod',
+        'grandParentProtoMethod',
+      ];
 
       class Parent extends GrandParent {
         constructor () {
@@ -513,10 +523,21 @@ describe('@utilities/object', () => {
       Parent.prototype.parentProtoStr = 'protoStr';
       Parent.prototype.parentProtoNum = 1;
 
+      parentMethods = [
+        'constructor',
+        'parentMethod',
+        'sameNameMethod',
+        'parentProtoMethod',
+      ];
+
       obj = new Parent();
       obj.ownMethod = () => {};
       obj.ownStr = 'ownStr';
       obj.ownNum = 0;
+
+      ownMethods = [
+        'ownMethod',
+      ];
 
     });
 
@@ -524,40 +545,58 @@ describe('@utilities/object', () => {
       assert(typeof getMethods === 'function', 'Expect function');
     });
 
-    it('# depth = 0', function () {
-      const expected = [
-        'ownMethod',
-      ];
+    it('# { depth: 0 }', function () {
+      const expected = ownMethods;
       const result = getMethods(obj, { depth: 0 });
-      console.log('getMethods:  depth = 0:', result);
+      //console.log('getMethods: { depth: 0 }: result:', result);
       expect(result).to.eql(expected);
     });
 
-    it('# depth = 1', function () {
-      const expected = [
-        'constructor',
-        'ownMethod',
-        'parentMethod',
-        'parentProtoMethod',
-        'sameNameMethod',
-      ];
+    it('# { depth: 1 }', function () {
+      let expected = []
+        .concat(ownMethods)
+        //.concat(constructorMethods)
+        .concat(parentMethods)
+      ;
+      expected = _.uniq(expected);
+
       const result = getMethods(obj, { depth: 1 });
-      console.log('getMethods:  depth = 1', result);
+
+      //console.log('getMethods: { depth: 1 }: result:', result);
       expect(result).to.eql(expected);
     });
 
-    it('# depth = 2', function () {
-      const expected = [
-        'constructor',
-        'grandParentMethod',
-        'grandParentProtoMethod',
-        'ownMethod',
-        'parentMethod',
-        'parentProtoMethod',
-        'sameNameMethod',
-      ];
+    it('# { depth: 2 }', function () {
+      let expected = []
+        .concat(ownMethods)
+        //.concat(constructorMethods)
+        .concat(parentMethods)
+        .concat(grandParentMethods)
+      ;
+      expected = _.uniq(expected);
+      //console.log('getMethods: { depth: 2 }: expected:', expected);
+
       const result = getMethods(obj, { depth: 2 });
-      console.log('getMethods:  depth = 2', result);
+
+      //console.log('getMethods: { depth: 2 }: result:', result);
+      expect(result).to.eql(expected);
+    });
+
+    it('# { depth: 1, excludeConstructor: true }', function () {
+      let expected = []
+        .concat(ownMethods)
+        .concat(parentMethods)
+        .filter( m => m !== 'constructor')
+      ;
+      expected = _.uniq(expected);
+      //[
+      //'ownMethod',
+      //'parentMethod',
+      //'parentProtoMethod',
+      //'sameNameMethod',
+      //];
+      const result = getMethods(obj, { depth: 1, excludeConstructor: true });
+      //console.log('getMethods:', result);
       expect(result).to.eql(expected);
     });
 
