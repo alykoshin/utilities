@@ -99,7 +99,7 @@ module.exports = {
   hasElement,
   getOne,
   arrayOne: getOne,
-  findOne:  getOne,
+  //findOne:  getOne,
   findMatched,
 
   removeAt,
