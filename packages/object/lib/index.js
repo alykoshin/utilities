@@ -8,6 +8,7 @@ const mkdirp = require('mkdirp');
 
 const debug = require('debug')('@utilities/object');
 
+const {hasElement} = require('@utilities/array');
 const {replaceEolWithBr} = require('@utilities/string');
 const {loadTextSync, saveTextSync, dirListFilenames, dirListDirnames } = require('@utilities/fs');
 
@@ -473,8 +474,8 @@ const loadJsonDirSync = (dir, options={}) => {
 
 
 const saveJsonSync = (pathname, o, options={}) => {
-  const allowedTypes = [ 'string', 'number', 'object' ];
-  if (['string'].indexOf(typeof o) < 0) throw new Error('saveJsonSync: second argument must be object to save');
+  const allowedTypes = [ 'string', 'number', 'boolean', 'object' ];
+  if (!hasElement(allowedTypes, typeof o)) throw new Error(`saveJsonSync: typeof second argument must be one of following: [${allowedTypes.join(', ')}]`);
 
   const s = jsonStringify(o, options);
 
