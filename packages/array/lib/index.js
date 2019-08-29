@@ -19,6 +19,7 @@ const peek = (array, offset) => {
 
 
 const indexOf = (array, el) => {
+  array = sanitize(array);
   return array.indexOf(el);
 };
 
