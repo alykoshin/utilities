@@ -25,8 +25,50 @@ npm install --save @utilities/string
 ```
 
 ## Usage
-#####Expect
 
+#### Function lpad()
+Returns: a string filled with characters to the specified length.
+ 
+Arguments: 
+* s - string;
+* size - string length;
+* c - character that is used to fill the string to size.
+
+Example:
+```
+const lpad = ('12345', 10, '0') => {
+  c = c || ' ';
+  if (c.length > 1)  console.warn('lpad expects one padding character');
+  while (s.length < size) s = c + s;
+  return s;
+};
+```
+Will print:
+```
+'0000012345'
+```
+
+#### Function repeat() 
+Returns: <[function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)>  a string filled with characters to the specified length.  
+
+Arguments:
+* c - character that is used to fill the string to size;
+* len - string length.
+
+
+Example:
+```
+const repeat = (9, 10) => {
+  return lpad('', len, c);
+};
+
+```
+Will print:
+```
+'9999912345'
+```
+
+#### Function lpadZeros()
 
 ## Credits
 [Alexander](https://github.com/alykoshin/)

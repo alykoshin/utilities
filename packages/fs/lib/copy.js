@@ -26,7 +26,7 @@ function copyFile(source, target, cb) {
   wr.on('error', function(err) {
     done(err);
   });
-  wr.on('close', function(ex) {
+  wr.on('close', function() {
     done();
   });
 

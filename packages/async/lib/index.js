@@ -5,9 +5,8 @@ const asyncForEach = async (array, callback) => {
   //console.log('asyncForEach: enter');
   for (let index = 0; index < array.length; index++) {
     //console.log('asyncForEach: index:', index);
-    await callback(array[index], index, array)
+    await callback(array[index], index, array);
   }
-  //console.log('asyncForEach: exit');
 };
 
 
@@ -19,7 +18,8 @@ const asyncForEachParallelLimit = async (array, limit, callback) => {
   async function doWork(iterator) {
     for (let [index, item] of iterator) {
       const result = await callback(item, index, array);
-      if (result === false) { // if worker returne false, remove everything in the iterator
+
+      if (result === false) { // if worker return false, remove everything in the iterator
         for (let [index, item] of iterator);
         console.log(index + '(result===false): ' + item);
       }

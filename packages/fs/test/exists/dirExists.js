@@ -10,6 +10,7 @@ chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
 
 var path = require('path');
 var miniFs = require('../../');
+var dirL = require('../../../fs/lib/dirList');
 
 var invalidPath = 1;
 var existingFile = module.filename;
@@ -100,4 +101,20 @@ describe('# mini-fs', function () {
     });
   });
 
+
+  describe('dirListFilenames', function () {
+    let dirListFilenames;
+
+    before(()=>{
+      dirListFilenames = dirL.dirListFilenames;
+    });
+
+    it('is a function', function () {
+      assert(typeof dirListFilenames === 'function');
+    });
+
+    it('@dirListFilenames', function () {
+
+    });
+  });
 });

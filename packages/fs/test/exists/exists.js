@@ -8,8 +8,13 @@ var expect = chai.expect;
 chai.should();
 chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
 
+
+
 var path = require('path');
 var miniFs = require('../../');
+const mkdirp = require('mkdirp');
+const baseCopyDir = path.join(process.cwd(), 'test-data');
+
 
 var invalidPath = 1;
 var existingFile = module.filename;
@@ -18,7 +23,8 @@ var existingDir = path.dirname(module.filename);
 var nonExistingDir = existingDir+'xyz';
 var nonAccessibleDir = '/root/anything';
 
-describe('mini-fs', function () {
+describe('' +
+  '-fs', function () {
 
   describe('existsSync', function () {
     it('existing file', function () {
@@ -91,9 +97,62 @@ describe('mini-fs', function () {
       });
     }
     it('# exists equal existsAsync', function () {
-        expect(miniFs.exists).equal(miniFs.existsAsync);
+      expect(miniFs.exists).equal(miniFs.existsAsync);
     });
   });
 
+//my test [copy] leno4ka.buka@gmail.com
+  describe('copyFile ', function () {
+    let copyFile;
+    let copyFileDir = path.join(baseCopyDir,'saveJsonSync');
+    let copyFilePath = path.join(copyFileDir, 'fromFileCopy');
+    let copyPastDir = path.join(baseCopyDir,'fileCopy');
+    let expectedCopyPastPath = path.join(copyPastDir, 'toFileCopy');
+
+    before(() => {
+      copyFile = miniFs.copyFile;
+      mkdirp(copyFileDir);
+      mkdirp(copyPastDir);
+    });
+
+    it('is a function', function () {
+      assert(typeof copyFile === 'function');
+    });
+
+    it('should be async copy element from -> to', function (done) {
+      copyFile(copyFilePath, expectedCopyPastPath, function (err) {
+        if(err !== undefined){
+          throw new Error(`My error`);
+        }
+        done();
+      });
+    });
+
+  });
+
+
+  describe('copyFileSync', function () {
+    let copyFileSync;
+    let copyFileDir = path.join(baseCopyDir,'saveJsonSync');
+    let copyFilePath = path.join(copyFileDir, 'fromFileCopy');
+    let copyPastDir = path.join(baseCopyDir,'fileCopy');
+    let expectedCopyPastPath = path.join(copyPastDir, 'toFileCopy');
+
+    before(() => {
+      copyFileSync = miniFs.copyFileSync;
+      mkdirp(copyFileDir);
+      mkdirp(copyPastDir);
+    });
+
+    it('is a function', function () {
+      assert(typeof copyFileSync === 'function');
+    });
+
+    it('should be run function copyFile, end return copy file from -> to', function (done) {
+      const result = copyFileSync(copyFilePath, expectedCopyPastPath);
+      expect(result).to.eql( done());
+    });
+
+  });
 
 });

@@ -41,15 +41,15 @@ const _dirList = (baseDir, filter={}, options={}) => {
            }, filesInThisDir)
          : filesInThisDir
     ;
-}
+};
 
 const dirListFilenames = (dir, options) => {
   return _dirList(dir, { isFile:true }, options);
-}
+};
 
 const dirListDirnames = (dir, options) => {
   return _dirList(dir, { isDir:true }, options);
-}
+};
 
 const _listLocalFiles = (localDir) => {
   let list = dirList(localDir, { resolvePath});
@@ -59,11 +59,11 @@ const _listLocalFiles = (localDir) => {
   ;
   debug('_listLocalFiles:', list);
   return list;
-}
+};
 
 
 
 module.exports = {
   dirListFilenames,
   dirListDirnames,
-}
+};

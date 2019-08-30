@@ -11,7 +11,7 @@ const repeat = (c, len) => {
 
 const lpad = (s, size, c) => {
   c = c || ' ';
-  if (c.length > 1)  console.warn('lpad expects one padding character')
+  if (c.length > 1)  console.warn('lpad expects one padding character');
   while (s.length < size) s = c + s;
   return s;
 };
@@ -68,7 +68,10 @@ const replaceEolWithBr = (s='') => {
 
 const defaultTemplate = (tmpl, context, options) => {
   try {
+    console.log('options:', options);
+    console.log('tmpl:', tmpl);
     const compiled = _.template(tmpl, options);
+    console.log('compiled:', compiled(context));
     return compiled(context);
 
   } catch(e) {

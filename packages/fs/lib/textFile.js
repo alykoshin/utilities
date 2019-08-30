@@ -35,6 +35,7 @@ const saveTextSync = (pathname, s, options={}) => {
   if (typeof s !== 'string') throw new Error('saveTextSync: second argument must be the string to save');
 
   debug(`saveTextSync: Saving ${s.length} characters to "${pathname}"`);
+  console.log(' mkdirp.sync(path.dirname(pathname)):',  mkdirp.sync(path.dirname(pathname)));
   mkdirp.sync(path.dirname(pathname));
   fs.writeFileSync(pathname, s, { encoding: 'utf8' });
   debug(`saveTextSync: Done"`);

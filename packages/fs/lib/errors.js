@@ -8,7 +8,7 @@ const newError = (message, errorInfo={}, extMessage) => {
   let e = new Error(message);
   e = _.extend(e, errorInfo);
   return e;
-}
+};
 
 //const newSystemError = (message, errorInfo={}, extMessage) => {
 //  return newError(message, errorInfo, extMessage);
@@ -29,7 +29,7 @@ const newNoSuchFileError = (errorInfo={}, extMessage) => {
   const message = `${errorInfo.code}: ${msg}, ${errorInfo.syscall} '${errorInfo.path}'`;
 
   return newError(message, errorInfo, extMessage);
-}
+};
 
 module.exports = {
   newError,

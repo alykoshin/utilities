@@ -332,13 +332,24 @@ describe('@utilities/object', () => {
 
   describe('@loadJsonSync', function () {
     let loadJsonSync;
+    let testDir = path.join(baseTestDir,'saveJsonSync');
+    let testFile = path.join(testDir,'test');
 
     before(() => {
       loadJsonSync = object.loadJsonSync;
+      mkdirp(testDir);
     });
 
     it('is a function', function () {
       assert(typeof loadJsonSync === 'function');
+    });
+
+    it('in alphabet order', function () {
+      const options = false;
+      const result =   loadJsonSync(testFile, options);
+      const expected = { d: 5, e:5, f:5,q:5,r:5,t:5,w:5 };
+
+      expect(result).to.eql(expected);
     });
 
   });
@@ -360,19 +371,18 @@ describe('@utilities/object', () => {
 
     it('"o" must be object to save', function () {
       const o = 'string';
-      const pathname = '';
       const options =  false;
 
       expect(function () {
-        object.saveJsonSync(pathname, o, options);
+        object.saveJsonSync(testFile, o, options);
       }).throw();
     });
 
     it('saves the file', function () {
-      const obj = {f:5};
-      const options = 5;
+      const obj = {f:5, d:5,q:5,w:5,e:5,r:5,t:5};
+      const options = true;
       const result =   saveJsonSync(testFile, obj, options);
-      const expected = 5;
+      const expected = 72;
       expect(result).to.eql(expected);
     });
 
@@ -457,6 +467,47 @@ describe('@utilities/object', () => {
       expect( result ).to.equals(expected);
     });
 
+  });
+
+
+  describe('@loadJsonDirSync', function () {
+    let loadJsonDirSync;
+
+    before(() => {
+      loadJsonDirSync = object.loadJsonDirSync;
+    });
+
+    it('is a function', function () {
+      assert(typeof loadJsonDirSync === 'function');
+    });
+
+    it('all files from dir', function () {
+      const dir = 'test-data';
+      const options = true;
+      const result = object.loadJsonDirSync(dir, options);
+      const expected = [
+        {
+          '_file': {
+            'baseDir': 'test-data',
+            'basename': 'test',
+            'extname': '',
+            'pathname': 'test-data/saveJsonSync/test',
+            'subDir': 'saveJsonSync'
+          },
+          'data': {
+            'd': 5,
+            'e': 5,
+            'f': 5,
+            'q': 5,
+            'r': 5,
+            't': 5,
+            'w': 5
+          },
+          'name': 'saveJsonSync.test'
+        }
+    ];
+      expect(result).to.eql(expected);
+    });
   });
 
 

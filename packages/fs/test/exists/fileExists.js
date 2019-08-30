@@ -10,6 +10,7 @@ chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
 
 var path = require('path');
 var miniFs = require('../../');
+var miniFile = require('../../../fs/lib/textFile');
 
 var invalidPath = 1;
 var existingFile = module.filename;
@@ -98,5 +99,77 @@ describe('# mini-fs', function () {
       expect(miniFs.fileExists).equal(miniFs.fileExistsAsync);
     });
   });
+
+  //leno4ka.buka@gmail.com
+  describe('loadTextSync', function () {
+    let loadTextSync;
+
+    before(()=>{
+      loadTextSync = miniFile.loadTextSync;
+    });
+
+    it('is a function', function () {
+      assert(typeof loadTextSync === 'function');
+    });
+
+    it('if unvalible pathname ', function () {
+      const pathname = 'test-data';
+      expect(function () {
+        loadTextSync(pathname, {});
+      }).throw();
+    });
+
+    it('if pathname !== string', function () {
+      const pathname = loadTextSync;
+      expect(function () {
+        loadTextSync(pathname, false);
+      }).throw();
+    });
+
+    it('should read text from file', function () {
+      const pathname = 'test-data/saveJsonSync/test';
+      const result = loadTextSync(pathname);
+      expect(result).to.eql('this is my text for writing the file /test');
+    });
+
+  });
+
+
+  describe('saveTextSync', function () {
+    let saveTextSync;
+
+    before(()=> {
+      saveTextSync = miniFile.saveTextSync;
+    });
+
+    it('is a function', function () {
+      assert(typeof saveTextSync === 'function');
+    });
+
+    it('if s !== string', function () {
+      const pathname = 'abcd';
+      const s = [];
+      expect(function () {
+        saveTextSync(pathname, s);
+      }).throw();
+    });
+
+    it('if pathname !== string', function () {
+      const pathname = saveTextSync;
+      const s = '';
+      expect(function () {
+        saveTextSync(pathname, s);
+      }).throw();
+    });
+
+    it('should write in the file', function () {
+      const pathname = 'test-data/saveJsonSync/test';
+      const s = 'this is my text for writing the file /test';
+      const result = saveTextSync(pathname, s);
+      expect(result).to.eql(42);
+    });
+
+  });
+
 
 });

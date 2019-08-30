@@ -8,6 +8,7 @@ const expect = chai.expect;
 chai.should();
 chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
 chai.use(require('chai-arrays'));
+chai.use(require('chai-arrays'));
 
 
 describe('@utilities/string', function () {
@@ -28,7 +29,7 @@ describe('@utilities/string', function () {
       const s = '12345'; // 5 chars
       const c = '0';
       const expected = '0000012345';
-      const result = string.lpad(s, 10, c);
+      const result = string.lpad(s, 10,  c);
       expect(result).to.be.equals(expected);
     });
 
@@ -226,10 +227,28 @@ describe('@utilities/string', function () {
       expect(string.joinNonEmpty).to.be.a('function');
     });
 
-    it('return joinNonEmpty', function () {
+    it('@joinNonEmpty', function () {
       const arrayOfStrings = ['RABBIT', 'BIRD'];
       const result = 'RABBIT.BIRD';
       expect(string.joinNonEmpty(arrayOfStrings)).to.be.equal(result);
     });
+
   });
+
+
+  // describe('defaultTemplate', function () {
+  //   it('is a function', function () {
+  //     expect(string.defaultTemplate).to.be.a('function');
+  //   });
+  //
+  //   it('@defaultTemplate', function () {
+  //     const template = '/profiles/:_id/profile/';
+  //     const context = { _id: 'value' };
+  //     const options = { _id: 'value' };
+  //     const expected = '/profiles/value/profile/';
+  //     const result = string.defaultTemplate(template, context, options);
+  //
+  //     expect(result).to.be.equal(expected);
+  //   });
+  // });
 });
