@@ -12,6 +12,7 @@ const {hasElement} = require('@utilities/array');
 const {replaceEolWithBr} = require('@utilities/string');
 const {loadTextSync, saveTextSync, dirListFilenames, dirListDirnames } = require('@utilities/fs');
 
+const ChainableNode = require('./chainableNode');
 
 
 const isObject = (value) => {
@@ -585,4 +586,6 @@ module.exports = {
   getMethods,
   getOwnMethods,
   getClassMethods,
+
+  ChainableNode,
 };
