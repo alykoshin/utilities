@@ -68,10 +68,7 @@ const replaceEolWithBr = (s='') => {
 
 const defaultTemplate = (tmpl, context, options) => {
   try {
-    console.log('options:', options);
-    console.log('tmpl:', tmpl);
     const compiled = _.template(tmpl, options);
-    console.log('compiled:', compiled(context));
     return compiled(context);
 
   } catch(e) {

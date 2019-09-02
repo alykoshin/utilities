@@ -47,6 +47,24 @@ describe('@utilities/string', function () {
       const result = string.repeat( c, 10);
       expect(result).to.be.equals(expected);
     });
+
+    it('if c is underfind', function () {
+      const s = '12345'; // 5 chars
+      const c = undefined;
+      const expected = '12345';
+      const result = string.lpad(s, 5,  c);
+      expect(result).to.be.equals(expected);
+    });
+
+    it('if expects more then one padding character', function () {
+      const s = '12345'; // 5 chars
+      const c = '99';
+      const expected = '9912345';
+      const result = string.lpad(s, 6,  c);
+      expect(result).to.be.equals(expected);
+    });
+
+
   });
 
 
@@ -64,6 +82,21 @@ describe('@utilities/string', function () {
       expect(result).to.be.equals(expected);
     });
 
+    it('if c is underfind', function () {
+      const s = '12345'; // 5 chars
+      const c = undefined;
+      const expected = '12345     ';
+      const result = string.rpad(s, 10, c);
+      expect(result).to.be.equals(expected);
+    });
+
+    it('rpad expects more then one padding character', function () {
+      const s = '12345'; // 5 chars
+      const c = '99';
+      const expected = '12345999999';
+      const result = string.rpad(s, 10, c);
+      expect(result).to.be.equals(expected);
+    });
   });
 
 
@@ -142,10 +175,18 @@ describe('@utilities/string', function () {
       expect(string.replaceEol).to.be.a('function');
     });
 
-    it('replace in replaceEol', function () {
+    it('@replaceEol', function () {
       const replacement = '1';
       const s = '\n\r';
       const expected = '11';
+      const result = string.replaceEol(s, replacement);
+      expect(result).to.be.equal(expected);
+    });
+
+    it('if s and  replacement are equal undefined', function () {
+      const replacement = undefined;
+      const s = undefined;
+      const expected = '';
       const result = string.replaceEol(s, replacement);
       expect(result).to.be.equal(expected);
     });
@@ -163,6 +204,14 @@ describe('@utilities/string', function () {
       const result = string.replaceEolWithBr(s);
       expect(result).to.be.equal(expected);
     });
+
+    it('replace in replaceEolWithBr when s is undefined', function () {
+      const s = undefined;
+      const expected = '';
+      const result = string.replaceEolWithBr(s);
+      expect(result).to.be.equal(expected);
+    });
+
   });
 
 
@@ -212,11 +261,27 @@ describe('@utilities/string', function () {
       expect(string.addfix).to.be.a('function');
     });
 
-    it('return addfix', function () {
+    it('@addfix', function () {
       const s = 'text';
       const prefix = 'www';
       const suffix = 'com';
       const result = 'www.text.com';
+      expect(string.addfix(s, {prefix, suffix})).to.be.equal(result);
+    });
+
+    it('if prefix is undefined', function () {
+      const s = 'text';
+      const prefix = undefined;
+      const suffix = 'com';
+      const result = 'text.com';
+      expect(string.addfix(s, {prefix, suffix})).to.be.equal(result);
+    });
+
+    it('if suffix is undefined', function () {
+      const s = 'text';
+      const prefix = 'www';
+      const suffix = undefined;
+      const result = 'www.text';
       expect(string.addfix(s, {prefix, suffix})).to.be.equal(result);
     });
   });
@@ -236,19 +301,22 @@ describe('@utilities/string', function () {
   });
 
 
-  // describe('defaultTemplate', function () {
-  //   it('is a function', function () {
-  //     expect(string.defaultTemplate).to.be.a('function');
-  //   });
-  //
-  //   it('@defaultTemplate', function () {
-  //     const template = '/profiles/:_id/profile/';
-  //     const context = { _id: 'value' };
-  //     const options = { _id: 'value' };
-  //     const expected = '/profiles/value/profile/';
-  //     const result = string.defaultTemplate(template, context, options);
-  //
-  //     expect(result).to.be.equal(expected);
-  //   });
-  // });
+  describe('defaultTemplate', function () {
+    it('is a function', function () {
+      expect(string.defaultTemplate).to.be.a('function');
+    });
+
+    it('@defaultTemplate', function () {
+      const template = 'abc ${def} ghi';
+      const context = { undf: 'smt' };
+      const options = { undf: 'smt'};
+
+      expect(()=> {
+        string.defaultTemplate(template, context, options);
+      }).throw();
+    });
+
+  });
+
+
 });
