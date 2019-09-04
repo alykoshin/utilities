@@ -51,9 +51,9 @@
   },
   "homepage": "https://github.com/alykoshin/@utilities",
   "dependencies": {
-    "@utilities/array": "0.0.12",
-    "@utilities/fs": "^0.2.10",
-    "@utilities/string": "0.0.18",
+    "@utilities/array": "^0.0.12",
+    "@utilities/fs": "^0.2.11",
+    "@utilities/string": "^0.0.18",
     "debug": "^4.1.1",
     "lodash": "^4.17.15",
     "mkdirp": "^0.5.1"
