@@ -46,7 +46,7 @@ class ChainableNode {
       const bothUndefined = (
         typeof fnArg   === 'undefined' && typeof thisArg   === 'undefined'
       );
-      debug('_mergeArgs: isMergeableObject:', isMergeableObject, '; isMergableArray:', isMergableArray);
+      //debug('_mergeArgs: isMergeableObject:', isMergeableObject, '; isMergableArray:', isMergableArray);
       if (isMergeableObject) {
         thisArg = thisArg || {};
         fnArg   = fnArg   || {};
