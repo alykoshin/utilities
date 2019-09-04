@@ -21,6 +21,7 @@ var nonAccessibleDir = '/root/anything';
 
 describe('# mini-fs', function () {
 
+
   describe('# fileExistsSync', function () {
     it('# existing file', function () {
       expect(miniFs.fileExistsSync(existingFile)).equal(true);
@@ -46,6 +47,7 @@ describe('# mini-fs', function () {
     }
 
   });
+
 
   describe('# fileExistsAsync', function () {
     it('# empty callback', function () {
@@ -98,9 +100,10 @@ describe('# mini-fs', function () {
     it('# fileExists equal fileExistsAsync', function () {
       expect(miniFs.fileExists).equal(miniFs.fileExistsAsync);
     });
+
   });
 
-  //leno4ka.buka@gmail.com
+
   describe('loadTextSync', function () {
     let loadTextSync;
 

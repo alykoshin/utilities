@@ -22,6 +22,7 @@ var nonAccessibleDir = '/root/anything';
 
 describe('# mini-fs', function () {
 
+
   describe('# dirExistsSync', function () {
     it('# existing file', function () {
       expect(miniFs.dirExistsSync(existingFile)).equal(false);
@@ -47,6 +48,7 @@ describe('# mini-fs', function () {
     }
 
   });
+
 
   describe('# dirExistsAsync', function () {
 
@@ -105,7 +107,6 @@ describe('# mini-fs', function () {
     });
   });
 
-//my test <- Leno4ka.buka@gmail.com
 
   describe('dirListFilenames', function () {
     let dirListFilenames;
@@ -199,7 +200,7 @@ describe('# mini-fs', function () {
       const result = dirListFilenames(dir, options);
       const expected = [
         {'name': 'toFileCopy',
-         'pathname': 'test-data/fileCopy/toFileCopy',
+          'pathname': 'test-data/fileCopy/toFileCopy',
         },
         {'name': 'fromFileCopy',
           'pathname':'test-data/saveJsonSync/fromFileCopy'
@@ -378,7 +379,6 @@ describe('# mini-fs', function () {
 
       expect(result).to.be.eql(expected);
     });
-
 
     it('if addPath == joinSub && recursive == true ', function () {
       const dir = 'test-data';

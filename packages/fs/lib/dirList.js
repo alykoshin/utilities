@@ -29,7 +29,7 @@ const _dirList = (baseDir, filter={}, options={}) => {
       else if (addPath) throw new Error(`addPath must be empty or set to one of following: [${ADD_PATH_VALUES.join(',')}], found: "${addPath}" instead`);
       return nameOnly ? dirent.pathname : dirent;
     });
-  console.log('filesInThisDir', filesInThisDir);
+  // console.log('filesInThisDir', filesInThisDir);
 
   return recursive
     ? fullList

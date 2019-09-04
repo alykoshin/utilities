@@ -65,7 +65,6 @@ describe('@utilities/object', () => {
 
     it('returns empty object for non-objects', () => {
 
-
       const values = [
         undefined,
         null,
@@ -127,6 +126,7 @@ describe('@utilities/object', () => {
     it('is a function', () => {
       assert(typeof object.rename === 'function', 'Expect function');
     });
+
 
     describe('simple check', () => {
       let source, mapping, expected;
@@ -241,14 +241,14 @@ describe('@utilities/object', () => {
         object.matchKeyToIdx(myKey);
       }).throw();
     });
-
-    it('if myLey eql undefined', function () {
+//?
+    it('if myKey eql undefined', function () {
       const myKey = '$[512][512]';
-      // console.log('typeof myKey:', typeof myKey);
-      expect(function () {
-        object.matchKeyToIdx(myKey);
-      }).throw();
+      const result = object.matchKeyToIdx(myKey);
+      const expected = '$[512][512]';
+      expect(result).to.be.eql(expected);
     });
+
   });
 
 
@@ -264,8 +264,6 @@ describe('@utilities/object', () => {
     const pick1 = [ 'a' ];
     const pick2 = [ 'a', 'b.c' ];
     const pick3 = [ 'a', 'b.c', 'd.e' ];
-
-
 
     const omit1_1 = [ 'd.e' ];
     const omit1_2 = [ 'd' ];
@@ -289,14 +287,13 @@ describe('@utilities/object', () => {
       expect(function () {
         object.isEqualPartial(o1, o2, s);
       }).throw();
-    });
 
+    });
 
     it('pick', function () {
       assert( isEqualPartial(o1,o2,{pick:pick1}));
       assert( isEqualPartial(o1,o2,{pick:pick2}));
       assert( !isEqualPartial(o1,o2,{pick:pick3}));
-
     });
 
     it('omit', function () {
@@ -314,7 +311,6 @@ describe('@utilities/object', () => {
       assert( isEqualPartial(o1,o2,{omit:omit3_3}));
       assert( isEqualPartial(o1,o2,{omit:omit3_4}));
     });
-
 
   });
 
@@ -334,7 +330,7 @@ describe('@utilities/object', () => {
     });
 
     it('in alphabet order', function () {
-      const options = false;
+      const options = {};
       const result =   loadJsonSync(testFile, options);
       const expected = { d: 5, e:5, f:5,q:5,r:5,t:5,w:5 };
 
@@ -348,7 +344,9 @@ describe('@utilities/object', () => {
 
       expect(result).to.eql(expected);
     });
+
   });
+
 
   describe('@saveJsonSync', function () {
     let saveJsonSync;
@@ -360,14 +358,13 @@ describe('@utilities/object', () => {
       mkdirp(testDir);
     });
 
-
     it('is a function', function () {
       assert(typeof saveJsonSync === 'function');
     });
 
     it('"o" must be object to save', function () {
       const o = 'string';
-      const options =  false;
+      const options =  {};
 
       expect(function () {
         object.saveJsonSync(testFile, o, options);
@@ -376,7 +373,7 @@ describe('@utilities/object', () => {
 
     it('saves the file', function () {
       const obj = {f:5, d:5,q:5,w:5,e:5,r:5,t:5};
-      const options = true;
+      const options = {};
       const result =   saveJsonSync(testFile, obj, options);
       const expected = 72;
       expect(result).to.eql(expected);
@@ -389,6 +386,7 @@ describe('@utilities/object', () => {
       expect(result).to.eql(expected);
     });
   });
+
 
   describe('@jsonParse', function () {
     let jsonParse;
@@ -412,7 +410,7 @@ describe('@utilities/object', () => {
 
     it('error jsonParse', function () {
       const s = '';
-      const options = true;
+      const options = {};
       expect(function () {
         object.jsonParse(s, options);
       }).throw();
@@ -542,6 +540,5 @@ describe('@utilities/object', () => {
     });
 
   });
-
 
 });

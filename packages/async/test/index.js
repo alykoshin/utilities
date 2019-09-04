@@ -11,6 +11,7 @@ chai.should();
 
 var asyncFile = require('../../async/lib/index');
 
+
 describe('@utilities/async', function () {
 
   before('before', function () {
@@ -103,8 +104,6 @@ describe('@utilities/async', function () {
       console.log('result: ', result);
       expect(result).to.eql(expected);
     });
-
-
 
     it('if limit undefined', async function () {
       const myArray = [ 1, 2, 3, 5, 8, 14];
@@ -210,21 +209,18 @@ describe('@utilities/async', function () {
 
   });
 
-// также проблема, не могу присвойть элемент
+
   describe('asyncMapReverse', function () {
     let asyncMapReverse;
 
     before(()=> {
-      asyncMapReverse = asyncFile.asyncMapReverse
+      asyncMapReverse = asyncFile.asyncMapReversel;
     });
 
     it('is a function', function () {
       assert(typeof asyncMapReverse === 'function');
     });
 
-
-
-// 1 версия, вместо асинк здесь можно написать просто function, потому что это синхронная функция
     it('@asyncMapReverse with sync cb', async function () {
       const myArray = [2,0,1,9];
       const expected = [3,1,2,10];
@@ -237,7 +233,7 @@ describe('@utilities/async', function () {
       console.log('result:', result);
       expect(result).to.eql(expected);
     });
-//здесь вариант написанный с промисом, для этого мы вытащили в отдельную функцию промис, ктотый возвращает через 100 сек эл+1
+
     it('@asyncMapReverse with Promise', async function () {
       const myArray = [2,0,1,9];
       const expected = [3,1,2,10];

@@ -20,7 +20,6 @@ describe('@utilities/string', function () {
 
 
   describe('lpad', function () {
-
     it('is a function', function () {
       assert(typeof string.lpad === 'function', 'Expect function');
     });
@@ -69,7 +68,6 @@ describe('@utilities/string', function () {
 
 
   describe('rpad', function () {
-
     it('is a function', function () {
       assert(typeof string.rpad === 'function', 'Expect function');
     });
@@ -253,7 +251,6 @@ describe('@utilities/string', function () {
       expect(result).to.be.equal(expected);
     });
   });
-
 
 
   describe('addfix', function () {

@@ -101,11 +101,11 @@ describe('' +
     });
   });
 
-//my test [copy] leno4ka.buka@gmail.com
   describe('copyFile ', function () {
     let copyFile;
     let copyFileDir = path.join(baseCopyDir,'saveJsonSync');
     let copyFilePath = path.join(copyFileDir, 'fromFileCopy');
+    let copyErrorPath = path.join(copyFileDir, 'errorCopy');
     let copyPastDir = path.join(baseCopyDir,'fileCopy');
     let expectedCopyPastPath = path.join(copyPastDir, 'toFileCopy');
 
@@ -121,15 +121,32 @@ describe('' +
 
     it('should be async copy element from -> to', function (done) {
       copyFile(copyFilePath, expectedCopyPastPath, function (err) {
-        if(err !== undefined){
+        if(err ){
           throw new Error(`My error`);
         }
         done();
       });
     });
 
-  });
+    it('return error rd.on', function (done) {
+      copyFile(copyErrorPath,expectedCopyPastPath, function (err) {
+        // console.log(err);
+        expect(err).to.be.an('error');
+        expect(err.code).to.equal('ENOENT');
+        done();
+      });
+    });
 
+    it('return error wr.on', function (done) {
+      copyFile(copyFilePath, '/', function (err) {
+        //console.log(err);
+        expect(err).to.be.an('error');
+        expect(err.code).to.equal('EISDIR');
+        done();
+      });
+    });
+
+  });
 
   describe('copyFileSync', function () {
     let copyFileSync;
@@ -154,5 +171,7 @@ describe('' +
     });
 
   });
-
 });
+
+
+
