@@ -13,8 +13,7 @@ const _dirList = (baseDir, filter={}, options={}) => {
   debug(`_dirList: baseDir: "${baseDir}", _subDir: "${_subDir}", recursive: ${recursive}`);
 
   const fullList = fs
-    .readdirSync(path.join(baseDir, _subDir), { withFileTypes: true })
-  ;
+    .readdirSync(path.join(baseDir, _subDir), { withFileTypes: true });
 
   let filesInThisDir = fullList
     .filter(dirent => (
@@ -22,25 +21,26 @@ const _dirList = (baseDir, filter={}, options={}) => {
       ((filter.isDir || filter.isDirectory) && dirent.isDirectory())
     ))
     .map(dirent => {
-      if (addPath==='joinBase') dirent.name = path.join( baseDir, dirent.name );
-      else if (addPath==='joinSub') dirent.name = path.join( _subDir, dirent.name );
-      else if (addPath==='resolve') dirent.name = path.resolve( baseDir, dirent.name );
+      //dirent._name    = dirent.name;
+      dirent.pathname = dirent.name;
+      if      (addPath==='joinBase') dirent.pathname = path.join(    baseDir, _subDir, dirent.name );
+      else if (addPath==='joinSub')  dirent.pathname = path.join(             _subDir, dirent.name );
+      else if (addPath==='resolve')  dirent.pathname = path.resolve( baseDir, _subDir, dirent.name );
       else if (addPath) throw new Error(`addPath must be empty or set to one of following: [${ADD_PATH_VALUES.join(',')}], found: "${addPath}" instead`);
-      return nameOnly ? dirent.name : dirent;
-    })
-  ;
+      return nameOnly ? dirent.pathname : dirent;
+    });
+  console.log('filesInThisDir', filesInThisDir);
 
   return recursive
-         ? fullList
-           .filter(dirent => dirent.isDirectory())
-           .reduce((accumulator_allFiles, currentValue_dirent) => {
-             const subdir = currentValue_dirent.name;
-             return accumulator_allFiles.concat(
-               _dirList(baseDir, filter, {...options, _subDir: path.join(_subDir, subdir)})
-             );
-           }, filesInThisDir)
-         : filesInThisDir
-    ;
+    ? fullList
+      .filter(dirent => dirent.isDirectory())
+      .reduce((accumulator_allFiles, currentValue_dirent) => {
+        const subdir = currentValue_dirent.name;
+        return accumulator_allFiles.concat(
+          _dirList(baseDir, filter, {...options, _subDir: path.join(_subDir, subdir)})
+        );
+      }, filesInThisDir)
+    : filesInThisDir;
 };
 
 const dirListFilenames = (dir, options) => {
@@ -51,15 +51,14 @@ const dirListDirnames = (dir, options) => {
   return _dirList(dir, { isDir:true }, options);
 };
 
-const _listLocalFiles = (localDir) => {
-  let list = dirList(localDir, { resolvePath});
-  list = list
-    .filter(dirent => dirent.isFile())
-    .map(dirent => path.join( localDir, dirent.name ))
-  ;
-  debug('_listLocalFiles:', list);
-  return list;
-};
+// const _listLocalFiles = (localDir) => {
+//   let list = dirList(localDir, { resolvePath});
+//   list = list
+//     .filter(dirent => dirent.isFile())
+//     .map(dirent => path.join( localDir, dirent.name ));
+//   debug('_listLocalFiles:', list);
+//   return list;
+// };
 
 
 

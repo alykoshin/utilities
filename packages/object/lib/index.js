@@ -160,7 +160,7 @@ function _rename1(o, map, mapKey, options) {
 
   if (typeof sourceKey === 'function') sourceKey = sourceKey(o, targetKey);
 
-  const value = sourceKey !== 'undefined'
+  const value = typeof sourceKey !== 'undefined'
                 ? _.get(o, sourceKey)
                 : undefined;
 
@@ -378,7 +378,7 @@ const isEqualPartial = (o1, o2, {pick,omit} = {}) => {
   let partials = [o1,o2];
   if (pick) partials = partials.map(p => _.pick(p,pick));
   if (omit) partials = partials.map(p => _.omit(p, omit));
-  //console.log('isEqualPartial: partials:',partials);
+  console.log('isEqualPartial: partials:',partials);
   return _.isEqual(...partials);
 };
 

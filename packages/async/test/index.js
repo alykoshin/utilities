@@ -63,29 +63,72 @@ describe('@utilities/async', function () {
       expect( asyncForEachParallelLimit).to.be.a('function');
     });
 
-    it('@asyncForEachParallelLimit', async function () {
-      const myArray = [ 1, 2, 3, 5, 8 , 14];
+    it('@asyncForEachParallelLimit with sync cb', async function () {
+      const myArray = [ 1, 2, 3, 5, 8, 14];
       const limit = 2;
-      const expected = [1, 2];
+      const expected = [ 1, 2, 3, 5, 8, 14];
       let result = [];
+      this.timeout(10000);
 
-      await asyncForEachParallelLimit( myArray, limit,  async(item, index) =>
-      { for(index; index < limit; index ++){
-        result[index] = item;}
+      await asyncForEachParallelLimit( myArray, limit,  async(element, index) => {
+        console.log('element:', element, ', index', index);
+        return( result[index] = element);
       });
+      console.log('result: ', result);
       expect(result).to.eql(expected);
     });
 
-    it('if limit undefind', async function () {
-      const myArray = [ 1, 2, 3, 5, 8 , 14];
+    it('asyncForEachParallelLimit with Promise', async function () {
+      const myArray = [1, 2, 3, 5, 8, 14];
+      const limit = 3;
+      const expected = [1, 2, 3, 5, 8, 14];
+      let result = [];
+      this.timeout(10000);
+
+      const forEacher = (element, index) => {
+        return new Promise((resolve, reject) => {
+          return setTimeout(() => {
+            return resolve( result [index] = element );
+          }, 1000);
+        });
+      };
+
+      await asyncForEachParallelLimit(myArray, limit, async(element, index) => {
+        // for (index; index<limit; index++ ){
+        console.log('element:', element, ', index', index);
+        return forEacher(element, index);
+        // }
+      });
+
+      console.log('result: ', result);
+      expect(result).to.eql(expected);
+    });
+
+
+
+    it('if limit undefined', async function () {
+      const myArray = [ 1, 2, 3, 5, 8, 14];
       const limit = false;
       const expected = [];
       let result = [];
+      this.timeout(2000);
 
-      await asyncForEachParallelLimit( myArray, limit,  async(item, index) =>
-      { for(index; index < limit; index ++){
-        result[index] = item;}
+      const forEacher = (element, index) => {
+        return new Promise((resolve, reject) => {
+          return setTimeout(() => {
+            return resolve( false );
+          }, 1);
+        });
+      };
+
+      await asyncForEachParallelLimit(myArray, limit, async(element, index) => {
+        // for (index; index<limit; index++ ){
+        console.log('element:', element, ', index', index);
+        return forEacher(element, index);
+        // }
       });
+
+      console.log('result: ', result);
       expect(result).to.eql(expected);
     });
 
@@ -103,25 +146,44 @@ describe('@utilities/async', function () {
       assert(typeof asyncForEachReverse === 'function');
     });
 
-    it('@asyncForEachReverse', async function () {
+    it('@asyncForEachReverse with sync cb', async function () {
       const myArray = [2,0,1,9];
-      const expected = [2,0,1,9];
+      const expected = [4,2,3,11];
       let result = [];
 
-      await asyncForEachReverse( myArray, async( element, index, array) =>{
-        for ( index = array.length-1; index >= 0 ; index-- ){
-          console.log('index:', index);
-          result[index]= array[index]; //element
-          console.log('result:', result);
-        }
+      await asyncForEachReverse(myArray, function (element, index) {
+        console.log('element:', element, ', index', index);
+        return ( result[index] = element+2);
       });
-      console.log('res:', result);
+      console.log('result:', result);
+      expect(result).to.eql(expected);
+    });
+
+    it('@asyncForEachReverse with Promise', async function () {
+      const myArray = [2,0,1,9];
+      const expected = [4,2,3,11];
+      let result = [];
+
+      const mapper = (element,index) => {
+        return new Promise((resolve, reject) => {
+          return setTimeout(() => {
+            return resolve(result[index] = element+2);
+          }, 1);
+        });
+      };
+
+      await asyncForEachReverse(myArray, async (element, index, array) => {
+        console.log('element:', element, ', index', index);
+        return mapper(element, index);
+      });
+
+      console.log('result:', result);
       expect(result).to.eql(expected);
     });
   });
 
 
-  describe('asyncMap', function () {
+  describe('asyncMap with sync cb', function () {
     let asyncMap;
 
     before('before', function () {
@@ -132,16 +194,17 @@ describe('@utilities/async', function () {
       expect(asyncMap).to.be.a('function');
     });
 
-    it('@asyncMap', async function () {
+    it('@asyncMap ', async function () {
       const myArray     = [ 9, 8, 7 ];
-      const expected = '987';
+      const expected = [ 9, 8, 7 ];
       let result = [];
+
       await asyncMap( myArray, async(element,index, array) =>
       {
-        result += array[index];
+        return(result[index] = element);
         // console.log('result', result);
       });
-      // console.log('res:', result );
+      console.log('res:', result );
       expect(result).to.eql(expected);
     });
 
@@ -159,23 +222,71 @@ describe('@utilities/async', function () {
       assert(typeof asyncMapReverse === 'function');
     });
 
-    it('@asyncMapReverse', async function () {
-      const myArray = [2,0,1,9];
-      const expected = [2,0,1,9];
-      let result = [];
 
-      await asyncMapReverse(myArray, async (element, index, array) => {
-        for(index; index< array.length; index++) {
-          console.log('index', index);
-          console.log('result:', result);
-          result[index]= array[index];
-        }
+
+// 1 версия, вместо асинк здесь можно написать просто function, потому что это синхронная функция
+    it('@asyncMapReverse with sync cb', async function () {
+      const myArray = [2,0,1,9];
+      const expected = [3,1,2,10];
+      // let result = [];
+
+      const result = await asyncMapReverse(myArray, async (element, index, array) => {
+        console.log('element:', element, ', index', index);
+        return element+1;
       });
       console.log('result:', result);
       expect(result).to.eql(expected);
     });
+//здесь вариант написанный с промисом, для этого мы вытащили в отдельную функцию промис, ктотый возвращает через 100 сек эл+1
+    it('@asyncMapReverse with Promise', async function () {
+      const myArray = [2,0,1,9];
+      const expected = [3,1,2,10];
+      // let result = [];
 
+      const mapper = (element) => {
+        return new Promise((resolve, reject) => {
+          return setTimeout(() => {
+            return resolve(element + 1);
+          }, 1);
+        });
+      };
+
+      const result = await asyncMapReverse(myArray, async (element, index, array) => {
+        console.log('element:', element, ', index', index);
+        return mapper(element);
+      });
+
+      console.log('result:', result);
+      expect(result).to.eql(expected);
+    });
+    this.timeout(1);
   });
 
 
+  describe('runAsync', function () {
+    let runAsync;
+
+    before('before', function () {
+      runAsync = asyncFile.runAsync;
+    });
+
+    it('is a function', function () {
+      assert(typeof runAsync === 'function');
+    });
+
+    it('@runAsync', function (done) {
+      const expected = 'hello';
+      const args = 'hello';
+      // const thisObj = {'OMG this is this': args};
+      const fn = (ar)=>{
+        console.log(ar);
+        expect(ar).to.equal(expected);
+        done();
+      };
+      // runAsync.call(thisObj, fn, args);
+      runAsync( fn, args);
+
+    });
+
+  });
 });

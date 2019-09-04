@@ -23,12 +23,13 @@ const asyncForEachParallelLimit = async (array, limit, callback) => {
         for (let [index, item] of iterator);
         console.log(index + '(result===false): ' + item);
       }
-     console.log(index + ': ' + item + ': ' +array);
+  //   console.log(index + ': ' + item + ': ' +array);
     }
   }
 
   const iterator = array.entries();
   const workers = new Array(limit).fill(iterator).map(doWork);
+
 //      ^--- starts `limit` workers sharing the same iterator
 
   return Promise
@@ -71,7 +72,7 @@ const asyncMapReverse = async(array, callback) => {
 
 
 const runAsync = (fn, ...args) => {
-  return setTimeout(() => fn(...args) , 0);
+   return setTimeout(() => fn/*.call(this, */(...args) , 0);
 };
 
 const asyncSetInterval = async (ms) => new Promise(resolve => setInterval(resolve, ms));
@@ -91,9 +92,8 @@ if (isNodejs()) {
   const Fibers = require('fibers');
   wrapIntoFiber = (fn, ...args) => Fibers( async () => await fn(...args) ).run();
 } else {
-  wrapIntoFiber = () => { throw new Error('Fibers cannot be used at browser'); }
+  wrapIntoFiber = () => { throw new Error('Fibers cannot be used at browser'); };
 }
-
 
 
 module.exports = {

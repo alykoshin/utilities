@@ -242,6 +242,13 @@ describe('@utilities/object', () => {
       }).throw();
     });
 
+    it('if myLey eql undefined', function () {
+      const myKey = '$[512][512]';
+      // console.log('typeof myKey:', typeof myKey);
+      expect(function () {
+        object.matchKeyToIdx(myKey);
+      }).throw();
+    });
   });
 
 
@@ -257,6 +264,8 @@ describe('@utilities/object', () => {
     const pick1 = [ 'a' ];
     const pick2 = [ 'a', 'b.c' ];
     const pick3 = [ 'a', 'b.c', 'd.e' ];
+
+
 
     const omit1_1 = [ 'd.e' ];
     const omit1_2 = [ 'd' ];
@@ -282,13 +291,16 @@ describe('@utilities/object', () => {
       }).throw();
     });
 
+
     it('pick', function () {
       assert( isEqualPartial(o1,o2,{pick:pick1}));
       assert( isEqualPartial(o1,o2,{pick:pick2}));
       assert( !isEqualPartial(o1,o2,{pick:pick3}));
+
     });
 
     it('omit', function () {
+
       assert( isEqualPartial(o1,o2,{omit:omit1_1}));
       assert( isEqualPartial(o1,o2,{omit:omit1_2}));
 
@@ -303,31 +315,8 @@ describe('@utilities/object', () => {
       assert( isEqualPartial(o1,o2,{omit:omit3_4}));
     });
 
+
   });
-
-
-  // describe('saveJsonSync', function () {
-  //   let saveJsonSync;
-  //
-  //   before(()=>{
-  //     saveJsonSync = object.saveJsonSync;
-  //   });
-  //
-  //   it('is a function', () => {
-  //     assert(typeof saveJsonSync === 'function');
-  //   });
-  //
-  //   it('"o" must be object to save', function () {
-  //    const o = 'string';
-  //    const pathname = '';
-  //    const options =  false;
-  //
-  //    expect(function () {
-  //      object.saveJsonSync(pathname, o, options);
-  //    }).throw();
-  //   });
-  //
-  // });
 
 
   describe('@loadJsonSync', function () {
@@ -352,6 +341,13 @@ describe('@utilities/object', () => {
       expect(result).to.eql(expected);
     });
 
+    it('in options eql underfind', function () {
+      const options = undefined;
+      const result =   loadJsonSync(testFile, options);
+      const expected = { d: 5, e:5, f:5,q:5,r:5,t:5,w:5 };
+
+      expect(result).to.eql(expected);
+    });
   });
 
   describe('@saveJsonSync', function () {
@@ -386,6 +382,12 @@ describe('@utilities/object', () => {
       expect(result).to.eql(expected);
     });
 
+    it('if options eql undefind', function () {
+      const obj = {f:5, d:5,q:5,w:5,e:5,r:5,t:5};
+      const result =   saveJsonSync(testFile, obj, undefined);
+      const expected = 72;
+      expect(result).to.eql(expected);
+    });
   });
 
   describe('@jsonParse', function () {
@@ -483,7 +485,7 @@ describe('@utilities/object', () => {
 
     it('all files from dir', function () {
       const dir = 'test-data';
-      const options = true;
+      const options = undefined;
       const result = object.loadJsonDirSync(dir, options);
       const expected = [
         {
@@ -505,7 +507,7 @@ describe('@utilities/object', () => {
           },
           'name': 'saveJsonSync.test'
         }
-    ];
+      ];
       expect(result).to.eql(expected);
     });
   });
