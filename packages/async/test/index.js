@@ -214,7 +214,7 @@ describe('@utilities/async', function () {
     let asyncMapReverse;
 
     before(()=> {
-      asyncMapReverse = asyncFile.asyncMapReversel;
+      asyncMapReverse = asyncFile.asyncMapReverse;
     });
 
     it('is a function', function () {

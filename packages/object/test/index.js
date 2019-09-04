@@ -6,8 +6,8 @@ const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
 chai.should();
-chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
-chai.use(require('chai-arrays'));
+//chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
+//chai.use(require('chai-arrays'));
 
 const _ = require('lodash');
 const path = require('path');
@@ -540,5 +540,145 @@ describe('@utilities/object', () => {
     });
 
   });
+
+  describe('loadJsonDirSync', function () {
+    let loadJsonDirSync;
+
+    before(() => {
+      loadJsonDirSync = object.loadJsonDirSync;
+      // jsonParseObj = object.jsonParse.option(false);
+    });
+
+    it('is a function', function () {
+      assert(typeof object.loadJsonDirSync === 'function', 'Expect function');
+    });
+
+    // it('stringify loadJsonDirSync', function () {
+    //   const dir = '';
+    //   const options = '123';
+    //   const  result = object.loadJsonDirSync(dir, options);
+    //   const expected = 123;
+    //   expect( result ).to.equals(expected);
+    // });
+
+  });
+
+
+  describe('# getMethods', function () {
+    let getMethods, obj;
+    let /*constructorMethods,*/ grandParentMethods, parentMethods, ownMethods;
+
+    before(() => {
+      getMethods = object.getMethods;
+      // jsonParseObj = object.jsonParse.option(false);
+
+      class GrandParent {
+        grandParentMethod () {}
+        sameNameMethod () {}
+      }
+      GrandParent.prototype.grandParentProtoMethod = () => {};
+      GrandParent.prototype.grandParentProtoStr = 'parentProtoStr';
+      GrandParent.prototype.grandParentProtoNum = 1;
+
+      //constructorMethods = [
+      //  'constructor',
+      //];
+      grandParentMethods = [
+        'constructor',
+        'grandParentMethod',
+        'sameNameMethod',
+        'grandParentProtoMethod',
+      ];
+
+      class Parent extends GrandParent {
+        constructor () {
+          super();
+        }
+        parentMethod () {}
+        sameNameMethod () {}
+      }
+      Parent.prototype.parentProtoMethod = () => {};
+      Parent.prototype.parentProtoStr = 'protoStr';
+      Parent.prototype.parentProtoNum = 1;
+
+      parentMethods = [
+        'constructor',
+        'parentMethod',
+        'sameNameMethod',
+        'parentProtoMethod',
+      ];
+
+      obj = new Parent();
+      obj.ownMethod = () => {};
+      obj.ownStr = 'ownStr';
+      obj.ownNum = 0;
+
+      ownMethods = [
+        'ownMethod',
+      ];
+
+    });
+
+    it('is a function', function () {
+      assert(typeof getMethods === 'function', 'Expect function');
+    });
+
+    it('# { depth: 0 }', function () {
+      const expected = ownMethods;
+      const result = getMethods(obj, { depth: 0 });
+      //console.log('getMethods: { depth: 0 }: result:', result);
+      expect(result).to.eql(expected);
+    });
+
+    it('# { depth: 1 }', function () {
+      let expected = []
+        .concat(ownMethods)
+        //.concat(constructorMethods)
+        .concat(parentMethods)
+      ;
+      expected = _.uniq(expected);
+
+      const result = getMethods(obj, { depth: 1 });
+
+      //console.log('getMethods: { depth: 1 }: result:', result);
+      expect(result).to.eql(expected);
+    });
+
+    it('# { depth: 2 }', function () {
+      let expected = []
+        .concat(ownMethods)
+        //.concat(constructorMethods)
+        .concat(parentMethods)
+        .concat(grandParentMethods)
+      ;
+      expected = _.uniq(expected);
+      //console.log('getMethods: { depth: 2 }: expected:', expected);
+
+      const result = getMethods(obj, { depth: 2 });
+
+      //console.log('getMethods: { depth: 2 }: result:', result);
+      expect(result).to.eql(expected);
+    });
+
+    it('# { depth: 1, excludeConstructor: true }', function () {
+      let expected = []
+        .concat(ownMethods)
+        .concat(parentMethods)
+        .filter( m => m !== 'constructor')
+      ;
+      expected = _.uniq(expected);
+      //[
+      //'ownMethod',
+      //'parentMethod',
+      //'parentProtoMethod',
+      //'sameNameMethod',
+      //];
+      const result = getMethods(obj, { depth: 1, excludeConstructor: true });
+      //console.log('getMethods:', result);
+      expect(result).to.eql(expected);
+    });
+
+  });
+
 
 });

@@ -8,9 +8,11 @@ const mkdirp = require('mkdirp');
 
 const debug = require('debug')('@utilities/object');
 
+const {hasElement} = require('@utilities/array');
 const {replaceEolWithBr} = require('@utilities/string');
 const {loadTextSync, saveTextSync, dirListFilenames, dirListDirnames } = require('@utilities/fs');
 
+const ChainableNode = require('./chainableNode');
 
 
 const isObject = (value) => {
@@ -439,38 +441,43 @@ const loadJsonDirSync = (dir, options={}) => {
       }
     };
   });
-/*
-[
-  {
-    name: 'ubereats_with_breakfast',
-    data: { sections: [Array] },
-    _file: {
-      pathname: 'data/in/menu/ubereats_with_breakfast.json',
-      baseDir: './data/in/menu',
-      subDir: '.',
-      basename: 'ubereats_with_breakfast',
-      extname: '.json'
+  /*
+  [
+    {
+      name: 'ubereats_with_breakfast',
+      data: { sections: [Array] },
+      _file: {
+        pathname: 'data/in/menu/ubereats_with_breakfast.json',
+        baseDir: './data/in/menu',
+        subDir: '.',
+        basename: 'ubereats_with_breakfast',
+        extname: '.json'
+      }
+    },
+    {
+      name: 'test.test2.northbridge',
+      data: { sections: [Array] },
+      _file: {
+        pathname: 'data/in/menu/test/test2/northbridge.json',
+        baseDir: './data/in/menu',
+        subDir: 'test/test2',
+        basename: 'northbridge',
+        extname: '.json'
+      }
     }
-  },
-  {
-    name: 'test.test2.northbridge',
-    data: { sections: [Array] },
-    _file: {
-      pathname: 'data/in/menu/test/test2/northbridge.json',
-      baseDir: './data/in/menu',
-      subDir: 'test/test2',
-      basename: 'northbridge',
-      extname: '.json'
-    }
-  }
-]
-*/
+  ]
+  */
 };
 
 
 
 const saveJsonSync = (pathname, o, options={}) => {
+
   if (typeof o !== 'object') throw new Error('saveJsonSync: second argument must be object to save');
+  const allowedTypes = [ 'string', 'number', 'boolean', 'object' ];
+  if (!hasElement(allowedTypes, typeof o)) throw new Error(`saveJsonSync: typeof second argument must be one of following: [${allowedTypes.join(', ')}]`);
+
+
   const s = jsonStringify(o, options);
   const { sizeThreshold } = options;
   if (typeof sizeThreshold === 'number' && s.length > sizeThreshold) console.warn(`File size is greater than sizeThreshold=${sizeThreshold}, file size=${s.length}`);
@@ -503,7 +510,50 @@ const assignUniq = (toObject, ...fromObjects) => {
 };
 
 
+const getMethods = (obj, options={}) => {
+  const {depth=-1,excludeConstructor=false} = options;
+  //
+  // Based on https://stackoverflow.com/a/31055217/2774010
+  //
+  let props = [];
+  let i = 0;
+  let o = obj;
+  do {
+    props = props.concat(Object.getOwnPropertyNames(o));
+    //console.log('getMethods: i:', i, 'props', props, ', depth:', depth);
+  } while (
+    (o = Object.getPrototypeOf(o)) &&
+    (depth < 0 || i++ < depth)
+    );
 
+  //console.log('getMethods: props:', props);
+
+  const result = props
+    //.sort()
+    .filter((e, i, arr) => {
+      //
+      // this changes the order of methods, so'll sort later though less effective:
+      //return (e !== arr[i+1] && typeof obj[e] === 'function');
+      //
+      return (typeof obj[e] === 'function');
+    })
+    .filter((e,i,arr) => {
+      return !(excludeConstructor && e==='constructor');
+    })
+  ;
+  return _.uniq(result);
+
+  //console.log('result', result);
+
+  //const keys          = Object.getOwnPropertyNames(Object.getPrototypeOf(obj));
+  //const actualMethods = keys.filter(k => typeof obj[ k ] === 'function');
+};
+
+
+const getOwnMethods   = (obj) => getMethods(obj, { depth: 0 });
+
+
+const getClassMethods = (obj) => getMethods(obj, { depth: 1 });
 
 
 module.exports = {
@@ -530,4 +580,10 @@ module.exports = {
   saveJsonSync,
 
   jsonToHtml,
+
+  getMethods,
+  getOwnMethods,
+  getClassMethods,
+
+  ChainableNode,
 };

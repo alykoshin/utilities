@@ -15,7 +15,7 @@
     "lint": "eslint -f unix .",
     "inspect": "jsinspect --ignore 'coverage|test'",
     "pretest": "npm run lint && npm run inspect && npm run _npm-audit && npm run _deps-check",
-    "_test":  "npm run _test-coverage && npm run _test-report",
+    "_test": "npm run _test-coverage && npm run _test-report",
     "_test-coverage": "nyc ./node_modules/mocha/bin/_mocha -- -R spec ./test/**/*",
     "_test-report": "nyc report --reporter=html && nyc report --reporter=text-lcov > coverage/coverage.lcov",
     "test": "npm run _test",

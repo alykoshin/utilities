@@ -1,6 +1,6 @@
 {
   "name": "@utilities/object",
-  "version": "0.1.20",
+  "version": "0.2.0",
   "description": "Set of misc utilities for objects",
   "main": "./index.js",
   "engines": {
@@ -15,11 +15,10 @@
     "lint": "eslint -f unix .",
     "inspect": "jsinspect --ignore 'coverage|test'",
     "pretest": "npm run lint && npm run inspect && npm run _npm-audit && npm run _deps-check",
-    "_test":  "npm run _test-coverage && npm run _test-report",
+    "_test": "npm run _test-coverage && npm run _test-report",
     "_test-coverage": "nyc ./node_modules/mocha/bin/_mocha -- -R spec ./test/**/*",
     "_test-report": "nyc report --reporter=html && nyc report --reporter=text-lcov > coverage/coverage.lcov",
     "test": "npm run _test",
-
     "__test": "echo \"Warning: no test specified\" && exit 0",
     "___test": "echo \"Error: no test specified\" && exit 1",
     "_commit": "git commit -am \"commit by 'npm run commit'\"",
@@ -52,6 +51,7 @@
   },
   "homepage": "https://github.com/alykoshin/@utilities",
   "dependencies": {
+    "@utilities/array": "0.0.11",
     "@utilities/fs": "^0.2.10",
     "@utilities/string": "0.0.18",
     "debug": "^4.1.1",
@@ -63,7 +63,7 @@
     "chai-arrays": "^2.0.0",
     "chai-things": "^0.2.0",
     "coveralls": "^3.0.6",
-    "eslint": "^6.1.0",
+    "eslint": "^6.3.0",
     "jshint": "^2.10.2",
     "jsinspect": "^0.12.7",
     "mocha": "^6.2.0",
