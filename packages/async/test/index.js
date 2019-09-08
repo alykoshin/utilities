@@ -42,12 +42,27 @@ describe('@utilities/async', function () {
       expect(asyncForEach).to.be.a('function');
     });
 
-    it('simple check', async function () {
+    describe('simple checks', async function () {
+
+    it('sum', async function () {
       const data     = [ 1, 2, 3 ];
       const expected = 6;
       let result = 0;
-      await asyncForEach(data, async(element) => result += element );
+      await asyncForEach(data, async(element) => {
+        result += element
+      } );
       expect(result).to.eql(expected);
+    });
+
+    it('this passed', async function () {
+      const _this = { prop: 'value' };
+      const data     = [ 1 ];
+      await asyncForEach.call(_this, data, async function (element) {
+        /* must be function instead of => to pass `this` value */
+        expect(_this).to.eql(this);
+      } );
+    });
+
     });
 
   });

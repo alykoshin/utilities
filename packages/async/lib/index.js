@@ -1,26 +1,27 @@
 const isNodejs = require('./isNodejs');
 
 
-const asyncForEach = async (array, callback, exitConditionFn) => {
-  //console.log('asyncForEach: enter');
+const asyncForEach = async function (array, callback, exitConditionFn) {
+  /* must be function instead of => to in order `this` value tp be passed */
   let res;
   for (let index = 0; index < array.length; index++) {
     //console.log('asyncForEach: index:', index);
-    res = await callback(array[ index ], index, array)
+    res = await callback.call(this, array[ index ], index, array);
     if (exitConditionFn && exitConditionFn(res)) break;
   }
   return res;
   //console.log('asyncForEach: exit');
-}
+};
 
 //
 // https://stackoverflow.com/a/51020535/2774010
 //
-const asyncForEachParallelLimit = async (array, limit, callback) => {
+const asyncForEachParallelLimit = async function (array, limit, callback) {
+  /* must be function instead of => to in order `this` value tp be passed */
 
   async function doWork(iterator) {
     for (let [index, item] of iterator) {
-      const result = await callback(item, index, array);
+      const result = await callback.call(this, item, index, array);
 
       if (result === false) { // if worker return false, remove everything in the iterator
         for (let [index, item] of iterator);
@@ -31,7 +32,7 @@ const asyncForEachParallelLimit = async (array, limit, callback) => {
   }
 
   const iterator = array.entries();
-  const workers = new Array(limit).fill(iterator).map(doWork);
+  const workers = new Array(limit).fill(iterator).map(doWork.bind(this));
 
 //      ^--- starts `limit` workers sharing the same iterator
 
@@ -42,45 +43,49 @@ const asyncForEachParallelLimit = async (array, limit, callback) => {
 };
 
 
-const asyncForEachReverse = async (array, callback) => {
+const asyncForEachReverse = async function (array, callback) {
   //console.log('asyncForEach: enter');
   for (let index = array.length-1; index >= 0 ; index--) {
     //console.log('asyncForEach: index:', index);
-    await callback(array[index], index, array);
+    await callback.call(this, array[index], index, array);
   }
   //console.log('asyncForEach: exit');
 };
 
 
-const asyncMap = async(array, callback) => {
+const asyncMap = async function(array, callback) {
   //console.log('asyncMap');
   const res = [];
   for (let index = 0; index < array.length; index++) {
     //console.log('asyncMap: index:', index);
-    res[index] = await callback(array[index], index, array);
+    res[index] = await callback.call(this, array[index], index, array);
   }
   return res;
 };
 
 
-const asyncMapReverse = async(array, callback) => {
+const asyncMapReverse = async function(array, callback) {
   //console.log('asyncMap');
   const res = [];
   for (let index = array.length-1; index >= 0 ; index--) {
     //console.log('asyncMap: index:', index);
-    res[index] = await callback(array[index], index, array);
+    res[index] = await callback.call(this, array[index], index, array);
   }
   return res;
 };
 
 
-const runAsync = (fn, ...args) => {
-   return setTimeout(() => fn/*.call(this, */(...args) , 0);
+const runAsync = function (fn, ...args) {
+   return setTimeout(() => fn.call(this, ...args) , 0);
 };
 
-const asyncSetInterval = async (ms) => new Promise(resolve => setInterval(resolve, ms));
+const asyncSetInterval = async function (ms) {
+  return new Promise(resolve => setInterval(resolve.bind(this), ms));
+};
 
-const asyncSetTimeout = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const asyncSetTimeout = async function (ms) {
+  return new Promise(resolve => setTimeout(resolve.bind(this), ms));
+};
 const setTimeoutAsPromised = asyncSetTimeout;
 
 
