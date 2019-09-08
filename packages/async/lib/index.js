@@ -1,14 +1,17 @@
 const isNodejs = require('./isNodejs');
 
 
-const asyncForEach = async (array, callback) => {
+const asyncForEach = async (array, callback, exitConditionFn) => {
   //console.log('asyncForEach: enter');
+  let res;
   for (let index = 0; index < array.length; index++) {
     //console.log('asyncForEach: index:', index);
-    await callback(array[index], index, array);
+    res = await callback(array[ index ], index, array)
+    if (exitConditionFn && exitConditionFn(res)) break;
   }
-};
-
+  return res;
+  //console.log('asyncForEach: exit');
+}
 
 //
 // https://stackoverflow.com/a/51020535/2774010
