@@ -9,6 +9,7 @@ const exists   = require('./exists');
 const copy     = require('./copy');
 const textFile = require('./textFile');
 const dirList  = require('./dirList');
+const emptyDir = require('./emptyDir');
 
 
 module.exports = {
@@ -23,6 +24,9 @@ module.exports = {
   dirExists:      exists.dirExistsAsync,
   dirExistsAsync: exists.dirExistsAsync,
   dirExistsSync:  exists.dirExistsSync,
+
+  emptyDir:       emptyDir.emptyDir,
+  emptyDirSync:   emptyDir.emptyDirSync,
 
   copyFile:      copy.copyFile,
   copyFileSync:  copy.copyFileSync,
