@@ -51,6 +51,8 @@
   },
   "homepage": "https://github.com/alykoshin/@utilities",
   "dependencies": {
+  },
+  "optionalDependencies": {
     "fibers": "^4.0.1"
   },
   "devDependencies": {
