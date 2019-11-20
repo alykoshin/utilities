@@ -410,11 +410,11 @@ const loadJsonSync = (pathname, options={}) => {
 
 
 const loadJsonDirSync = (dir, options={}) => {
-  const {recursive = true, prefix = '', delimiter = '.', extname='.json' } = options;
+  const {recursive = true, prefix = '', delimiter = '.', extname=''/*'.json'*/ } = options;
   let result = [];
 
   const files = dirListFilenames(dir, {recursive, addPath:'joinSub'})
-    .filter(filename => path.extname(filename) === extname);
+    .filter(filename => !extname || path.extname(filename) === extname);
   debug(`files: ${JSON.stringify(files)}`);
 
   return files.map(filename => {
