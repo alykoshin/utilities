@@ -339,4 +339,82 @@ describe('@utilities/array', function () {
 
   });
 
+  describe('@keyValueObjArrayToObj', function () {
+    let keyValueObjArrayToObj;
+
+    before(() => {
+      keyValueObjArrayToObj = array.keyValueObjArrayToObj;
+    });
+
+    it('is a function', function () {
+      assert(typeof keyValueObjArrayToObj === 'function');
+    });
+
+    it('@simple check with defaults', function () {
+      const array = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: { c: 2 } },
+      ];
+      const expected = {
+        a: 1,
+        b: { c: 2 },
+      }
+      const result = keyValueObjArrayToObj(array);
+      expect( result ).to.be.deep.equal(expected);
+    });
+
+    it('@simple check with non-default deep props', function () {
+      const array = [
+        { propertyKey: { subKey: 'a' }, propertyValue: { subValue: 1 } },
+        { propertyKey: { subKey: 'b' }, propertyValue: { subValue: { c: 2 } } },
+      ];
+      const expected = {
+        a: 1,
+        b: { c: 2 },
+      }
+      const result = keyValueObjArrayToObj(array, 'propertyKey.subKey', 'propertyValue.subValue');
+      expect( result ).to.be.deep.equal(expected);
+    });
+
+  });
+
+  describe('@objToKeyValueObjArray', function () {
+    let objToKeyValueObjArray;
+
+    before(() => {
+      objToKeyValueObjArray = array.objToKeyValueObjArray;
+    });
+
+    it('is a function', function () {
+      assert(typeof objToKeyValueObjArray === 'function');
+    });
+
+    it('@simple check with defaults', function () {
+      const data = {
+        a: 1,
+        b: { c: 2 },
+      }
+      const expected = [
+        { key: 'a', value: 1 },
+        { key: 'b', value: { c: 2 } },
+      ];
+      const result = objToKeyValueObjArray(data);
+      expect( result ).to.be.deep.equal(expected);
+    });
+
+    it('@simple check with non-default deep props', function () {
+      const data = {
+        a: 1,
+        b: { c: 2 },
+      }
+      const expected = [
+        { propertyKey: { subKey: 'a' }, propertyValue: { subValue: 1 } },
+        { propertyKey: { subKey: 'b' }, propertyValue: { subValue: { c: 2 } } },
+      ];
+      const result = objToKeyValueObjArray(data, 'propertyKey.subKey', 'propertyValue.subValue');
+      expect( result ).to.be.deep.equal(expected);
+    });
+
+  });
+
 });

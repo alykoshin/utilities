@@ -90,6 +90,30 @@ const compareArraysNonOrdered = (arr1, arr2, {filter,compare}) => {
 };
 
 
+const keyValueObjArrayToObj = ( arr, keyPropName/*: string*/ = 'key', valuePropName/*: string*/ = 'value' ) => {
+  return arr.reduce((accumulator, currentValue) => {
+      // accumulator[ currentValue[keyPropName] ] = currentValue[valuePropName]
+      _.set(accumulator, _.get(currentValue, keyPropName), _.get(currentValue, valuePropName))
+      return accumulator;
+    },
+    {} // accumulator
+  )
+}
+
+const objToKeyValueObjArray = ( obj, keyPropName/*: string*/ = 'key', valuePropName/*: string*/ = 'value' ) => {
+  return Object.keys(obj).map((key) => {
+      // accumulator[ currentValue[keyPropName] ] = currentValue[valuePropName]
+      const res = {};
+      _.set(res, keyPropName,   key)
+      _.set(res, valuePropName, obj[key])
+      return res;
+    },
+    {} // accumulator
+  )
+}
+
+
+
 module.exports = {
   sanitize,
   sanitizeArray: sanitize,
@@ -108,4 +132,7 @@ module.exports = {
   removeMatched,
 
   compareArraysNonOrdered,
+
+  keyValueObjArrayToObj,
+  objToKeyValueObjArray,
 };
