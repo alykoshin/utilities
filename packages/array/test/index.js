@@ -363,6 +363,33 @@ describe('@utilities/array', function () {
       expect( result ).to.be.deep.equal(expected);
     });
 
+    it('@throws for non-uniq if set', function () {
+      const array = [
+        { key: 'a', value: 1 },
+        { key: 'a', value: 2 },
+      ];
+      expect(() =>{
+        keyValueObjArrayToObj(array)
+      }).to.throw();
+    });
+
+   it('@not throws for non-uniq if unset', function () {
+      const array = [
+        { key: 'a', value: 1 },
+        { key: 'a', value: 2 },
+      ];
+     const expected = {
+       a: 2,
+     }
+     //
+     expect(() =>{
+        keyValueObjArrayToObj(array, { unique: false })
+      }).to.not.throw();
+     //
+     const result = keyValueObjArrayToObj(array, { unique: false })
+     expect( result ).to.be.deep.equal(expected);
+   });
+
     it('@simple check with non-default deep props', function () {
       const array = [
         { propertyKey: { subKey: 'a' }, propertyValue: { subValue: 1 } },
@@ -372,7 +399,10 @@ describe('@utilities/array', function () {
         a: 1,
         b: { c: 2 },
       }
-      const result = keyValueObjArrayToObj(array, 'propertyKey.subKey', 'propertyValue.subValue');
+      const result = keyValueObjArrayToObj(array, {
+        keyProp: 'propertyKey.subKey',
+        valueProp: 'propertyValue.subValue',
+      });
       expect( result ).to.be.deep.equal(expected);
     });
 
@@ -411,7 +441,10 @@ describe('@utilities/array', function () {
         { propertyKey: { subKey: 'a' }, propertyValue: { subValue: 1 } },
         { propertyKey: { subKey: 'b' }, propertyValue: { subValue: { c: 2 } } },
       ];
-      const result = objToKeyValueObjArray(data, 'propertyKey.subKey', 'propertyValue.subValue');
+      const result = objToKeyValueObjArray(data, {
+        keyProp: 'propertyKey.subKey',
+        valueProp: 'propertyValue.subValue',
+      });
       expect( result ).to.be.deep.equal(expected);
     });
 

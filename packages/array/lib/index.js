@@ -101,7 +101,7 @@ const keyValueObjArrayToObj = ( arr, options={}) => {
 
       const key   = _.get(currentValue, keyProp);
       const value = _.get(currentValue, valueProp)
-      if (accumulator[key]) throw new Error(`Property "${key}" is already set, while unique is set to ${unique}`);
+      if (unique && typeof accumulator[key]!=='undefined') throw new Error(`Property "${key}" is already set, while unique is set to ${unique}`);
 
       _.set(accumulator, key, value);
       return accumulator;
