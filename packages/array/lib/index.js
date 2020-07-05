@@ -90,22 +90,36 @@ const compareArraysNonOrdered = (arr1, arr2, {filter,compare}) => {
 };
 
 
-const keyValueObjArrayToObj = ( arr, keyPropName/*: string*/ = 'key', valuePropName/*: string*/ = 'value' ) => {
+const keyValueObjArrayToObj = ( arr, options={}) => {
+  const {
+          keyProp/*: string*/ = 'key',
+          valueProp/*: string*/ = 'value',
+          unique = true,
+        } = options;
   return arr.reduce((accumulator, currentValue) => {
       // accumulator[ currentValue[keyPropName] ] = currentValue[valuePropName]
-      _.set(accumulator, _.get(currentValue, keyPropName), _.get(currentValue, valuePropName))
+
+      const key   = _.get(currentValue, keyProp);
+      const value = _.get(currentValue, valueProp)
+      if (accumulator[key]) throw new Error(`Property "${key}" is already set, while unique is set to ${unique}`);
+
+      _.set(accumulator, key, value);
       return accumulator;
     },
     {} // accumulator
   )
 }
 
-const objToKeyValueObjArray = ( obj, keyPropName/*: string*/ = 'key', valuePropName/*: string*/ = 'value' ) => {
+const objToKeyValueObjArray = ( obj, options={}) => {
+  const {
+          keyProp/*: string*/   = 'key',
+          valueProp/*: string*/ = 'value',
+        } = options;
   return Object.keys(obj).map((key) => {
       // accumulator[ currentValue[keyPropName] ] = currentValue[valuePropName]
       const res = {};
-      _.set(res, keyPropName,   key)
-      _.set(res, valuePropName, obj[key])
+      _.set(res, keyProp,   key)
+      _.set(res, valueProp, obj[key])
       return res;
     },
     {} // accumulator
