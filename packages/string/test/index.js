@@ -10,14 +10,12 @@ chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
 chai.use(require('chai-arrays'));
 chai.use(require('chai-arrays'));
 
+const string = require('../lib/');
 
 describe('@utilities/string', function () {
-  let string;
 
   before('before', function () {
-    string = require('../lib/');
   });
-
 
   describe('lpad', function () {
     it('is a function', function () {
@@ -311,6 +309,74 @@ describe('@utilities/string', function () {
       expect(()=> {
         string.defaultTemplate(template, context, options);
       }).throw();
+    });
+
+  });
+
+
+  describe('shorten', function () {
+    it('is a function', function () {
+      expect(string.shorten).to.be.a('function');
+    });
+
+    it('@throws if max <= 5', function () {
+      expect(()=> {
+        string.shorten('some-string', 5);
+      }).throw();
+    });
+
+    it('@shorten 10->10', function () {
+      const s0 = '0123456789';
+      const s = s0.repeat(1); // 10 chars
+      const max = 10;
+      const result = string.shorten(s, max);
+      expect(result).to.equal(s0);
+      expect(result.length).to.equal(max);
+    });
+
+    it('@shorten 100->6', function () {
+      const s0 = '0123456789';
+      const s = s0.repeat(10); // 100 chars
+      const max = 6;
+      const result = string.shorten(s, max);
+      expect(result).to.equal('01..89');
+      expect(result.length).to.equal(max);
+    });
+
+    it('@shorten 100->10', function () {
+      const s0 = '0123456789';
+      const s = s0.repeat(10); // 100 chars
+      const max = 10;
+      const result = string.shorten(s, max);
+      expect(result).to.equal('012....789');
+      expect(result.length).to.equal(max);
+    });
+
+    it('@shorten 100->15', function () {
+      const s0 = '0123456789';
+      const s = s0.repeat(10); // 100 chars
+      const max = 15;
+      const result = string.shorten(s, max);
+      expect(result).to.equal('0123.......6789');
+      expect(result.length).to.equal(max);
+    });
+
+    it('@shorten 100->20', function () {
+      const s0 = '0123456789';
+      const s = s0.repeat(10); // 100 chars
+      const max = 20;
+      const result = string.shorten(s, max);
+      expect(result).to.equal('01234'+'.'.repeat(10)+'56789');
+      expect(result.length).to.equal(max);
+    });
+
+    it('@shorten 100->100', function () {
+      const s0 = '0123456789';
+      const s = s0.repeat(10); // 100 chars
+      const max = 100;
+      const result = string.shorten(s, max);
+      expect(result).to.equal(s);
+      expect(result.length).to.equal(max);
     });
 
   });

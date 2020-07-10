@@ -139,6 +139,40 @@ function generateUUID(){
 
 
 
+const SHORTEN_MAX_STR_LEN = 1024;
+const SHORTEN_MAX_GREATER = 5;
+
+/**
+ * Limit string length by replacing middle part of it with ellipsys
+ *
+ *
+ * @param {string}  s        - original string
+ * @param {number}  [max=1024] - Maximum result string length (>5)
+ * @result {string}
+ */
+function shorten(s, max=SHORTEN_MAX_STR_LEN) {
+  // options.body.data may be huge; we need to shorten it when printing
+  if (typeof s !== 'string') return s;// = JSON.stringify(s);
+
+  if (max<=SHORTEN_MAX_GREATER) throw new Error(`Invalid max must be greater than ${SHORTEN_MAX_GREATER}, : ${max}`);
+
+  const ellLength = max < 20
+                    ? max % 2===0
+                      ? Math.trunc(max/2)-1
+                      : Math.trunc(max/2)
+                    : 10;
+
+  const ell = '.'.repeat(ellLength);
+
+  if (s.length > max) {
+    s = s.substring(0,(max-ell.length)/2) +
+      ell +
+      s.substring(s.length - (max-ell.length)/2/*, MAX_STR_LEN*/)
+  }
+  return s;
+}
+
+
 module.exports = {
   repeat,
   lpad,
@@ -160,4 +194,6 @@ module.exports = {
   joinNonEmpty,
 
   generateUUID,
+
+  shorten,
 };
