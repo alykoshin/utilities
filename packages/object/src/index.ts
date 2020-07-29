@@ -593,6 +593,7 @@ const getClassMethods = (obj) => getMethods(obj, { depth: 1 });
 
 import * as basicObjects from './basicObjects';
 import * as timers from './timers';
+import * as watchdogs from './watchdogs';
 
 module.exports = {
   sanitize,
@@ -627,4 +628,5 @@ module.exports = {
 
   ...basicObjects,
   ...timers,
+  ...watchdogs,
 };
