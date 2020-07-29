@@ -42,7 +42,7 @@
     "travis-after-script": "npm run _coveralls",
     "build": "node_modules/.bin/tsc",
     "clean:dist": "rm -rf dist/*",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "keywords": [
     "string,utility,utilities"
