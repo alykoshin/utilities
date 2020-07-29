@@ -2,9 +2,8 @@
   "name": "@utilities/object",
   "version": "0.3.0",
   "description": "Set of misc utilities for objects",
-  "_main": "dist/index.js",
-  "_types": "dist/index.d.ts",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "engines": {
     "node": ">=12"
   },
