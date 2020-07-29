@@ -1,5 +1,3 @@
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 
@@ -252,7 +250,7 @@ const getPartial = (o, keys, value, indexes) => {
   const currKey = keys[0];
   const nextKeys = keys.slice(1);
 
-  const partialKey = matchKeyToIdx(currKey, indexes);
+  const partialKey = matchKeyToIdx(currKey/*, indexes*/);
   //if (typeof partialKey === 'number') { // array
   //  o = o || [];
   //} else {
@@ -284,7 +282,7 @@ const setPartial = (o, keys, value, indexes) => {
   const currKey = keys[0];
   const nextKeys = keys.slice(1);
 
-  const partialKey = matchKeyToIdx(currKey, indexes);
+  const partialKey = matchKeyToIdx(currKey/*, indexes*/);
   if (typeof partialKey === 'number') { // array
     o = o || [];
   } else {
@@ -314,25 +312,25 @@ const setExtended = (obj, path, value, indexes) => {
 //debug(setExtended({ a: {b:1}, b: [{a:1},1,2,3]}, 'b.$0.c.$1', 'test_value', [0,0] ));
 
 
-const remap_new = (o, map) => {
-  //_.forOwn(map, (toKey, frKey, object) => {
-  //  // convert dot-separated string into array
-  //  // expecting no dots inside property names
-  //  const path = frKey.split('.');
-  //  const topKey = path.shift();
-  //  const
-  //  //path.forEach(subKey => {
-  //  //  o[subKey]
-  //  //})
-  //});
-  return _.reduce(map, function(result, mapValue, mapKey) {
-    const fromKey = mapKey;
-    const toKey   = mapValue;
-    const {value, indexes} = getExtended(o, fromKey, indexes);
-    if (typeof value !== 'undefined') setExtended(result, toKey, value, indexes);
-    return result;
-  }, {});
-};
+//const remap_new = (o, map) => {
+//  //_.forOwn(map, (toKey, frKey, object) => {
+//  //  // convert dot-separated string into array
+//  //  // expecting no dots inside property names
+//  //  const path = frKey.split('.');
+//  //  const topKey = path.shift();
+//  //  const
+//  //  //path.forEach(subKey => {
+//  //  //  o[subKey]
+//  //  //})
+//  //});
+//  return _.reduce(map, function(result, mapValue, mapKey) {
+//    const fromKey = mapKey;
+//    const toKey   = mapValue;
+//    const {value, indexes} = getExtended(o, fromKey, indexes, undefined);
+//    if (typeof value !== 'undefined') setExtended(result, toKey, value, indexes);
+//    return result;
+//  }, {});
+//};
 
 //console.log(remap({ a: {b:1}}, { 'a.b': 'c.d' } ));
 
@@ -375,7 +373,13 @@ const test_map_4 = [
 //];
 
 
-const isEqualPartial = (o1, o2, {pick,omit} = {}) => {
+interface IsEqualPartialOptions {
+  pick?
+  omit?
+}
+
+const isEqualPartial = (o1, o2, options: IsEqualPartialOptions = {}) => {
+  const { pick, omit } = options;
   if (pick && omit) throw new Error('Only one of pick,omit values allowed');
   let partials = [o1,o2];
   if (pick) partials = partials.map(p => _.pick(p,pick));
@@ -385,7 +389,11 @@ const isEqualPartial = (o1, o2, {pick,omit} = {}) => {
 };
 
 
-const jsonParse = (s, options={}) => {
+interface JsonParseOptions {
+  validateJson?: boolean
+}
+
+const jsonParse = (s, options: JsonParseOptions={}) => {
   const { validateJson = true } = options;
   try {
     return JSON.parse(s);
@@ -396,20 +404,34 @@ const jsonParse = (s, options={}) => {
 };
 
 
-const jsonStringify = (o, options={}) => {
+interface JsonStringifyOptions {
+  pretty?: boolean
+}
+
+const jsonStringify = (o, options: JsonStringifyOptions={}) => {
   const { pretty=true } = options;
   return JSON.stringify(o, null, pretty ? 2 : 0);
 };
 
+interface LoadJsonSyncOptions extends JsonParseOptions {
+  mustExist?: boolean
+}
 
-const loadJsonSync = (pathname, options={}) => {
+const loadJsonSync = (pathname, options: LoadJsonSyncOptions={}) => {
   const { mustExist=true } = options;
   const s = loadTextSync(pathname, {mustExist});
   return jsonParse(s, options);
 };
 
 
-const loadJsonDirSync = (dir, options={}) => {
+interface LoadJsonDirSyncOptions {
+  recursive?: boolean
+  prefix?:    string
+  delimiter?: string
+  extname?:   string
+}
+
+const loadJsonDirSync = (dir, options: LoadJsonDirSyncOptions={}) => {
   const {recursive = true, prefix = '', delimiter = '.', extname=''/*'.json'*/ } = options;
   let result = [];
 
@@ -471,13 +493,15 @@ const loadJsonDirSync = (dir, options={}) => {
 };
 
 
+interface SaveJsonSyncOptions extends JsonStringifyOptions {
+  sizeThreshold?: number
+}
 
-const saveJsonSync = (pathname, o, options={}) => {
+const saveJsonSync = (pathname, o, options: SaveJsonSyncOptions={}) => {
 
   if (typeof o !== 'object') throw new Error('saveJsonSync: second argument must be object to save');
   const allowedTypes = [ 'string', 'number', 'boolean', 'object' ];
   if (!hasElement(allowedTypes, typeof o)) throw new Error(`saveJsonSync: typeof second argument must be one of following: [${allowedTypes.join(', ')}]`);
-
 
   const s = jsonStringify(o, options);
   const { sizeThreshold } = options;
@@ -486,7 +510,12 @@ const saveJsonSync = (pathname, o, options={}) => {
 };
 
 
-const jsonToHtml = (json, options={}) => {
+interface JsonToHtmlOptions extends JsonStringifyOptions {
+  br?: boolean
+  code?: boolean
+}
+
+const jsonToHtml = (json, options: JsonToHtmlOptions={}) => {
   let s = jsonStringify(json, options);
   if (options.br   !== false) s = replaceEolWithBr(s);
   if (options.code !== false) s = `<code>${s}</code>`;
@@ -511,7 +540,12 @@ const assignUniq = (toObject, ...fromObjects) => {
 };
 
 
-const getMethods = (obj, options={}) => {
+interface GetMethodsOptions {
+  depth?: number
+  excludeConstructor?: boolean
+}
+
+const getMethods = (obj, options: GetMethodsOptions={}) => {
   const {depth=-1,excludeConstructor=false} = options;
   //
   // Based on https://stackoverflow.com/a/31055217/2774010
@@ -557,6 +591,9 @@ const getOwnMethods   = (obj) => getMethods(obj, { depth: 0 });
 const getClassMethods = (obj) => getMethods(obj, { depth: 1 });
 
 
+import * as basicObjects from './basicObjects';
+import * as timers from './timers';
+
 module.exports = {
   sanitize,
   sanitizeObject: sanitize,
@@ -587,4 +624,7 @@ module.exports = {
   getClassMethods,
 
   ChainableNode,
+
+  ...basicObjects,
+  ...timers,
 };

@@ -5,6 +5,8 @@ const {sanitizeArray} = require('@utilities/array');
 //
 
 class ChainableNode {
+  _parent: ChainableNode
+  _args
 
   constructor(parentNode, ...args) {
     this._parent = parentNode;
