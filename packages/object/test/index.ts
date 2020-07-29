@@ -22,7 +22,7 @@ describe('@utilities/object', () => {
   let object;
 
   before('before', () => {
-    object = require('../lib/');
+    object = require('../src/');
   });
 
 

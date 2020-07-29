@@ -10,10 +10,9 @@ const {hasElement} = require('@utilities/array');
 const {replaceEolWithBr} = require('@utilities/string');
 const {loadTextSync, saveTextSync, dirListFilenames, dirListDirnames } = require('@utilities/fs');
 
-const ChainableNode = require('./chainableNode');
+export * from './chainableNode';
 
-
-const isObject = (value) => {
+export const isObject = (value) => {
   const type = typeof value;
   return !Array.isArray(value) &&
     value != null &&
@@ -21,7 +20,7 @@ const isObject = (value) => {
 
 };
 
-const sanitize = (object) => {
+export const sanitize = (object) => {
   //if (typeof object === 'undefined' || object === null ) object = {}
   if ( ! isObject(object) ) object = {};
   return object;
@@ -38,7 +37,7 @@ const sanitize = (object) => {
  * @private
  */
 
-function remap1_({ source, target, sourceKey, targetKey, transform }) {
+export function remap1_({ source, target, sourceKey, targetKey, transform }) {
 
   const sourceValue = _.get(source, sourceKey);
   const targetValue = _.get(target, targetKey);
@@ -107,7 +106,7 @@ function remap1_({ source, target, sourceKey, targetKey, transform }) {
 /**
  *
  */
-function remap(o, map, options) {
+export function remap(o, map, options) {
   options = options || {};
   if (options.inverted === true) map = _.invert(map);
   //console.log('remap: o:', o);
@@ -178,7 +177,7 @@ function _rename1(o, map, mapKey, options) {
 }
 
 
-function rename(o, map, options) {
+export function rename(o, map, options) {
   options = options || {};
   if (options.inverted === true) map = _.invert(map);
   //console.log('map:', map)
@@ -204,13 +203,13 @@ function rename(o, map, options) {
 // We need to remap object containing multilevel arrays
 // Below some approaches to this task
 
-const matchKey = (key) => {
+export const matchKey = (key) => {
   //const re = /^\$(\d*)$/;
   const re =  /^\$(?:(\d*)|(\[\d+\]))$/;
   return key.match(re);
 };
 
-const matchKeyToIdx = (key) => {
+export const matchKeyToIdx = (key) => {
   const match = matchKey(key);
   if (match) {
     if (typeof match[ 2 ] !== 'undefined') {
@@ -378,7 +377,7 @@ interface IsEqualPartialOptions {
   omit?
 }
 
-const isEqualPartial = (o1, o2, options: IsEqualPartialOptions = {}) => {
+export const isEqualPartial = (o1, o2, options: IsEqualPartialOptions = {}) => {
   const { pick, omit } = options;
   if (pick && omit) throw new Error('Only one of pick,omit values allowed');
   let partials = [o1,o2];
@@ -393,7 +392,7 @@ interface JsonParseOptions {
   validateJson?: boolean
 }
 
-const jsonParse = (s, options: JsonParseOptions={}) => {
+export const jsonParse = (s, options: JsonParseOptions={}) => {
   const { validateJson = true } = options;
   try {
     return JSON.parse(s);
@@ -404,34 +403,34 @@ const jsonParse = (s, options: JsonParseOptions={}) => {
 };
 
 
-interface JsonStringifyOptions {
+export interface JsonStringifyOptions {
   pretty?: boolean
 }
 
-const jsonStringify = (o, options: JsonStringifyOptions={}) => {
+export const jsonStringify = (o, options: JsonStringifyOptions={}) => {
   const { pretty=true } = options;
   return JSON.stringify(o, null, pretty ? 2 : 0);
 };
 
-interface LoadJsonSyncOptions extends JsonParseOptions {
+export interface LoadJsonSyncOptions extends JsonParseOptions {
   mustExist?: boolean
 }
 
-const loadJsonSync = (pathname, options: LoadJsonSyncOptions={}) => {
+export const loadJsonSync = (pathname, options: LoadJsonSyncOptions={}) => {
   const { mustExist=true } = options;
   const s = loadTextSync(pathname, {mustExist});
   return jsonParse(s, options);
 };
 
 
-interface LoadJsonDirSyncOptions {
+export interface LoadJsonDirSyncOptions {
   recursive?: boolean
   prefix?:    string
   delimiter?: string
   extname?:   string
 }
 
-const loadJsonDirSync = (dir, options: LoadJsonDirSyncOptions={}) => {
+export const loadJsonDirSync = (dir, options: LoadJsonDirSyncOptions={}) => {
   const {recursive = true, prefix = '', delimiter = '.', extname=''/*'.json'*/ } = options;
   let result = [];
 
@@ -493,11 +492,11 @@ const loadJsonDirSync = (dir, options: LoadJsonDirSyncOptions={}) => {
 };
 
 
-interface SaveJsonSyncOptions extends JsonStringifyOptions {
+export interface SaveJsonSyncOptions extends JsonStringifyOptions {
   sizeThreshold?: number
 }
 
-const saveJsonSync = (pathname, o, options: SaveJsonSyncOptions={}) => {
+export const saveJsonSync = (pathname, o, options: SaveJsonSyncOptions={}) => {
 
   if (typeof o !== 'object') throw new Error('saveJsonSync: second argument must be object to save');
   const allowedTypes = [ 'string', 'number', 'boolean', 'object' ];
@@ -510,12 +509,12 @@ const saveJsonSync = (pathname, o, options: SaveJsonSyncOptions={}) => {
 };
 
 
-interface JsonToHtmlOptions extends JsonStringifyOptions {
+export interface JsonToHtmlOptions extends JsonStringifyOptions {
   br?: boolean
   code?: boolean
 }
 
-const jsonToHtml = (json, options: JsonToHtmlOptions={}) => {
+export const jsonToHtml = (json, options: JsonToHtmlOptions={}) => {
   let s = jsonStringify(json, options);
   if (options.br   !== false) s = replaceEolWithBr(s);
   if (options.code !== false) s = `<code>${s}</code>`;
@@ -523,12 +522,12 @@ const jsonToHtml = (json, options: JsonToHtmlOptions={}) => {
 };
 
 
-const _assignUniqOne = (toObject, name, value) => {
+export const _assignUniqOne = (toObject, name, value) => {
   if (toObject[ name ]) throw new Error(`toObject already has property named "${name}"`);
   toObject[ name ] = value;
 };
 
-const assignUniq = (toObject, ...fromObjects) => {
+export const assignUniq = (toObject, ...fromObjects) => {
   //
   fromObjects.forEach(from => {
     for (let name in from) if (from.hasOwnProperty(name)) {
@@ -540,12 +539,12 @@ const assignUniq = (toObject, ...fromObjects) => {
 };
 
 
-interface GetMethodsOptions {
+export interface GetMethodsOptions {
   depth?: number
   excludeConstructor?: boolean
 }
 
-const getMethods = (obj, options: GetMethodsOptions={}) => {
+export const getMethods = (obj, options: GetMethodsOptions={}) => {
   const {depth=-1,excludeConstructor=false} = options;
   //
   // Based on https://stackoverflow.com/a/31055217/2774010
@@ -585,17 +584,19 @@ const getMethods = (obj, options: GetMethodsOptions={}) => {
 };
 
 
-const getOwnMethods   = (obj) => getMethods(obj, { depth: 0 });
+export const getOwnMethods   = (obj) => getMethods(obj, { depth: 0 });
 
 
-const getClassMethods = (obj) => getMethods(obj, { depth: 1 });
+export const getClassMethods = (obj) => getMethods(obj, { depth: 1 });
 
 
-import * as basicObjects from './basicObjects';
-import * as timers from './timers';
-import * as watchdogs from './watchdogs';
+export * from './basicObjects';
 
-module.exports = {
+export * from './timers';
+export * from './watchdogs';
+
+
+export default {
   sanitize,
   sanitizeObject: sanitize,
 
@@ -624,9 +625,4 @@ module.exports = {
   getOwnMethods,
   getClassMethods,
 
-  ChainableNode,
-
-  ...basicObjects,
-  ...timers,
-  ...watchdogs,
 };

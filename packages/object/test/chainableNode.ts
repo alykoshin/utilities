@@ -11,12 +11,12 @@ chai.should();
 
 const _ = require('lodash');
 
+import {ChainableNode} from '../src/';
+
 
 describe('ChainableNode', () => {
-  let ChainableNode;
 
   before('before', () => {
-    ({ChainableNode} = require('../lib/'));
   });
 
   it('is a function', () => {

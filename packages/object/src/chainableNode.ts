@@ -4,7 +4,7 @@ const {sanitizeArray} = require('@utilities/array');
 
 //
 
-class ChainableNode {
+export class ChainableNode {
   _parent: ChainableNode
   _args
 
@@ -84,4 +84,4 @@ class ChainableNode {
 
 //
 
-module.exports = ChainableNode;
+// module.exports = ChainableNode;

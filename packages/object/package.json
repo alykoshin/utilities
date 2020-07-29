@@ -1,6 +1,6 @@
 {
   "name": "@utilities/object",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Set of misc utilities for objects",
   "_main": "dist/index.js",
   "_types": "dist/index.d.ts",
@@ -18,7 +18,7 @@
     "inspect": "jsinspect --ignore 'coverage|test'",
     "pretest": "npm run lint && npm run inspect && npm run _npm-audit && npm run _deps-check",
     "_test": "npm run _test-coverage && npm run _test-report",
-    "_test-coverage": "nyc ./node_modules/mocha/bin/_mocha -- -R spec ./test/**/*",
+    "_test-coverage": "nyc ./node_modules/ts-mocha/bin/ts-mocha -- -R spec ./test/**/*",
     "_test-report": "nyc report --reporter=html && nyc report --reporter=text-lcov > coverage/coverage.lcov",
     "test": "npm run _test",
     "__test": "echo \"Warning: no test specified\" && exit 0",
@@ -66,6 +66,7 @@
     "mkdirp": "^1.0.4"
   },
   "devDependencies": {
+    "@types/mocha": "^8.0.0",
     "chai": "^4.2.0",
     "chai-arrays": "^2.2.0",
     "chai-things": "^0.2.0",
@@ -78,6 +79,7 @@
     "mockery": "^2.1.0",
     "nyc": "^15.1.0",
     "sinon": "^9.0.2",
+    "ts-mocha": "^7.0.0",
     "typescript": "^3.9.7"
   }
 }
