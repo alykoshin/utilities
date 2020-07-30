@@ -52,7 +52,6 @@
   "homepage": "https://github.com/alykoshin/@utilities",
   "dependencies": {},
   "optionalDependencies": {
-    "fibers": "^4.0.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",

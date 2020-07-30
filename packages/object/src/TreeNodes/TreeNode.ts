@@ -39,8 +39,11 @@ export class ENOT_APPLICABLE extends Error {
 
 
 export class TreeNode {
+  _children: TreeNode[]
+  _parent: TreeNode
+  _data: any
 
-  constructor (data) {
+  constructor (data?:any) {
     this._children = [];
     this._parent   = null;
     this._data     = data;

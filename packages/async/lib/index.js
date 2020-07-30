@@ -91,6 +91,7 @@ const setTimeoutAsPromised = asyncSetTimeout;
 
 
 
+/*
 // Fibers cannot be loaded at browser side
 
 let wrapIntoFiber;
@@ -106,6 +107,7 @@ if (isNodejs()) {
 } else {
   wrapIntoFiber = () => { throw new Error('Fibers cannot be used at browser'); };
 }
+*/
 
 
 function processNextTick(fn /* arguments */) {
