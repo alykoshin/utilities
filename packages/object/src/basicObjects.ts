@@ -7,10 +7,10 @@ const {joinNonEmpty} = require('@utilities/string');
 import {defaultsDeep} from 'lodash';
 
 
-type EmptyOptions = {
+export type EmptyOptions = {
 }
 
-type GenericOptions = EmptyOptions & {
+export type GenericOptions = EmptyOptions & {
   [key: string]: any
 }
 

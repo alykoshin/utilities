@@ -155,11 +155,11 @@ export class TreeNode {
   }
 
   async traversePostOrder(fn) {
-    console.log('traversePostOrder 1', this._data.name, this._children.length)
+    // console.log('traversePostOrder 1', this._data.name, this._children.length)
     await asyncForEach(this._children, async child => child.traversePostOrder.call(child, fn));
-    console.log('traversePostOrder 2', this._data.name)
+    // console.log('traversePostOrder 2', this._data.name)
     await fn(this);
-    console.log('traversePostOrder 3', this._data.name)
+    // console.log('traversePostOrder 3', this._data.name)
   }
 
   async _traverseLevelOrderSelf(fn) {
