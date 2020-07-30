@@ -27,13 +27,13 @@
   },
   "disableWarnings": false,
   "include": [
-    "src"
+    "./src"
     //    "./src/**/*"
   ],
   "exclude": [
     "**/node_modules/*",
     "**/test/*",
-    "dist"
+    "/dist/**/*"
   ],
   "references": [
   ]

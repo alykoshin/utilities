@@ -1,7 +1,7 @@
-import EventEmitter from 'events';
+import {EventEmitter} from 'events';
 
 
-import { bootstrap, shutdown, BootstrapperThis, SimpleAction, SimpleActionClass } from '@utilities/object';
+import { bootstrap, shutdown, BootstrapperThis, SimpleAction, SimpleActionClass } from '../';
 
 
 export abstract class Application extends EventEmitter {
