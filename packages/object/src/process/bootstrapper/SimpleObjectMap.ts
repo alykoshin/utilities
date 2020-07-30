@@ -1,6 +1,10 @@
 const assert = require('assert');
 
 
+interface GetOptions {
+  mustExist: boolean
+}
+
 export class SimpleObjectMap {
   private readonly _data: { [k: string]: any; };
 
@@ -17,19 +21,19 @@ export class SimpleObjectMap {
   }
 
   protected _ensureExist(name: string) {
-    assert(typeof name === 'string');
+    assert(typeof name === 'string', 'mandatory argument "name" missing');
     if (!this._get(name)) throw new Error(`Property named "${name}" does not exist`);
   }
 
   protected _ensureNotExist(name: string) {
-    assert(typeof name === 'string');
+    assert(typeof name === 'string', 'mandatory argument "name" missing');
     if (this._get(name)) throw new Error(`Property named "${name}" already exists`);
   }
 
   //
 
-  public get(name: string): any {
-    this._ensureExist(name);
+  public get(name: string, { mustExist=true }: GetOptions={mustExist:true}): any {
+    if (mustExist) this._ensureExist(name);
     return this._get(name);
   }
 

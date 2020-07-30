@@ -1,6 +1,5 @@
 import * as path from 'path';
 import _ from 'lodash';
-process.env.DEBUG = 'bootstrapper,watchdog';
 const debug = require('debug')('bootstrapper');
 
 import * as util from 'util';
@@ -96,6 +95,7 @@ export class Bootstrapper extends Dependencies {
 
 
 if (module === require.main) {
+  process.env.DEBUG = 'bootstrapper,watchdog';
   //process.env.DEBUG = '*';
   (async () => {
 
