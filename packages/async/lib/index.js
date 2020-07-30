@@ -142,7 +142,9 @@ module.exports = {
   asyncSetTimeout,
   setTimeoutAsPromised,
 
+/*
   wrapIntoFiber,
+*/
 
   processNextTick,
   setTimeout0,
