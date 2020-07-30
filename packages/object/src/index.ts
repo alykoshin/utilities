@@ -12,5 +12,6 @@ export * from './chainableNode';
 export * from './TreeNodes/TreeNode';
 export * from './TreeNodes/NamedTreeNode';
 
-export * from './process/bootstrapper';
+export * from './process/bootstrapper/';
+export * from './process/Application';
 export * from './process/ShutdownMonitor';
