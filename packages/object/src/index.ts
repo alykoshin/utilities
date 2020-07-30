@@ -7,3 +7,6 @@ export * from './mixins';
 
 export * from './timers';
 export * from './watchdogs';
+
+export * from './TreeNodes/TreeNode';
+export * from './TreeNodes/NamedTreeNode';
