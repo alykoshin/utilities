@@ -7,7 +7,7 @@ const {joinNonEmpty}  = require('@utilities/string');
 
 import {SimpleObjectMap} from "./SimpleObjectMap";
 
-const {WatchdogTimer, WatchdogCounter} = require('@utilities/object');
+const {WatchdogTimer, WatchdogCounter} = require('../../');
 const debug = require('debug')('bootstrapper');
 
 

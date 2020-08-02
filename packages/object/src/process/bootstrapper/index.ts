@@ -9,7 +9,7 @@ const {sanitizeArray} = require('@utilities/array');
 //const Dependency = require('./Dependency');
 //const Dependencies = require('./Dependencies');
 import {HandlerFn, NameToOneTimeHandlerMap as Dependencies, HandlerFullData} from './Dependencies';
-const {WatchdogTimer, WatchdogCounter, EWATCHDOG} = require('@utilities/object');
+const {WatchdogTimer, WatchdogCounter, EWATCHDOG} = require('../../');
 
 class EPRIORITY_NOT_FOUND {
   constructor(prio) {
