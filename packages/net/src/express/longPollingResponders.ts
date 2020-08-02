@@ -10,34 +10,37 @@ const LONG_POLLING_TIMEOUT = 10  * ONE_SECOND;
 
 
 export class Responder {
-  data: any[]
-  res: express.Response
-  done: boolean
-  finished: boolean
+  data: any[] = []
+  req: express.Request  = null
+  res: express.Response = null
+  done: boolean     = false
+  finished: boolean = false
   throttlingTimer: NodeJS.Timeout = null
-  pollingTimer: NodeJS.Timeout = null
+  pollingTimer:    NodeJS.Timeout = null
 
   constructor () {
-    this.data = [];
-    this.res = null;
-    this.done = false;
-    this.finished = false;
-    this.throttlingTimer = null;
-    this.pollingTimer    = null;
-    //this._reset();
+    // this.data = [];
+    // this.req = null;
+    // this.res = null;
+    // this.done = false;
+    // this.finished = false;
+    // this.throttlingTimer = null;
+    // this.pollingTimer    = null;
+    this._reset();
   }
-  _reset() {
+  _reset(): void {
     this.data = [];
+    this.req = null;
     this.res = null;
   }
-  _clearThrottling() {
+  _clearThrottling(): void {
     debug(`_clearThrottling`);
     if (this.throttlingTimer) {
       clearTimeout(this.throttlingTimer);
       this.throttlingTimer = null;
     }
   }
-  _clearPolling() {
+  _clearPolling(): void {
     debug(`_clearPolling`);
     if (this.pollingTimer) {
       clearTimeout(this.pollingTimer);
@@ -45,20 +48,21 @@ export class Responder {
     }
   }
 
-  handleData(data) {
+  handleData(data: any): void {
     debug(`handleData`);
     this._addData(data);
     //this._tryRespond();
     this._startThrottling();
   }
-  handleRequest(req,res) {
+  handleRequest(req: express.Request, res: express.Response): void {
     debug(`handleRequest`);
+    this.req = req;
     this.res = res;
     //if (this._tryRespond()) this._startWaiting();
     this._startThrottling();
     //this._startWaiting();
   }
-  finish() {
+  finish(): void {
     debug(`finish: ${this.done} this.data`, this.data);
 
     this.done = true;
@@ -67,15 +71,15 @@ export class Responder {
     //this._respond();
     this._tryRespond();
   }
-  _clearTimers() {
+  _clearTimers(): void {
     this._clearThrottling();
     this._clearPolling();
   }
-  _addData(data) {
+  _addData(data: any): void {
     debug(`_addData`);
     this.data.push(data);
   }
-  _tryRespond() {
+  _tryRespond(): boolean {
     debug(`_tryRespond`);
     if (this.res && this.data.length > 0) {
       this._respond();
@@ -83,7 +87,7 @@ export class Responder {
     }
     return false;
   }
-  _respond() {
+  _respond(): boolean {
     debug(`_respond`);
     this._clearTimers();
     if (this.done) {
@@ -91,7 +95,7 @@ export class Responder {
       this.finished = true;
     }
 
-    handleSuccess({ res: this.res, result: this.data })
+    handleSuccess({ req: this.req, res: this.res, result: this.data })
     // debug(`_respond: ${this.done} this.data`, this.data);
     // this.res.json({ result: this.data });
 
@@ -103,7 +107,7 @@ export class Responder {
     //}
     return true;
   }
-  _startThrottling() {
+  _startThrottling(): void {
     debug(`_startThrottling: enter`);
 
     // if we already set this timer, just continue to wait until it trigger
@@ -117,7 +121,7 @@ export class Responder {
       }, THROTTLING_TIMEOUT);
     }
   }
-  _startWaiting() {
+  _startWaiting(): void {
     debug(`_startWaiting`);
     if (this.pollingTimer) {
       debug(`_startWaiting: pollingTimer is already active, clearing`);
@@ -139,15 +143,17 @@ export class Responder {
 export class Responders {
   protected responders: { [key:string]: Responder } = {}
 
-  public new (id: string) {
+  public new (id: string): Responder {
     if (this.responders[id]) {
       throw new Error(`Another request with same id ${id} is in progress`);
     } else {
-      this.responders[ id ] = new Responder();
+      const responder = new Responder();
+      this.responders[ id ] = responder;
+      return responder;
     }
   }
 
-  public handleData(id: string, data: any) {
+  public handleData(id: string, data: any): void {
 
     if (!this.responders[id]) {
       return console.error(`runner.on(output): received for non-existing request`);
@@ -176,9 +182,9 @@ export class Responders {
     }
   }
 
-  public handleRequest(id: string, req: express.Request, res: express.Response) {
+  public handleRequest(id: string, req: express.Request, res: express.Response): void {
     if (typeof this.responders[id] === 'undefined') {
-      return handleError({res, code: 404, error: new Error(`Not Found "${id}"`)})
+      return handleError({ req, res, code: 404, error: new Error(`Not Found "${id}"`)})
     }
     return this.responders[id].handleRequest(req, res);
   }
