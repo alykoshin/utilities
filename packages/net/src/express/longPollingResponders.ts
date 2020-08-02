@@ -9,7 +9,7 @@ const THROTTLING_TIMEOUT   = 250;
 const LONG_POLLING_TIMEOUT = 10  * ONE_SECOND;
 
 
-export class LongPollingResponders {
+export class Responder {
   data: any[]
   res: express.Response
   done: boolean
@@ -137,13 +137,13 @@ export class LongPollingResponders {
 
 
 export class Responders {
-  protected responders: { [key:string]: LongPollingResponders } = {}
+  protected responders: { [key:string]: Responder } = {}
 
   public new (id: string) {
     if (this.responders[id]) {
       throw new Error(`Another request with same id ${id} is in progress`);
     } else {
-      this.responders[ id ] = new LongPollingResponders();
+      this.responders[ id ] = new Responder();
     }
   }
 
