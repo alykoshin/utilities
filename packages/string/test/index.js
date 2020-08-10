@@ -314,6 +314,38 @@ describe('@utilities/string', function () {
   });
 
 
+  describe('id_unique_13', function () {
+    it('is a function', function () {
+      expect(string.id_unique_13).to.be.a('function');
+    });
+
+    const tries = 10;
+    describe(`repeat ${tries} tries`, function () {
+
+      it(`@returns string [A-Z0-9] with length=13`, function () {
+        for (let i=0; i<10; i++) {
+          const result = string.id_unique_13();
+          expect(result).to.be.a('string');
+          expect(result).to.have.lengthOf(13);
+          console.log(result);
+          expect(result).to.match(/[A-Z0-9]{13}/);
+        }
+      });
+
+      it('@returns different results', function () {
+        for (let i=0; i<10; i++) {
+          const result1 = string.id_unique_13();
+          const result2 = string.id_unique_13();
+          console.log(`${result1} / ${result2}`);
+          expect(result1).to.be.not.equal(result2);
+        }
+      });
+
+    });
+
+  });
+
+
   describe('shorten', function () {
     it('is a function', function () {
       expect(string.shorten).to.be.a('function');
