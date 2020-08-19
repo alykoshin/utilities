@@ -13,11 +13,11 @@ const ADD_PATH_VALUES = ['joinBase', 'joinSub', 'resolve'];
  * @param {boolean} filter.isFile
  * @param {boolean} filter.isDir
  * @param {boolean} filter.isDirectory
- * @param {object} options
- * @param {string} options.addPath = ''
- * @param {boolean|string} options.nameOnly = false
- * @param {boolean} options.recursive = false
- * @param {string} options._subDir = ''
+ * @param {object} [options]
+ * @param {string} [options.addPath] = ''
+ * @param {boolean|string} [options.nameOnly] = false
+ * @param {boolean} [options.recursive] = false
+ * @param {string} [options._subDir] = ''
  * @returns {*}
  * @private
  */
