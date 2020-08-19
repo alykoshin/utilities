@@ -9,11 +9,11 @@ chai.should();
 //chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
 //chai.use(require('chai-arrays'));
 
-const _ = require('lodash');
-const path = require('path');
-const mkdirp = require('mkdirp');
+// const _ = require('lodash');
+// const path = require('path');
+// const mkdirp = require('mkdirp');
 
-const baseTestDir = path.join(process.cwd(), 'test-data');
+// const baseTestDir = path.join(process.cwd(), 'test-data');
 
 const {replaceEol} = require('@utilities/string');
 
