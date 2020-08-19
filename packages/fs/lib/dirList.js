@@ -9,11 +9,11 @@ const ADD_PATH_VALUES = ['joinBase', 'joinSub', 'resolve'];
 /**
  *
  * @param {string} baseDir
- * @param {object} filter
- * @param {boolean} filter.isFile
- * @param {boolean} filter.isDir
- * @param {boolean} filter.isDirectory
- * @param {object} [options]
+ * @param {object} [filter]={}
+ * @param {boolean} [filter.isFile]=false
+ * @param {boolean} [filter.isDir]=false
+ * @param {boolean} [filter.isDirectory]=false
+ * @param {object} [options]={}
  * @param {string} [options.addPath] = ''
  * @param {boolean|string} [options.nameOnly] = false
  * @param {boolean} [options.recursive] = false
