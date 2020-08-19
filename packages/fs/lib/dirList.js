@@ -14,7 +14,7 @@ const ADD_PATH_VALUES = ['joinBase', 'joinSub', 'resolve'];
  * @param {boolean} [filter.isDir]=false
  * @param {boolean} [filter.isDirectory]=false
  * @param {object} [options]={}
- * @param {string} [options.addPath] = ''
+ * @param {''|'joinBase'|'joinSub'|'resolve'} [options.addPath] = ''
  * @param {boolean|string} [options.nameOnly] = false
  * @param {boolean} [options.recursive] = false
  * @param {string} [options._subDir] = ''
@@ -49,12 +49,13 @@ const _dirList = (baseDir, filter={}, options={}) => {
     })
     .map(dirent => {
       //dirent._name    = dirent.name;
-      dirent.pathname = dirent.name;
       if      (addPath==='joinBase') dirent.pathname = path.join(    baseDir, _subDir, dirent.name );
       else if (addPath==='joinSub')  dirent.pathname = path.join(             _subDir, dirent.name );
       else if (addPath==='resolve')  dirent.pathname = path.resolve( baseDir, _subDir, dirent.name );
       else if (addPath) throw new Error(`addPath must be empty or set to one of following: [${ADD_PATH_VALUES.join(',')}], found: "${addPath}" instead`);
+      else dirent.pathname = dirent.name;
       //
+      const _dirent = _.pick(dirent, ['name', 'pathname']);
       //return nameOnly ? dirent.pathname : dirent;
       if (typeof nameOnly === 'string'){
 
@@ -70,8 +71,8 @@ const _dirList = (baseDir, filter={}, options={}) => {
           //  size: fileSizeInBytes,
           //}
           return {
+            ..._dirent,
             ...stats,
-            //...dirent,
             //isBlockDevice:     dirent.isBlockDevice(),
             //isCharacterDevice: dirent.isCharacterDevice(),
             //isDirectory:       dirent.isDirectory(),
@@ -79,7 +80,7 @@ const _dirList = (baseDir, filter={}, options={}) => {
             //isFile:            dirent.isFile(),
             //isSocket:          dirent.isSocket(),
             //isSymbolicLink:    dirent.isSymbolicLink(),
-            name:              dirent.name,
+            //name:              dirent.name,
           };
           //} catch(e) {
           //  console.log('ERROR: listFiles():', e);
@@ -94,6 +95,7 @@ const _dirList = (baseDir, filter={}, options={}) => {
         } else if (nameOnly === 'with-stats-resolve') {
 
           return {
+            ..._dirent,
             ...stats,
             //isBlockDevice:     dirent.isBlockDevice(),
             //isCharacterDevice: dirent.isCharacterDevice(),
@@ -109,7 +111,7 @@ const _dirList = (baseDir, filter={}, options={}) => {
             isFile:            stats.isFile(),
             isSocket:          stats.isSocket(),
             isSymbolicLink:    stats.isSymbolicLink(),
-            name:              dirent.name,
+            //name:              dirent.name,
           };
         };
 

@@ -7,4 +7,4 @@ const p = path.resolve(module.path, './');
 console.log( _dirList( p ) );
 console.log( _dirList(p, {}, { nameOnly: false }) );
 console.log( _dirList(p, {}, { nameOnly: 'with-stats' }) );
-console.log( _dirList(p, {}, { nameOnly: 'with-stats-resolve' }) );
+console.log( _dirList(p, {}, { nameOnly: 'with-stats-resolve', addPath: 'resolve' }) );
