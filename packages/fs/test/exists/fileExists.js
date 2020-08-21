@@ -10,7 +10,7 @@ chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
 
 var path = require('path');
 var miniFs = require('../../');
-var miniFile = require('../../../fs/lib/textFile');
+var miniFile = require('../../../fs/src/textFile');
 
 var invalidPath = 1;
 var existingFile = module.filename;
