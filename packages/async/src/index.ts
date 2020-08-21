@@ -1,7 +1,8 @@
-const isNodejs = require('./isNodejs');
+import * as isNodejs from './isNodejs';
+import * as deferred from'./deferred';
 
 
-const asyncForEach = async function (array, callback, exitConditionFn) {
+const asyncForEach = async function (this: any, array, callback, exitConditionFn) {
   /* must be function instead of => to in order `this` value tp be passed */
   let res;
   for (let index = 0; index < array.length; index++) {
@@ -16,10 +17,10 @@ const asyncForEach = async function (array, callback, exitConditionFn) {
 //
 // https://stackoverflow.com/a/51020535/2774010
 //
-const asyncForEachParallelLimit = async function (array, limit, callback) {
+const asyncForEachParallelLimit = async function (this: any, array, limit, callback) {
   /* must be function instead of => to in order `this` value tp be passed */
 
-  async function doWork(iterator) {
+  async function doWork(this: any, iterator) {
     for (let [index, item] of iterator) {
       const result = await callback.call(this, item, index, array);
 
@@ -43,7 +44,7 @@ const asyncForEachParallelLimit = async function (array, limit, callback) {
 };
 
 
-const asyncForEachReverse = async function (array, callback) {
+const asyncForEachReverse = async function (this: any, array, callback) {
   //console.log('asyncForEach: enter');
   for (let index = array.length-1; index >= 0 ; index--) {
     //console.log('asyncForEach: index:', index);
@@ -53,7 +54,7 @@ const asyncForEachReverse = async function (array, callback) {
 };
 
 
-const asyncMap = async function(array, callback) {
+const asyncMap = async function(this: any, array, callback) {
   //console.log('asyncMap');
   const res = [];
   for (let index = 0; index < array.length; index++) {
@@ -64,7 +65,7 @@ const asyncMap = async function(array, callback) {
 };
 
 
-const asyncMapReverse = async function(array, callback) {
+const asyncMapReverse = async function(this: any, array, callback) {
   //console.log('asyncMap');
   const res = [];
   for (let index = array.length-1; index >= 0 ; index--) {
@@ -75,15 +76,15 @@ const asyncMapReverse = async function(array, callback) {
 };
 
 
-const runAsync = function (fn, ...args) {
+const runAsync = function (this: any, fn, ...args) {
    return setTimeout(() => fn.call(this, ...args) , 0);
 };
 
-const asyncSetInterval = async function (ms) {
+const asyncSetInterval = async function (this: any, ms) {
   return new Promise(resolve => setInterval(resolve.bind(this), ms));
 };
 
-const asyncSetTimeout = async function (ms) {
+const asyncSetTimeout = async function (this: any, ms) {
   return new Promise(resolve => setTimeout(resolve.bind(this), ms));
 };
 const setTimeoutAsPromised = asyncSetTimeout;
@@ -93,6 +94,7 @@ const setTimeoutAsPromised = asyncSetTimeout;
 
 /*
 // Fibers cannot be loaded at browser side
+// ...and also causes problems with building
 
 let wrapIntoFiber;
 
@@ -110,7 +112,7 @@ if (isNodejs()) {
 */
 
 
-function processNextTick(fn /* arguments */) {
+function processNextTick(this: any, fn /* arguments */) {
   const args = [].slice.call(arguments, 1);
   const self = this;
   process.nextTick(function() {
@@ -119,7 +121,7 @@ function processNextTick(fn /* arguments */) {
 }
 
 
-function setTimeout0(fn /* arguments */) {
+function setTimeout0(this: any, fn /* arguments */) {
   const args = [].slice.call(arguments, 1);
   const self = this;
   setTimeout(() => {
@@ -148,6 +150,10 @@ module.exports = {
 
   processNextTick,
   setTimeout0,
+
+  ...isNodejs,
+
+  ...deferred,
 };
 
 
