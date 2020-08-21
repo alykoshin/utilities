@@ -38,8 +38,12 @@ export class Timeout extends DebuggableObject {
   }
 
   protected _start() {
-    this.debug('_start')
-    this._timer = setTimeout( this.options.callback,  this.options.timeout)
+    if (this.options.timeout >= 0) {
+      this.debug(`_start ${this.options.timeout}ms`)
+      this._timer = setTimeout(this.options.callback, this.options.timeout)
+    } else {
+      this.debug('timeout not started due to negative value')
+    }
   }
 
   //
