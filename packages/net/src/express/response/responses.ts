@@ -17,20 +17,20 @@ const DEFAULT_ERROR_CODE = 500;
 
 const getDefaultMessage = (code) => http.STATUS_CODES[code];
 
-export function _sendJsonError({ req, res, code=DEFAULT_ERROR_CODE, error }: { req: express.Request, res: express.Response, code?: number, error?: Error }) {
+export function _sendJsonError({ req, res, code=DEFAULT_ERROR_CODE, error, message }: { req: express.Request, res: express.Response, code?: number, error?: Error, message?: string }) {
   return res.status(code).json({
     error: {
-      message: error?.message || getDefaultMessage(code),
+      message: message || error?.message || getDefaultMessage(code),
       data: error,
     }
   })
 }
 
-export function _sendTextError({ req, res, code=DEFAULT_ERROR_CODE, error }: { req: express.Request, res: express.Response, code?: number, error?: Error }) {
+export function _sendTextError({ req, res, code=DEFAULT_ERROR_CODE, error, message }: { req: express.Request, res: express.Response, code?: number, error?: Error, message?: string }) {
   return res.status(code).send(//{
     // error: {
     //   message:
-  error?.message || getDefaultMessage(code),
+    message || error?.message || getDefaultMessage(code),
       // data: error,
     // }
   // }
