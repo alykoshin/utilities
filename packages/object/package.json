@@ -62,7 +62,7 @@
     "@utilities/array": "^0.1.0",
     "@utilities/async": "^0.2.0",
     "@utilities/fs": "^0.2.16",
-    "@utilities/string": "^0.1.0",
+    "@utilities/string": "^0.1.1",
     "debug": "^4.2.0",
     "lodash": "^4.17.20",
     "micromongo": "^0.3.1",
