@@ -64,10 +64,10 @@ const stringify = (obj, prefix) => {
  * @returns {string|null}
  */
 function _findGetParameter(parameterName) {
-  if (typeof window.location === 'undefined') throw new Error('This function may be run in browser only');
+  if (typeof location === 'undefined') throw new Error('This function may be run in browser only');
   let result = null,
       tmp = [];
-  const items = window.location.search.substr(1).split("&");
+  const items = location.search.substr(1).split("&");
   for (let index = 0; index < items.length; index++) {
     tmp = items[index].split("=");
     if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
@@ -86,14 +86,14 @@ function _findGetParameter(parameterName) {
  * @returns {string|undefined}
  */
 function getParameterByName(name) {
-  var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+  var match = RegExp('[?&]' + name + '=([^&]*)').exec(location.search);
   return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 }
 
 module.exports = {
   parse,
   stringify,
-  
+
   _findGetParameter,
   getParameterByName,
 };

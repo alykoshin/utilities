@@ -10,7 +10,7 @@ chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
 chai.use(require('chai-arrays'));
 chai.use(require('chai-arrays'));
 
-const string = require('../lib/');
+const string = require('../src/');
 
 describe('@utilities/string', function () {
 

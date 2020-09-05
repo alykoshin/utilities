@@ -15,7 +15,7 @@ describe('@utilities/string/urlQuery', function () {
   let urlQuery;
 
   before('before', function () {
-    urlQuery = require('../lib/urlQuery');
+    urlQuery = require('../src/urlQuery');
   });
 
 
