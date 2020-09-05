@@ -46,11 +46,12 @@ describe('@utilities/string/urlQuery', function () {
 
     before('before', function () {
       if (typeof location !== 'undefined') throw new Error('Expect global location to be unassigned for this test');
-      location = { search: '' };
+      //location = { search: '' };
+      global.window = { location: { search: '' } };
     });
 
     after('after', function () {
-      delete location;
+      delete global.window.location;
     });
 
     it('is a function', function () {
@@ -58,7 +59,7 @@ describe('@utilities/string/urlQuery', function () {
     });
 
     it('simple check (only allowed symbols), with starting "?"', function () {
-      location.search = '?aaa=bbb&ccc=ddd';
+      global.window.location.search = '?aaa=bbb&ccc=ddd';
       const expected = 'bbb';
       const result = urlQuery._findGetParameter('aaa');
       expect(result).to.eql(expected);

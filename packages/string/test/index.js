@@ -1,6 +1,6 @@
 /* globals describe, before, beforeEach, after, afterEach, it */
 
-'use strict';
+//'use strict';
 
 const chai = require('chai');
 const assert = chai.assert;
