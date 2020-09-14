@@ -208,7 +208,7 @@ export class Jsonrpc extends EventEmitter2 {
     return this._transport.sendJson(response, cb);
   }
 
-//
+  //
 
   public async request(method: string, params: any, cb?: RequestCallback<SuccessResult,ErrorObject>): Promise<any> {
     this._debug('=> request', method, params);

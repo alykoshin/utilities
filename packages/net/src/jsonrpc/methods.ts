@@ -19,9 +19,9 @@ import {JSONRPC_VERSION} from './const'
 // data schemas
 
 import RequestSchema from './_schemas/Request.json';
-import RequestSchema_weak from './_schemas/Request_weak.json';
+// import RequestSchema_weak from './_schemas/Request_weak.json';
 import NotificationSchema from './_schemas/Notification.json';
-import ResponseSchema from './_schemas/Response.json';
+// import ResponseSchema from './_schemas/Response.json';
 import SuccessResponseSchema from './_schemas/SuccessResponse.json';
 import ErrorResponseSchema from './_schemas/ErrorResponse.json';
 import MessageSchema from './_schemas/Message.json';
@@ -97,7 +97,7 @@ const addValidatorSchema = (validator, Schema, schemaName) => {
 }
 
 addValidatorSchema(messageValidator, RequestSchema,         'Request.json');
-addValidatorSchema(messageValidator, RequestSchema_weak,         'Request_weak.json');
+// addValidatorSchema(messageValidator, RequestSchema_weak,         'Request_weak.json');
 addValidatorSchema(messageValidator, NotificationSchema,    'Notification.json');
 addValidatorSchema(messageValidator, SuccessResponseSchema, 'SuccessResponse.json');
 addValidatorSchema(messageValidator, ErrorResponseSchema,   'ErrorResponse.json');
