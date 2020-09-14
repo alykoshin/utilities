@@ -12,7 +12,7 @@ import {INTERNAL_ERROR_CODE, METHOD_NOT_FOUND_CODE} from './errors'
 
 import { Request, Id } from './_types/Request'
 import {Notification} from './_types/Notification'
-import {SuccessResponse} from './_types/SuccessResponse'
+import {SuccessResponse, SuccessResult} from './_types/SuccessResponse'
 import {ErrorResponse, ErrorObject} from './_types/ErrorResponse'
 
 import {
@@ -44,7 +44,7 @@ export class Jsonrpc extends EventEmitter2 {
   // protected requestors: {
   //   [id: string]: RequestData,
   // } = {}
-  protected _requestors: Requestors<Request,ErrorObject>
+  protected _requestors: Requestors<Request,SuccessResult,ErrorObject>
 
   constructor ({
                  transport,
@@ -173,7 +173,7 @@ export class Jsonrpc extends EventEmitter2 {
   }
 
 
-  protected async _request(request: Request, callback?: RequestCallback<Request,ErrorObject>): Promise<any> {
+  protected async _request(request: Request, callback?: RequestCallback<SuccessResult, ErrorObject>): Promise<any> {
     this._debug('=> _request', JSON.stringify(request,null,2));
     const id = request.id;
 
@@ -183,10 +183,16 @@ export class Jsonrpc extends EventEmitter2 {
 
     //
 
-    return new Promise((resolve: RequestPromiseResolve<Request>, reject: RequestPromiseReject<ErrorObject>) => {
+    return new Promise((resolve: RequestPromiseResolve<SuccessResult>, reject: RequestPromiseReject<ErrorObject>) => {
 
       // store request data
-      this._requestors.new({ id: id.toString(), request, resolve, reject, callback })
+      this._requestors.new({
+        id: id.toString(),
+        request,
+        resolve,
+        reject,
+        callback,
+      })
 
     })
   }
@@ -204,7 +210,7 @@ export class Jsonrpc extends EventEmitter2 {
 
 //
 
-  public async request(method: string, params: any, cb?: RequestCallback<Request,ErrorObject>): Promise<any> {
+  public async request(method: string, params: any, cb?: RequestCallback<SuccessResult,ErrorObject>): Promise<any> {
     this._debug('=> request', method, params);
     return this._request(
       createRequest({

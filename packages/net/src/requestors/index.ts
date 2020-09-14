@@ -3,21 +3,21 @@ import { Timer } from "@utilities/object";
 
 export const REQUEST_TIMEOUT = 5000
 
-import {INVALID_PARAMS_CODE} from "./jsonrpc/src/errors"
-import {ErrorObject} from "./jsonrpc/src/_types/ErrorResponse"
-import {Request} from "./jsonrpc/src/_types/Request"
-import {NodeJSError} from './errors'
+// import {INVALID_PARAMS_CODE} from "./jsonrpc/src/errors"
+// import {ErrorObject} from "./jsonrpc/src/_types/ErrorResponse"
+import {Request} from "../jsonrpc"
+// import {NodeJSError} from './errors'
 
 
 export type RequestPromiseResolve<ResultType> = (result: ResultType) => void;
 export type RequestPromiseReject<ErrorType>  = (error: ErrorType) => void;
 export type RequestCallback<ResultType,ErrorType> = (error: ErrorType, result: ResultType) => void
 
-export type RequestTimeoutParentCallback<ResultType,ErrorType> = (id: string, requestor: Requestor<ResultType,ErrorType>)=>void
+export type RequestTimeoutParentCallback<Request,ResultType,ErrorType> = (id: string, requestor: Requestor<Request,ResultType,ErrorType>)=>void
 
 const debug = Debug('requestor');
 
-export class Requestor<ResultType,ErrorType> {
+export class Requestor<Request,ResultType,ErrorType> {
   _id:       string
   _request:  Request
   // timeout: Timeout
@@ -25,7 +25,7 @@ export class Requestor<ResultType,ErrorType> {
   _resolve:  RequestPromiseResolve<ResultType>
   _reject:   RequestPromiseReject<ErrorType>
   _callback: RequestCallback<ResultType,ErrorType> // GenericNodejsCallback
-  _onRequestTimeoutParent: RequestTimeoutParentCallback<ResultType,ErrorType>
+  _onRequestTimeoutParent: RequestTimeoutParentCallback<Request,ResultType,ErrorType>
   _timeoutError: ErrorType
 
   constructor({
@@ -46,7 +46,7 @@ export class Requestor<ResultType,ErrorType> {
     resolve: RequestPromiseResolve<ResultType>,
     reject: RequestPromiseReject<ErrorType>,
     callback?: RequestCallback<ResultType,ErrorType>,
-    onRequestTimeoutParent: RequestTimeoutParentCallback<ResultType,ErrorType>,
+    onRequestTimeoutParent: RequestTimeoutParentCallback<Request,ResultType,ErrorType>,
 
     timeout?: number,
     timeoutError: ErrorType
@@ -103,11 +103,11 @@ export class Requestor<ResultType,ErrorType> {
 }
 
 
-export class Requestors<ResultType,ErrorType> {
+export class Requestors<Request,ResultType,ErrorType> {
   protected _debug: Debug
   protected _timeoutError: ErrorType
   protected _requestors: {
-    [id: string]: Requestor<ResultType,ErrorType>,
+    [id: string]: Requestor<Request,ResultType,ErrorType>,
   } = {}
 
   constructor({ timeoutError }: { timeoutError: ErrorType }) {
@@ -181,11 +181,11 @@ export class Requestors<ResultType,ErrorType> {
     return this._add(id, requestor);
   }
 
-  protected onRequestTimeout(id: string, requestor: Requestor<ResultType,ErrorType>): void {
+  protected onRequestTimeout(id: string, requestor: Requestor<Request,ResultType,ErrorType>): void {
     this.remove(id);
   }
 
-  protected _add(id, requestor: Requestor<ResultType,ErrorType>): Requestor<ResultType,ErrorType> {
+  protected _add(id, requestor: Requestor<Request,ResultType,ErrorType>): Requestor<Request,ResultType,ErrorType> {
     this._requestors[id] = requestor;
     return requestor;
   }
@@ -197,7 +197,7 @@ export class Requestors<ResultType,ErrorType> {
     }
   }
 
-  public get(id: string): Requestor<ResultType,ErrorType> {
+  public get(id: string): Requestor<Request,ResultType,ErrorType> {
     const requestor = this._requestors[id];
     if (requestor) {
       return requestor;
@@ -208,11 +208,12 @@ export class Requestors<ResultType,ErrorType> {
   }
 
   protected handleRequestNotFound(id) {
-    const code = INVALID_PARAMS_CODE;
     const msg = 'Invalid id';
-    // const error = new Error(msg);
-    // error.code = code;
-    this._debug(`ERROR ${code} "${msg}", id: "${id}"`);
+    // const code = INVALID_PARAMS_CODE;
+    // // const error = new Error(msg);
+    // // error.code = code;
+    // this._debug(`ERROR ${code} "${msg}", id: "${id}"`);
+    this._debug(`ERROR "${msg}", id: "${id}"`);
   }
 
   public respondSuccess(id, result) {
