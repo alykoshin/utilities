@@ -5,7 +5,6 @@
 //
 
 import * as util from 'util';
-import {EventEmitter2} from "eventemitter2";
 
 import _ from 'lodash';
 import Debug from 'debug';

@@ -21,10 +21,9 @@ import {
 } from './methods'
 
 
-
 export interface GenericNodejsCallback { (error: Error|undefined, ...result: any[]): any }
 
-import { Requestors, Requestor, RequestPromiseResolve, RequestPromiseReject, RequestCallback, REQUEST_TIMEOUT } from '../../requestors'
+import { Requestors, Requestor, RequestPromiseResolve, RequestPromiseReject, RequestCallback, REQUEST_TIMEOUT } from '../requestors'
 
 
 export interface JsonrpcTransport extends EventEmitter2 {
