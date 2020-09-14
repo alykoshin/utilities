@@ -91,7 +91,7 @@ export class Responder {
     debug(`_respond`);
     this._clearTimers();
     if (this.done) {
-      this.data.push(null);
+      this.data.push(null); // null means end of data
       this.finished = true;
     }
 

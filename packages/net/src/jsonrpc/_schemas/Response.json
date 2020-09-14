@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/jsonrpc/Response.json",
+  "type": "object",
+  "title": "Response",
+  "required": [
+    "jsonrpc",
+    "id"
+  ],
+  "oneOf": [
+    {"required": ["result"], "not":{"required":["error"]}},
+    {"required": ["error"], "not":{"required":["result"]}}
+  ],
+  "additionalProperties": false,
+  "definitions": {
+  },
+  "properties": {
+    "jsonrpc": {
+      "$ref": "Request.json#/properties/jsonrpc"
+    },
+    "oneOf": {
+      "result": {
+        "description": "This member is REQUIRED on success.\nThis member MUST NOT exist if there was an error invoking the method.\nThe value of this member is determined by the method invoked on the Server."
+      },
+      "error": {
+        "type": "object",
+        "description": "This member is REQUIRED on error.\nThis member MUST NOT exist if there was no error triggered during invocation.\nThe value for this member MUST be an Object as defined in section 5.1. \nWhen a rpc call encounters an error, the Response Object MUST contain the error member with a value that is a Object with the following members:",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "A Number that indicates the error type that occurred.\nThis MUST be an integer."
+          },
+          "message": {
+            "type": "string",
+            "description": "A String providing a short description of the error.\nThe message SHOULD be limited to a concise single sentence."
+          },
+          "data": {
+            "oneOf": [
+              { "$ref": "Request.json#/definitions/PrimitiveValue"},
+              { "$ref": "Request.json#/definitions/StructuredValue"}
+            ],
+            "description": "A Primitive or Structured value that contains additional information about the error.\nThis may be omitted.\nThe value of this member is defined by the Server (e.g. detailed error information, nested errors etc.)."
+          }
+        }
+      }
+    },
+    "id": {
+      "$ref": "Request.json#/definitions/Id",
+      "description": "This member is REQUIRED.\nIt MUST be the same as the value of the id member in the Request Object.\nIf there was an error in detecting the id in the Request object (e.g. Parse error/Invalid Request), it MUST be Null."
+    }
+  }
+}

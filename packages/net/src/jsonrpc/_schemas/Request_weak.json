@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/jsonrpc/Request_weak.json",
+  "type": "object",
+  "title": "Request_weak",
+  "required": [
+    "jsonrpc",
+    "method"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "PrimitiveValue": {
+      "title": "PrimitiveValue",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "type": "null" }
+      ],
+      "description": "JSON can represent four primitive types (Strings, Numbers, Booleans, and Null) and two structured types (Objects and Arrays). The term \"Primitive\" in this specification references any of those four primitive JSON types."
+    },
+    "StructuredValue": {
+      "title": "StructuredValue",
+      "oneOf": [
+        { "type": "object" },
+        { "type": "array" },
+        { "type": "null" }
+      ],
+      "description": "Workaround to allow null in incoming request.\n\nJSON can represent four primitive types (Strings, Numbers, Booleans, and Null) and two structured types (Objects and Arrays). The term \"Structured\" references either of the structured JSON types."
+    },
+    "JSONRPCVersion": {
+        "type": "string",
+        "const": "2.0",
+        "description": "A String specifying the version of the JSON-RPC protocol. MUST be exactly \"2.0\"."
+    },
+    "Id": {
+      "oneOf": [
+        { "type": "string"},
+        { "type": "number"},
+        { "type": "null"}
+      ],
+      "description": "An identifier established by the Client that MUST contain a String, Number, or NULL value if included. If it is not included it is assumed to be a notification.\nThe Server MUST reply with the same value in the Response object if included. This member is used to correlate the context between the two objects.\n[1] The use of Null as a value for the id member in a Request object is discouraged, because this specification uses a value of Null for Responses with an unknown id. Also, because JSON-RPC 1.0 uses an id value of Null for Notifications this could cause confusion in handling.\n[2] Fractional parts may be problematic, since many decimal fractions cannot be represented exactly as binary fractions."
+    }
+  },
+  "properties": {
+    "jsonrpc": {
+      "$ref": "#/definitions/JSONRPCVersion"
+    },
+    "method": {
+      "type": "string",
+      "description": "A String containing the name of the method to be invoked. Method names that begin with the word rpc followed by a period character (U+002E or ASCII 46) are reserved for rpc-internal methods and extensions and MUST NOT be used for anything else.",
+      "pattern": "^(?!rpc\\.).*$"
+    },
+    "params": {
+      "$ref": "#/definitions/StructuredValue",
+      "description": "A Structured value that holds the parameter values to be used during the invocation of the method. This member MAY be omitted."
+    },
+    "id": {
+      "$ref": "#/definitions/Id"
+    }
+  }
+}

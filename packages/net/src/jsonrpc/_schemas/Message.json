@@ -1,0 +1,18 @@
+{
+  "anyOf": [
+    {
+      "type": "object",
+      "title": "Request",
+      "$ref": "Request.json"
+    },
+    {
+      "$ref": "./Notification.json"
+    },
+    {
+      "$ref": "./SuccessResponse.json"
+    },
+    {
+      "$ref": "./ErrorResponse.json"
+    }
+  ]
+}

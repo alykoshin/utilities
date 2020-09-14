@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/jsonrpc/SuccessResponse.json",
+  "type": "object",
+  "title": "SuccessResponse",
+  "required": [
+    "jsonrpc",
+    "result",
+    "id"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+  },
+  "properties": {
+    "jsonrpc": {
+      "$ref": "Request.json#/properties/jsonrpc"
+    },
+    "result": {
+      "description": "This member is REQUIRED on success.\nThis member MUST NOT exist if there was an error invoking the method.\nThe value of this member is determined by the method invoked on the Server."
+    },
+    "id": {
+      "$ref": "Request.json#/definitions/Id",
+      "description": "This member is REQUIRED.\nIt MUST be the same as the value of the id member in the Request Object.\nIf there was an error in detecting the id in the Request object (e.g. Parse error/Invalid Request), it MUST be Null."
+    }
+  }
+}

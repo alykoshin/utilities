@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/jsonrpc/Notification.json",
+  "type": "object",
+  "title": "Notification",
+  "required": [
+    "jsonrpc",
+    "method"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+  },
+  "properties": {
+    "jsonrpc": {
+      "$ref": "Request.json#/properties/jsonrpc"
+    },
+    "method": {
+      "$ref": "Request.json#/properties/method"
+    },
+    "params": {
+      "$ref": "Request.json#/properties/params"
+    }
+  }
+}
