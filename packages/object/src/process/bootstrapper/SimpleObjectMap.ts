@@ -46,7 +46,7 @@ export class SimpleObjectMap {
     return !!this._get(name);
   }
 
-  public add(name: string, data: any): {name: string, data: any} {
+  protected _addNamedData(name: string, data: any): {name: string, data: any} {
     // add(name, data) {
     this._ensureNotExist(name);
     this._set(name, data);

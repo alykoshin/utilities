@@ -41,7 +41,7 @@ type InputHandlerSingleArgument = HandlerName | HandlerFn | DependsOn;
 type InputHandlerArguments      = InputHandlerSingleArgument[];
 
 
-const DEFAULT_TIMEOUT     = 30000;
+const DEFAULT_TIMEOUT     = 30*1000;
 const DEFAULT_ACTION_NAME = 'run';
 
 
@@ -77,7 +77,7 @@ type HandlerMapDataOnly = {
 }
 
 interface HandlerMapDataWithFn {
-  fn: HandlerFn
+  fn?: HandlerFn
   [key: string]: any
 }
 
@@ -88,7 +88,7 @@ interface HandlerMapDataInternal {
 
 export class NameToHandlerWithDataMap extends SimpleObjectMap {
 
-  add (
+  _addNamedHandler (
     origName: HandlerName,
     { fn, ...data }: HandlerMapDataWithFn
   ): HandlerMapDataInternal {
@@ -96,19 +96,20 @@ export class NameToHandlerWithDataMap extends SimpleObjectMap {
     // sanitize and check name
     const name = (typeof origName === 'undefined')
       ? joinNonEmpty([
-          fn && fn.name || 'temp',
+          fn?.name ?? 'temp',
           _.uniqueId(),
         ],
         '_'
       )
       : origName;
+
     assert(typeof name === 'string', 'Name must be string');
 
     // sanitize and check fn
     assert(['function','undefined'].indexOf(typeof fn)>=0 ,'must be function or undefined');
 
     // store
-    return super.add(name, { fn, ...data });
+    return super._addNamedData(name, { fn, ...data });
   }
 
   async _executeHandler (name: HandlerName, ...args: any[]): Promise<any> {
@@ -149,7 +150,7 @@ export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
 
     dependsOn = sanitizeArray(dependsOn);
 
-    return super.add(name, {
+    return super._addNamedHandler(name, {
       fn,
       dependsOn,
       state: 'init',
@@ -172,8 +173,8 @@ export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
   }
 
 
-  // @ts-ignore:
-  add (...argHandlers: InputHandlerSingleArgument[]|HandlerDataPartial[]): NamedHandlerInternalStructure|NamedHandlerInternalStructure[] {
+  // @ts--ignore:
+  add (...argHandlers: (InputHandlerSingleArgument | HandlerDataPartial)[]): NamedHandlerInternalStructure | NamedHandlerInternalStructure[] {
     //console.log('>>>>>>>>>>>>> add: argHandlers:', argHandlers);
     if ( argHandlers.length === 1 && Array.isArray(argHandlers[0]) ) {
       const results: NamedHandlerInternalStructure[] = [];

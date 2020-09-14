@@ -19,7 +19,7 @@
     "strictNullChecks": false,
     "outDir": "./dist",
     //    "rootDir": "./",
-    "baseUrl": ".",
+    "baseUrl": "."
     //    "paths": {
     //      "modules": ["../../modules"],
     //      "lib-shared": ["../../lib-shared"]

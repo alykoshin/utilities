@@ -144,12 +144,12 @@ if (module === require.main) {
     //x.add('a', ['b','c','d'], (name, handler) => { console.log(`Entered a-"${name}" handler: ${JSON.stringify(handler)}`); })
     x.add('a', ['b','c','d'], createTestActionFn(/*.call({xxx:'yyy'}, */'a'));
 
-    x.add('b', [], createTestActionFn('b') );
-    x.add('c', ['e','f'], createTestActionFn('c') );
-    x.add('d', [], createTestActionFn('d') );
+    x.add('b', [],            createTestActionFn('b') );
+    x.add('c', ['e','f'],     createTestActionFn('c') );
+    x.add('d', [],            createTestActionFn('d') );
 
-    x.add('e', [], createTestActionFn('e') );
-    x.add('f', ['e'], createTestActionFn('f') );
+    x.add('e', [],            createTestActionFn('e') );
+    x.add('f', ['e'],         createTestActionFn('f') );
     //x.add('g', [], createTestActionFn('g') )
     x.addTo('d', 'g', [], createTestActionFn('g') );
 

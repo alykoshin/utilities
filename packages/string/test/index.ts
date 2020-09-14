@@ -18,6 +18,7 @@ describe('@utilities/string', function () {
   });
 
   describe('lpad', function () {
+
     it('is a function', function () {
       assert(typeof string.lpad === 'function', 'Expect function');
     });
@@ -66,6 +67,7 @@ describe('@utilities/string', function () {
 
 
   describe('rpad', function () {
+
     it('is a function', function () {
       assert(typeof string.rpad === 'function', 'Expect function');
     });
@@ -93,6 +95,7 @@ describe('@utilities/string', function () {
       const result = string.rpad(s, 10, c);
       expect(result).to.be.equals(expected);
     });
+
   });
 
 
@@ -163,10 +166,12 @@ describe('@utilities/string', function () {
       const result = string.splitQuoted(data);
       expect(result).to.be.equalTo(expected);
     });
+
   });
 
 
   describe('replaceEol', function () {
+
     it('must be a function', function () {
       expect(string.replaceEol).to.be.a('function');
     });
@@ -186,10 +191,12 @@ describe('@utilities/string', function () {
       const result = string.replaceEol(s, replacement);
       expect(result).to.be.equal(expected);
     });
+
   });
 
 
   describe('replaceEolWithBr', function () {
+
     it('must be a function', function () {
       expect(string.replaceEolWithBr).to.be.a('function');
     });
@@ -248,10 +255,12 @@ describe('@utilities/string', function () {
       const result = string.routeTemplate(template, context);
       expect(result).to.be.equal(expected);
     });
+
   });
 
 
   describe('addfix', function () {
+
     it('must be function', function(){
       expect(string.addfix).to.be.a('function');
     });
@@ -279,24 +288,35 @@ describe('@utilities/string', function () {
       const result = 'www.text';
       expect(string.addfix(s, {prefix, suffix})).to.be.equal(result);
     });
+
   });
 
 
   describe('joinNonEmpty', function () {
+
     it('must be function', function () {
       expect(string.joinNonEmpty).to.be.a('function');
     });
 
-    it('@joinNonEmpty', function () {
+    it('@joinNonEmpty - default delimiter', function () {
+      const delimiter = '.';
       const arrayOfStrings = ['RABBIT', 'BIRD'];
-      const result = 'RABBIT.BIRD';
+      const result = arrayOfStrings[0] + delimiter + arrayOfStrings[1];
       expect(string.joinNonEmpty(arrayOfStrings)).to.be.equal(result);
+    });
+
+    it('@joinNonEmpty - set specific delimiter', function () {
+      const delimiter = '_';
+      const arrayOfStrings = ['RABBIT', 'BIRD'];
+      const result = arrayOfStrings[0] + delimiter + arrayOfStrings[1];
+      expect(string.joinNonEmpty(arrayOfStrings,delimiter)).to.be.equal(result);
     });
 
   });
 
 
   describe('defaultTemplate', function () {
+
     it('is a function', function () {
       expect(string.defaultTemplate).to.be.a('function');
     });
@@ -315,6 +335,7 @@ describe('@utilities/string', function () {
 
 
   describe('id_unique_13', function () {
+
     it('is a function', function () {
       expect(string.id_unique_13).to.be.a('function');
     });
@@ -347,6 +368,7 @@ describe('@utilities/string', function () {
 
 
   describe('shorten', function () {
+
     it('is a function', function () {
       expect(string.shorten).to.be.a('function');
     });

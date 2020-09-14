@@ -67,7 +67,7 @@
     "debug": "^4.2.0",
     "eventemitter2": "^6.4.3",
     "express": "^4.17.1",
-    "json2ts": "0.0.7",
+    "json-schema-to-typescript": "^9.1.1",
     "lodash": "^4.17.20",
     "mkdirp": "^1.0.4"
   },

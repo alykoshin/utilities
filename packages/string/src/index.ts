@@ -4,31 +4,31 @@ const _ = require('lodash');
 const urlQuery = require('./urlQuery');
 
 
-const repeat = (c, len) => {
+const repeat = (c: string, len: number) => {
   return lpad('', len, c);
 };
 
 
-const lpad = (s, size, c) => {
-  c = c || ' ';
+const lpad = (s: string, size: number, c: string = ' ') => {
+  // c = c || ' ';
   if (c.length > 1)  console.warn('lpad expects one padding character');
   while (s.length < size) s = c + s;
   return s;
 };
 
 
-const rpad = (s, size, c) => {
-  c = c || ' ';
+const rpad = (s: string, size: number, c: string = ' ') => {
+  // c = c || ' ';
   if (c.length > 1) console.warn('rpad expects one padding character');
   while (s.length < size) s = s + c;
   return s;
 };
 
 
-const lpadZeros = (num, size) => lpad(num+"", size, '0');
+const lpadZeros = (num: number, size: number): string => lpad(num+"", size, '0');
 
 
-function splitQuoted(s) {
+function splitQuoted(s: string): string[] {
   if (typeof s !== 'string') throw new Error('Expected string');
   return s
     .match(/\\?.|^$/g) // split to chars, consider \" as single char
@@ -55,20 +55,20 @@ function splitQuoted(s) {
 }
 
 
-const replaceEol = (s='', replacement='') => {
+const replaceEol = (s: string='', replacement: string=''): string => {
   const re = /(?:\r\n|\r|\n)/g;
   return s.replace(re, replacement);
 };
 
 
-const replaceEolWithBr = (s='') => {
+const replaceEolWithBr = (s: string=''): string => {
   return replaceEol(s, '<br/>');
 };
 
 
-const defaultTemplate = (tmpl, context, options) => {
+const defaultTemplate = (tmpl: string, context: object, options): string => {
   try {
-    const compiled = _.template(tmpl, options);
+    const compiled: (object)=>string = _.template(tmpl, options);
     return compiled(context);
 
   } catch(e) {
@@ -79,7 +79,7 @@ const defaultTemplate = (tmpl, context, options) => {
 };
 
 
-const customTemplate = (tmpl, context, re) => {
+const customTemplate = (tmpl, context: object, re: RegExp): string => {
   const saved = _.templateSettings.evaluate;
   _.templateSettings.evaluate = re;
 
@@ -99,19 +99,19 @@ const customTemplate = (tmpl, context, re) => {
 };
 
 
-const literalTemplate = (tmpl, context) => {
+const literalTemplate = (tmpl, context): string => {
   const re = /\${([\s\S]+?)}/g;
   return customTemplate(tmpl, context, re);
 };
 
 
-const routeTemplate = (route, values) => {
+const routeTemplate = (route, values): string => {
   const re = /:([^\/]+)/g;
   return customTemplate(route, values, re);
 };
 
 
-const addfix = (s, { prefix='', delimiter='.', suffix=''}) => {
+const addfix = (s:string, { prefix='', delimiter='.', suffix=''}: { prefix:string, delimiter:string, suffix:string}): string => {
   return (
     (prefix ? prefix+delimiter : '') +
     s +
@@ -120,14 +120,14 @@ const addfix = (s, { prefix='', delimiter='.', suffix=''}) => {
 };
 
 
-const joinNonEmpty = (arrayOfStrings, delimiter='.') => {
+const joinNonEmpty = (arrayOfStrings: string[], delimiter: string='.'): string => {
   return arrayOfStrings
     .filter(s => !!s)
     .join(delimiter);
 };
 
 
-function generateUUID(){
+function generateUUID(): string {
   var d = new Date().getTime();
   var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = (d + Math.random()*16)%16 | 0;
@@ -140,7 +140,7 @@ function generateUUID(){
 /**
  * https://gist.github.com/gordonbrander/2230317#gistcomment-1175717
  */
-function id_unique_13() {
+function id_unique_13(): string {
   return (Date.now().toString(36) + Math.random().toString(36).substr(2, 5)).toUpperCase()
 }
 
@@ -152,11 +152,11 @@ const SHORTEN_MAX_GREATER = 5;
  * Limit string length by replacing middle part of it with ellipsys
  *
  *
- * @param {string}  s        - original string
+ * @param {string}  s          - original string
  * @param {number}  [max=1024] - Maximum result string length (>5)
  * @result {string}
  */
-function shorten(s, max=SHORTEN_MAX_STR_LEN) {
+function shorten(s: string, max: number=SHORTEN_MAX_STR_LEN): string {
   // options.body.data may be huge; we need to shorten it when printing
   if (typeof s !== 'string') return s;// = JSON.stringify(s);
 
