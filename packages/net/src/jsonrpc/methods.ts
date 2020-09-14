@@ -49,72 +49,86 @@ type MessageType = typeof messageTypes[number];
 
 //
 
-async function loadSchema(uri): Promise<any> {
-  //return request.json(uri).then(function (res) {
-  //  if (res.statusCode >= 400)
-  //    throw new Error('Loading error: ' + res.statusCode);
-  //  return res.body;
-  //});
-  console.log('>>>>>>>>>>>>>>>> loadSchema',uri)
-}
-// const validator = new Ajv({ useDefaults: true, allErrors: true, loadSchema });
-const messageValidator = new Ajv({ /*removeAdditional: true,*/ useDefaults: true, allErrors: true, loadSchema });
+const initValidator = () => {
 
-// const MessageSchema  = {
-//     allOf: [
-//       RequestSchema,
-//       NotificationSchema,
-//       SuccessResponseSchema,
-//       ErrorResponseSchema,
-//     ],
-//   };
-
-// const MessageSchema = {
-//   "$merge": {
-//     "source": {
-//       "type": "object",
-//       "properties": { "p": { "type": "string" } },
-//       "additionalProperties": false
-//     },
-//     "with": {
-//       "properties": { "q": { "type": "number" } }
-//     }
-//   }
-// }
-// AjvImportPatch(messageValidator);
-
-const addValidatorSchema = (validator, Schema, schemaName) => {
-  if (validator.getSchema(schemaName)) {
-    throw new Error(`Schema "${schemaName}" already added`);
+  async function loadSchema(uri): Promise<any> {
+    //return request.json(uri).then(function (res) {
+    //  if (res.statusCode >= 400)
+    //    throw new Error('Loading error: ' + res.statusCode);
+    //  return res.body;
+    //});
+    console.log('>>>>>>>>>>>>>>>> loadSchema', uri)
   }
+
+  // const validator = new Ajv({ useDefaults: true, allErrors: true, loadSchema });
+  const messageValidator = new Ajv({ /*removeAdditional: true,*/ useDefaults: true, allErrors: true, loadSchema});
+
+  // const MessageSchema  = {
+  //     allOf: [
+  //       RequestSchema,
+  //       NotificationSchema,
+  //       SuccessResponseSchema,
+  //       ErrorResponseSchema,
+  //     ],
+  //   };
+
+  // const MessageSchema = {
+  //   "$merge": {
+  //     "source": {
+  //       "type": "object",
+  //       "properties": { "p": { "type": "string" } },
+  //       "additionalProperties": false
+  //     },
+  //     "with": {
+  //       "properties": { "q": { "type": "number" } }
+  //     }
+  //   }
+  // }
+  // AjvImportPatch(messageValidator);
+
+  const addValidatorSchema = (validator, Schema, schemaName) => {
+    if (validator.getSchema(schemaName)) {
+      throw new Error(`Schema "${schemaName}" already added`);
+    }
+    try {
+      messageValidator.addSchema(Schema, schemaName);
+    } catch (e) {
+      e.message += `; Error trying to add validator schema; schemaName: ${schemaName}`;
+      console.error(e);
+      throw e;
+    }
+  }
+
+  const internalValidate = (schemaName: string, data) => {
+    try {
+      return messageValidator.validate(schemaName, data);
+    } catch (e) {
+      e.message += `__checkProps: schemaName: ${schemaName}`;
+      console.error(e);
+      throw e;
+    }
+  };
+
   try {
-    messageValidator.addSchema(Schema, schemaName);
-  } catch (e) {
-    e.message += `; Error trying to add validator schema; schemaName: ${schemaName}`;
-    console.error(e);
+    addValidatorSchema(messageValidator, RequestSchema, 'Request.json');
+    // addValidatorSchema(messageValidator, RequestSchema_weak,         'Request_weak.json');
+    addValidatorSchema(messageValidator, NotificationSchema, 'Notification.json');
+    addValidatorSchema(messageValidator, SuccessResponseSchema, 'SuccessResponse.json');
+    addValidatorSchema(messageValidator, ErrorResponseSchema, 'ErrorResponse.json');
+    addValidatorSchema(messageValidator, MessageSchema, 'Message.json');
+  } catch(e) {
+    console.error('ERROR:', e);
     throw e;
   }
+
+  return messageValidator;
+
 }
-
-addValidatorSchema(messageValidator, RequestSchema,         'Request.json');
-// addValidatorSchema(messageValidator, RequestSchema_weak,         'Request_weak.json');
-addValidatorSchema(messageValidator, NotificationSchema,    'Notification.json');
-addValidatorSchema(messageValidator, SuccessResponseSchema, 'SuccessResponse.json');
-addValidatorSchema(messageValidator, ErrorResponseSchema,   'ErrorResponse.json');
-addValidatorSchema(messageValidator, MessageSchema,   'Message.json');
-
-const internalValidate = ( schemaName, data ) => {
-  try {
-    return  messageValidator.validate(schemaName, data);
-  } catch (e) {
-    e.message += `__checkProps: schemaName: ${schemaName}`;
-    console.error(e);
-    throw e;
-  }
-};
+const messageValidator = initValidator();
 
 
 //
+
 
 export const generateId = (prefix?: string): string => {
   return _.uniqueId(prefix);

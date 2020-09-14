@@ -1,0 +1,62 @@
+/* globals describe, before, beforeEach, after, afterEach, it */
+
+'use strict';
+
+const chai = require('chai');
+const assert = chai.assert;
+const expect = chai.expect;
+chai.should();
+//chai.use(require('chai-things')); //http://chaijs.com/plugins/chai-things
+//chai.use(require('chai-arrays'));
+
+// const _ = require('lodash');
+// const path = require('path');
+// const mkdirp = require('mkdirp');
+
+// const baseTestDir = path.join(process.cwd(), 'test-data');
+
+// const {replaceEol} = require('@utilities/string');
+
+// import {
+const {
+  createRequest,
+  createNotification,
+  createSuccessResponse,
+  createErrorResponse,
+  processMessage,
+ } = require('../../src/jsonrpc/methods');
+// } from '../../src/jsonrpc/methods';
+
+
+describe('@utilities/net/jsonrpc/methods', () => {
+  // let methods;
+  //
+  // before('before', () => {
+  //   methods = require('../../src/jsonrpc/methods');
+  // });
+
+
+  describe('createRequest', () => {
+
+      it('is a function', () => {
+        // assert(typeof createRequest === 'function', 'Expect function');
+      });
+
+
+    it('create', () => {
+      // const jsonrpc = '2.0';
+      // const method = 'test-method';
+      // const params = {};
+      // const result = createRequest({ method, params });
+      // const expected = {
+      //   jsonrpc,
+      //   method,
+      //   params,
+      // };
+      // expect( result ).to.deep.include(expected);
+      // expect( result.id ).to.be('string');
+    });
+
+  });
+
+});

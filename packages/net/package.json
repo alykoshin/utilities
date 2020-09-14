@@ -1,6 +1,6 @@
 {
   "name": "@utilities/net",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Set of misc utilities for networking",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,7 +20,8 @@
     "inspect": "jsinspect --ignore 'coverage|test|dist'",
     "pretest": "npm run lint && npm run inspect && npm run _npm-audit && npm run _deps-check",
     "_test": "npm run _test-coverage && npm run _test-report",
-    "_test-coverage": "nyc ./node_modules/ts-mocha/bin/ts-mocha -- -R spec ./test/*",
+    "_test-no-coverage": "./node_modules/ts-mocha/bin/ts-mocha --recursive --reporter spec './test/**/*.{js,ts}'",
+    "_test-coverage": "nyc ./node_modules/.bin/ts-mocha -- --recursive --reporter spec './test/**/*.{js,ts}'",
     "_test-report": "nyc report --reporter=html && nyc report --reporter=text-lcov > coverage/coverage.lcov",
     "__test": "npm run _test",
     "test": "echo \"Warning: no test specified\" && exit 0",
@@ -40,8 +41,10 @@
     "travis-before-script": "",
     "travis-script": "npm run test",
     "travis-after-script": "npm run _coveralls",
-    "build": "node_modules/.bin/tsc",
+    "build": "npm run clean:dist && npm run build:typescript && npm run copy:dts",
+    "build:typescript": "node_modules/.bin/tsc",
     "clean:dist": "rm -rf dist/*",
+    "copy:dts": "cp -r \"./src/jsonrpc/_types\" ./dist/jsonrpc/_types",
     "prepare": "npm run build"
   },
   "keywords": [
@@ -73,8 +76,8 @@
   },
   "devDependencies": {
     "@types/mocha": "^8.0.3",
-    "@typescript-eslint/eslint-plugin": "^4.1.0",
-    "@typescript-eslint/parser": "^4.1.0",
+    "@typescript-eslint/eslint-plugin": "^4.1.1",
+    "@typescript-eslint/parser": "^4.1.1",
     "chai": "^4.2.0",
     "chai-arrays": "^2.2.0",
     "chai-things": "^0.2.0",

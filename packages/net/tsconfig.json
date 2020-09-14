@@ -1,17 +1,22 @@
 {
+  "ts-node": {
+    "files": true
+  },
   "compilerOptions": {
     "moduleResolution": "node",
     "module": "commonjs",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "allowJs": false,
+    "allowJs": true,
     "checkJs": false,
     "noEmitOnError": false,
     //    "target": "es2018",
     "target": "esnext",
-    "sourceMap": true,
-    "noImplicitAny": false,
     "declaration": true,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "sourceMap": true,
+        "allowSyntheticDefaultImports": true,
     "strict": true,
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
@@ -33,7 +38,8 @@
   "exclude": [
     "**/node_modules/*",
     "**/test/*",
-    "/dist"
+    "/dist",
+    "test/"
   ],
   "references": [
   ]

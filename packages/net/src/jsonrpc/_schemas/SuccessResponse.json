@@ -16,7 +16,10 @@
       "$ref": "Request.json#/properties/jsonrpc"
     },
     "result": {
-      "type": "any",
+      "oneOf": [
+        { "$ref": "Request.json#/definitions/PrimitiveValue" },
+        { "$ref": "Request.json#/definitions/StructuredValue" }
+      ],
       "title": "SuccessResult",
       "description": "This member is REQUIRED on success.\nThis member MUST NOT exist if there was an error invoking the method.\nThe value of this member is determined by the method invoked on the Server."
     },
