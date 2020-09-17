@@ -67,6 +67,7 @@
     "@utilities/fs": "^0.2.16",
     "@utilities/object": "^0.3.15",
     "@utilities/string": "^0.1.1",
+    "ajv": "^6.12.5",
     "debug": "^4.2.0",
     "eventemitter2": "^6.4.3",
     "express": "^4.17.1",
