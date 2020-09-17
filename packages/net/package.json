@@ -1,6 +1,6 @@
 {
   "name": "@utilities/net",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Set of misc utilities for networking",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -61,7 +61,7 @@
   },
   "homepage": "https://github.com/alykoshin/@utilities",
   "dependencies": {
-    "@types/node": "^14.10.1",
+    "@types/node": "^14.10.3",
     "@utilities/array": "^0.1.0",
     "@utilities/async": "^0.2.0",
     "@utilities/fs": "^0.2.16",
