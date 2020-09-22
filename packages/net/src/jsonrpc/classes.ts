@@ -82,8 +82,8 @@ export class Jsonrpc extends EventEmitter2 {
       switch (messageType) {
         case 'request': return this.onRequest(<Request> parsed);
         case 'notification': return this.onNotification(<Notification> parsed);
-        case 'errorResponse': return this.onErrorResponse(<ErrorResponse> parsed);
-        case 'successResponse': return this.onSuccessResponse(<SuccessResponse> parsed);
+        case 'response.error': return this.onErrorResponse(<ErrorResponse> parsed);
+        case 'response.success': return this.onSuccessResponse(<SuccessResponse> parsed);
         default: throw new Error('Invalid message type');
       }
 
@@ -112,7 +112,7 @@ export class Jsonrpc extends EventEmitter2 {
     try {
       await this._emitEvent(notification.method, notification.params, notification);
     } catch(error) {
-      this._debug('onRequest >>> errorResponse', error)
+      this._debug('onRequest >>> response.error', error)
       await this.errorResponse(notification, error);
       return;
     }
@@ -161,7 +161,7 @@ export class Jsonrpc extends EventEmitter2 {
       return this.successResponse(request, emitResult);
 
     } catch(error) {
-      this._debug('onRequest >>> errorResponse', error)
+      this._debug('onRequest >>> response.error', error)
       return this.errorResponse(request, error);
 
     }

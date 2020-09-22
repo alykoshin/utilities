@@ -42,8 +42,8 @@ export type Message = Request | Notification | ErrorResponse | SuccessResponse;
 const messageTypes = [
   'request',
   'notification',
-  'errorResponse',
-  'successResponse',
+  'response.error',
+  'response.success',
 ] as const;
 type MessageType = typeof messageTypes[number];
 
@@ -57,7 +57,7 @@ const initValidator = () => {
     //    throw new Error('Loading error: ' + res.statusCode);
     //  return res.body;
     //});
-    console.log('>>>>>>>>>>>>>>>> loadSchema', uri)
+    // console.log('>>>>>>>>>>>>>>>> loadSchema', uri)
   }
 
   // const validator = new Ajv({ useDefaults: true, allErrors: true, loadSchema });
@@ -262,19 +262,19 @@ export const getMessageType = (message: Object): MessageType => {
   if ('method' in message) {
     if ('id' in message) return 'request';
     else return 'notification';
-  } else if ('result' in message) return 'successResponse';
-  else if ('error' in message) return 'errorResponse'
+  } else if ('result' in message) return 'response.success';
+  else if ('error' in message) return 'response.error'
   else throw new Error('Invalid Message Type');
 }
 
 export const validateMessage = async (messageType: MessageType, message: Object): Promise<Message> => {
 
-  if (messageType === 'successResponse') {
+  if (messageType === 'response.success') {
     await validate(messageValidator, 'SuccessResponse.json', message, {mode:'throw'});
     debug('<= validateMessage:SuccessResponse');
     return <SuccessResponse> message;
 
-  } else if (messageType === 'errorResponse') {
+  } else if (messageType === 'response.error') {
     await validate(messageValidator, 'ErrorResponse.json', message, {mode:'throw'});
     debug('<= validateMessage:ErrorResponse');
     return <ErrorResponse> message;
@@ -315,7 +315,7 @@ export const validateMessage = async (messageType: MessageType, message: Object)
 
 
 interface ProcessMessageResult {
-  messageType: string,
+  messageType: MessageType,
   parsed: Message,
 }
 
