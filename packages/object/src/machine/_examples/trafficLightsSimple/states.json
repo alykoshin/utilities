@@ -1,0 +1,17 @@
+{
+  "green": {
+    "transitions": {
+      "timer": "yellow"
+    }
+  },
+  "yellow": {
+    "transitions": {
+      "timer": "red"
+    }
+  },
+  "red": {
+    "transitions": {
+      "timer": "green"
+    }
+  }
+}

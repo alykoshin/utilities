@@ -1,0 +1,147 @@
+//
+// https://tools.ietf.org/html/rfc793
+// (page 23)
+//
+{
+  closed: {
+    name: 'CLOSED',
+    transitions: {
+      passiveOpen: {
+        name: 'passive OPEN',
+        to: 'listen',
+        action: 'create TCB',
+        // action: async function ({from, via, to}) { console.log('create TCB'); },
+      },
+      activeOpen: {
+        name: 'active OPEN',
+        to: 'synSent',
+        action: 'create TCB / snd SYN',
+      },
+    },
+  },
+  listen: {
+    name: 'LISTEN',
+    transitions: {
+      rcvSyn: {
+        name: 'rcv SYN',
+        to: 'synRcvd',
+        action: 'snd SYN,ACK',
+      },
+      send: {
+        name: 'SEND',
+        to: 'synSent',
+        action: 'snd SYN',
+      },
+    },
+  },
+  synRcvd: {
+    name: 'SYN RCVD',
+    transitions: {
+      rcvAckOfSyn: {
+        name: 'rcv ACK of SYN',
+        to: 'established',
+        action: 'x',
+      },
+      close: {
+        name: 'CLOSE',
+        to: 'finWait1',
+        action: 'snd FIN',
+      },
+    },
+  },
+  synSent: {
+    name: 'SYN SENT',
+    transitions: {
+      rcvSyn: {
+        name: 'rcv SYN',
+        to: 'synRcvd',
+        action: 'snd ACK',
+      },
+      rcvSynAck: {
+        name: 'rcv SYN,ACK',
+        to: 'established',
+        action: 'snd ACK',
+      },
+    },
+  },
+  established: {
+    name: 'ESTAB',
+    transitions: {
+      close: {
+        name: 'CLOSE',
+        to: 'finWait1',
+        action: 'snd FIN',
+      },
+      rcvFin: {
+        name: 'rcv FIN',
+        to: 'closeWait',
+        action: 'snd ACK',
+      },
+    },
+  },
+  finWait1: {
+    name: 'FIN WAIT-1',
+    transitions: {
+      rcvAckOfFin: {
+        name: 'rcv ACK of FIN',
+        to: 'finWait2',
+        action: 'x',
+      },
+      rcvFin: {
+        name: 'rcv FIN',
+        to: 'closing',
+        action: 'snd ACK',
+      },
+    },
+  },
+  closeWait: {
+    name: 'CLOSE WAIT',
+    transitions: {
+      close: {
+        name: 'CLOSE',
+        to: 'lastAck',
+        action: 'snd FIN',
+      },
+    },
+  },
+  finWait2: {
+    name: 'FINWAIT-2',
+    transitions: {
+      rcvFin: {
+        name: 'rcv FIN',
+        to: 'timeWait',
+        action: 'snd ACK',
+      },
+    },
+  },
+  closing: {
+    name: 'CLOSING',
+    transitions: {
+      rcvAckOfFin: {
+        name: 'rcv ACK of FIN',
+        to: 'timeWait',
+        action: 'x',
+      },
+    },
+  },
+  lastAck: {
+    name: 'LAST-ACK',
+    transitions: {
+      rcvAckOfFin: {
+        name: 'rcv ACK of FIN',
+        to: 'closed',
+        action: 'x',
+      },
+    },
+  },
+  timeWait: {
+    name: 'TIME WAIT',
+    transitions: {
+      timeout: {
+        name: 'Timeout=2MSLK',
+        to: 'closed',
+        action: 'delete TCB',
+      },
+    },
+  },
+}
