@@ -1,2 +1,2 @@
 export {WSClient} from './client'
-export {WSServer} from './server'
+export {WSServer,WSServerConnection} from './server'
