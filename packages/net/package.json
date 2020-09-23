@@ -73,7 +73,8 @@
     "express": "^4.17.1",
     "json-schema-to-typescript": "^9.1.1",
     "lodash": "^4.17.20",
-    "mkdirp": "^1.0.4"
+    "mkdirp": "^1.0.4",
+    "ws": "^7.3.1"
   },
   "devDependencies": {
     "@types/mocha": "^8.0.3",

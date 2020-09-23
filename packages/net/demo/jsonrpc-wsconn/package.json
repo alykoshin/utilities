@@ -1,0 +1,14 @@
+{
+  "name": "wsconn",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "client": "DEBUG=WS*,Jsonrpc,Requestor* nodemon --watch ./client --watch ../src/ --watch ./config.json ./client.ts",
+    "server": "DEBUG=WS*,Jsonrpc,Requestor* nodemon --watch ./server --watch ../src/ --watch ./config.json ./server.ts",
+    "_client": "DEBUG=WS*,Jsonrpc,Requestor* nodemon --watch ./client --watch ../src/ --watch ./config.json ./client.ts",
+    "_server": "DEBUG=WS*,Jsonrpc,Requestor* nodemon --watch ./server --watch ../src/ --watch ./config.json ./server.ts"
+  },
+  "author": "alykoshin <alykoshin@gmail.com>",
+  "license": "ISC"
+}

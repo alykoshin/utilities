@@ -1,0 +1,16 @@
+{
+  "_port": 80,
+  "_host": "192.168.189.68",
+  "port": 8082,
+  "host": "localhost",
+  "namespace": "naws",
+  "pingInterval": -1,
+  "inactivityTimeout": 20000,
+  "reconnectInterval": 5000,
+  "encodedToken": "1234567890",
+  "client": {
+  },
+  "server": {
+
+  }
+}

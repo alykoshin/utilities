@@ -14,14 +14,13 @@ import { Request, Id } from './_types/Request'
 import {Notification} from './_types/Notification'
 import {SuccessResponse, SuccessResult} from './_types/SuccessResponse'
 import {ErrorResponse, ErrorObject} from './_types/ErrorResponse'
+import {GenericNodejsCallback} from '../types'
 
 import {
   Response, Message, ErrorInfo,
   createErrorResponse, createNotification,createRequest,createSuccessResponse,processMessage,generateId
 } from './methods'
 
-
-export interface GenericNodejsCallback { (error: Error|undefined, ...result: any[]): any }
 
 import { Requestors, Requestor, RequestPromiseResolve, RequestPromiseReject, RequestCallback, REQUEST_TIMEOUT } from '../requestors'
 
