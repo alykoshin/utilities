@@ -1,5 +1,5 @@
-export * as isNodejs from './isNodejs';
-export * as deferred from'./deferred';
+export * from './isNodejs';
+export * from'./deferred';
 
 
 export const asyncForEach = async function (this: any, array, callback, exitConditionFn) {
