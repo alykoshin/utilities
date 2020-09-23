@@ -5,7 +5,7 @@
  *
  */
 
-import {Machine, States, Schema}  from '../../'
+import {Machine, States, Schema}  from '../../../../src/machine/'
 
 const stateIds = [
   0, 1, 2, 3, 4,

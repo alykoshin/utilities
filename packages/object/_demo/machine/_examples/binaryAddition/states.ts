@@ -4,7 +4,7 @@
  *
  */
 
-import {Machine, States, Schema}  from '../../'
+import {Machine, States, Schema}  from '../../../../src/machine/'
 
 const stateIds = [
   'q0', // carry bit = 0

@@ -1,4 +1,4 @@
-import {Machine, States}  from '../../'
+import {Machine, States}  from '../../../../src/machine/'
 
 export enum ElevatorStates {
   Closed,

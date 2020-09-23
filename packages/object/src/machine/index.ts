@@ -60,12 +60,22 @@ interface TransitionResolverFn<StateId extends BaseStateId, TransitionId extends
   (args: UnresolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<StateId>|StateId|undefined
 }
 
-interface TransitionEnablingHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
+interface StateExitHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
   (args: UnresolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<boolean>|boolean
 }
 
-interface TransitionNotifyHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-  (args: UnresolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<void>|void
+//
+
+interface TransitionBeforeHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
+  (args: ResolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<boolean>|boolean
+}
+
+interface StateEnterHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
+  (args: ResolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<void>|void
+}
+
+interface TransitionAfterHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
+  (args: ResolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<void>|void
 }
 
 // interface TransitionHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
@@ -110,9 +120,9 @@ interface BaseTransitionObject<StateId extends BaseStateId, TransitionId extends
   name?:   string
   data?:   any
 
-  before?: TransitionEnablingHandler<StateId, TransitionId>
+  before?: TransitionBeforeHandler<StateId, TransitionId>
   action?: TransitionActionHandler<StateId, TransitionId> | string | number // string for demo purposes and simple transducers
-  after?:  TransitionNotifyHandler<StateId, TransitionId>
+  after?:  TransitionAfterHandler<StateId, TransitionId>
 }
 
 interface TransitionDefinitionObject<StateId extends BaseStateId, TransitionId extends BaseTransitionId> extends BaseTransitionObject<StateId, TransitionId> {
@@ -139,7 +149,10 @@ interface ResolvedTransitionObject<StateId extends BaseStateId, TransitionId ext
   // after?:  TransitionAfterHandler<StateId, TransitionId>
 }
 
-export type TransitionDefinition<StateId extends BaseStateId, TransitionId extends BaseTransitionId> = StateId | TransitionDefinitionObject<StateId, TransitionId> | TransitionResolverFn<StateId, TransitionId>
+export type TransitionDefinition<StateId extends BaseStateId, TransitionId extends BaseTransitionId> =
+  StateId |
+  TransitionDefinitionObject<StateId, TransitionId> |
+  TransitionResolverFn<StateId, TransitionId>
 
 export type TransitionDefinitions<StateId extends BaseStateId, TransitionId extends BaseTransitionId> = {
   [id in TransitionId]?: TransitionDefinition<StateId, TransitionId>;
@@ -157,8 +170,8 @@ interface BaseStateObject<StateId extends BaseStateId, TransitionId extends Base
   name?:       string
   data?:       any
 
-  enter?:      TransitionNotifyHandler<StateId, TransitionId>
-  exit?:       TransitionEnablingHandler<StateId, TransitionId>
+  enter?:      StateEnterHandler<StateId, TransitionId>
+  exit?:       StateExitHandler<StateId, TransitionId>
 }
 
 interface StateDefinition<StateId extends BaseStateId, TransitionId extends BaseTransitionId> extends BaseStateObject<StateId, TransitionId> {

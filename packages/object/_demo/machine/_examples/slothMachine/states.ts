@@ -1,4 +1,4 @@
-import {Machine, States, BaseStateClass} from '../../'
+import {Machine, States, BaseStateClass} from '../../../../src/machine/'
 
 enum SlothState {
   Idle = 'Idle',

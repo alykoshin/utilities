@@ -1,6 +1,6 @@
 import Debug from 'debug';
 
-import {Machine, States, Schema, EINVALID_TRANSITION_ID }  from '../../'
+import {Machine, States, Schema, EINVALID_TRANSITION_ID }  from '../../../../src/machine/'
 import { initial, final, fsa, swapper, StateIds, InputVocabulary,  } from './states'
 
 // Debug.enable('*');

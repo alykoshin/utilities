@@ -2,7 +2,7 @@ import Debug from 'debug';
 // Debug.enable('*');
 const debug = Debug('machine');
 
-import {Machine, States, Schema, EINVALID_TRANSITION_ID }  from '../../'
+import {Machine, States, Schema, EINVALID_TRANSITION_ID }  from '../../../../src/machine/'
 import { fsa, StateIds, Inputs,  } from './states'
 
 const fsaMachine = new Machine(fsa);

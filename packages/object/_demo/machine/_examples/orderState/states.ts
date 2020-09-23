@@ -1,6 +1,6 @@
 import { intersection } from 'lodash'
 
-import {Machine, States}  from '../../'
+import {Machine, States}  from '../../../../src/machine/'
 
 export enum OrderStatus {
   STATUS_PENDING   = 'pending',

@@ -1,4 +1,4 @@
-import {Machine, States}  from '../../'
+import {Machine, States}  from '../../../../src/machine/'
 
 import { OrderStatus, OrderTransitions, adminStatuses, courierStatuses, allStatuses, } from './states'
 
@@ -14,18 +14,20 @@ async function run() {
   });
 
 
-  console.log('validating...')
+  process.stdout.write('validating... ')
   await machine.validate();
-  console.log('validated.')
+  process.stdout.write('OK.\n')
 
-  console.log(`machine.transition >> "${OrderStatus.STATUS_PLACED}"`);
+  process.stdout.write(`machine.transition -> "${OrderStatus.STATUS_PLACED}"`);
   await machine.transition(OrderStatus.STATUS_PLACED);
-  console.log(`machine.current :: "${machine.current}"`)
+  process.stdout.write(` (actual: "${machine.current}")\n`)
   if (machine.current !== OrderStatus.STATUS_PLACED) throw new Error(`"${OrderStatus.STATUS_PLACED}" expected`);
 
-  console.log(`machine.transition >> "${OrderStatus.STATUS_PICKED_UP}"`)
+  process.stdout.write(`machine.transition -> "${OrderStatus.STATUS_PICKED_UP}"`)
   /*const res =*/ await machine.transition(OrderStatus.STATUS_PICKED_UP);
-  console.log(`machine.current :: "${machine.current}"`)
+  process.stdout.write(` (actual: "${machine.current}")\n`)
+  //
+  // workaround for TypeScript error checking
   // @ts-ignore
   if (machine.current !== OrderStatus.STATUS_PICKED_UP) throw new Error(`"${STATUS_PICKED_UP}" status expected`);
 

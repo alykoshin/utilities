@@ -1,5 +1,5 @@
 import Debug from 'debug'
-import {Machine, States}  from '../../'
+import {Machine, States}  from '../../../../src/machine/'
 import 'json5/lib/register';
 // import JSON5 from 'json5'
 

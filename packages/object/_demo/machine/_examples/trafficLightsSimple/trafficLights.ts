@@ -1,6 +1,6 @@
 import Debug from 'debug';
 
-import {Machine, States}  from '../../'
+import {Machine, States}  from '../../../../src/machine/'
 
 import states from './states.json'
 

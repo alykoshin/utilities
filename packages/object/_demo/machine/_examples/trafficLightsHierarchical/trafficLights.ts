@@ -7,7 +7,7 @@
  */
 
 import Debug from 'debug';
-import {Machine, Schema, States}  from '../../'
+import {Machine, Schema, States}  from '../../../../src/machine/'
 
 Debug.enable('*');
 
