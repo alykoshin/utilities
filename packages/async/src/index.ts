@@ -1,8 +1,8 @@
-import * as isNodejs from './isNodejs';
-import * as deferred from'./deferred';
+export * as isNodejs from './isNodejs';
+export * as deferred from'./deferred';
 
 
-const asyncForEach = async function (this: any, array, callback, exitConditionFn) {
+export const asyncForEach = async function (this: any, array, callback, exitConditionFn) {
   /* must be function instead of => to in order `this` value tp be passed */
   let res;
   for (let index = 0; index < array.length; index++) {
@@ -17,7 +17,7 @@ const asyncForEach = async function (this: any, array, callback, exitConditionFn
 //
 // https://stackoverflow.com/a/51020535/2774010
 //
-const asyncForEachParallelLimit = async function (this: any, array, limit, callback) {
+export const asyncForEachParallelLimit = async function (this: any, array, limit, callback) {
   /* must be function instead of => to in order `this` value tp be passed */
 
   async function doWork(this: any, iterator) {
@@ -44,7 +44,7 @@ const asyncForEachParallelLimit = async function (this: any, array, limit, callb
 };
 
 
-const asyncForEachReverse = async function (this: any, array, callback) {
+export const asyncForEachReverse = async function (this: any, array, callback) {
   //console.log('asyncForEach: enter');
   for (let index = array.length-1; index >= 0 ; index--) {
     //console.log('asyncForEach: index:', index);
@@ -54,7 +54,7 @@ const asyncForEachReverse = async function (this: any, array, callback) {
 };
 
 
-const asyncMap = async function(this: any, array, callback) {
+export const asyncMap = async function(this: any, array, callback) {
   //console.log('asyncMap');
   const res = [];
   for (let index = 0; index < array.length; index++) {
@@ -65,7 +65,7 @@ const asyncMap = async function(this: any, array, callback) {
 };
 
 
-const asyncMapReverse = async function(this: any, array, callback) {
+export const asyncMapReverse = async function(this: any, array, callback) {
   //console.log('asyncMap');
   const res = [];
   for (let index = array.length-1; index >= 0 ; index--) {
@@ -76,15 +76,15 @@ const asyncMapReverse = async function(this: any, array, callback) {
 };
 
 
-const runAsync = function (this: any, fn, ...args) {
+export const runAsync = function (this: any, fn, ...args) {
    return setTimeout(() => fn.call(this, ...args) , 0);
 };
 
-const asyncSetInterval = async function (this: any, ms) {
+export const asyncSetInterval = async function (this: any, ms) {
   return new Promise(resolve => setInterval(resolve.bind(this), ms));
 };
 
-const asyncSetTimeout = async function (this: any, ms) {
+export const asyncSetTimeout = async function (this: any, ms) {
   return new Promise(resolve => setTimeout(resolve.bind(this), ms));
 };
 const setTimeoutAsPromised = asyncSetTimeout;
@@ -112,7 +112,7 @@ if (isNodejs()) {
 */
 
 
-function processNextTick(this: any, fn /* arguments */) {
+export function processNextTick(this: any, fn /* arguments */) {
   const args = [].slice.call(arguments, 1);
   const self = this;
   process.nextTick(function() {
@@ -121,7 +121,7 @@ function processNextTick(this: any, fn /* arguments */) {
 }
 
 
-function setTimeout0(this: any, fn /* arguments */) {
+export function setTimeout0(this: any, fn /* arguments */) {
   const args = [].slice.call(arguments, 1);
   const self = this;
   setTimeout(() => {
@@ -130,32 +130,32 @@ function setTimeout0(this: any, fn /* arguments */) {
 }
 
 
-module.exports = {
-  asyncForEach,
-  asyncForEachParallelLimit,
-
-  asyncForEachReverse,
-  asyncMap,
-  asyncMapReverse,
-
-  runAsync,
-
-  asyncSetInterval,
-  asyncSetTimeout,
-  setTimeoutAsPromised,
-
-/*
-  wrapIntoFiber,
-*/
-
-  processNextTick,
-  setTimeout0,
-
-  ...isNodejs,
-
-  ...deferred,
-};
-
+// module.exports = {
+//   asyncForEach,
+//   asyncForEachParallelLimit,
+//
+//   asyncForEachReverse,
+//   asyncMap,
+//   asyncMapReverse,
+//
+//   runAsync,
+//
+//   asyncSetInterval,
+//   asyncSetTimeout,
+//   setTimeoutAsPromised,
+//
+// /*
+//   wrapIntoFiber,
+// */
+//
+//   processNextTick,
+//   setTimeout0,
+//
+//   ...isNodejs,
+//
+//   ...deferred,
+// };
+//
 
 
 
