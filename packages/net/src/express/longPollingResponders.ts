@@ -132,7 +132,8 @@ export class Responder {
       this._clearTimers();
       if (!this.finished) {
         //this.done = true;
-        this._respond();
+        // this._respond();
+        this._tryRespond();
         //this._reset();
       }
     }, LONG_POLLING_TIMEOUT);

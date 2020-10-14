@@ -1,4 +1,4 @@
-import {Machine, States}  from '../../../../src/machine/'
+import {Machine, Schema, States}  from '../../../../src/machine/index'
 
 export const initial = 'START';
 export const final = ['END', 'ERROR'];

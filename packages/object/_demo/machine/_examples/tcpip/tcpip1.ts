@@ -1,6 +1,6 @@
 import Debug from 'debug';
-import {Machine, States}  from '../../../../src/machine/'
 import 'json5/lib/register';
+import {Machine, Schema, States}  from '../../../../src/machine'
 
 Debug.enable('*');
 

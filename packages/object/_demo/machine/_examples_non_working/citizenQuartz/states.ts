@@ -4,7 +4,7 @@
  * https://pdfs.semanticscholar.org/f874/bc7089c924961385e956a7eddcf2f4709c57.pdf
  */
 
-import {Machine, Schema, States} from '../../'
+import {Machine, Schema, States}  from '../../../../src/machine'
 
 const alarmDisplayStateIds = [
   'on',

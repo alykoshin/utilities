@@ -1,4 +1,4 @@
-import {Machine, States}  from '../../'
+import {Machine, Schema, States}  from '../../../../src/machine'
 
 const affiliateStates: States<string,string> = {
   new:    {
