@@ -111,7 +111,7 @@ export class WSClientConnection extends WsConn {
     return this.connect(cb);
   }
 
-  async delayedReconnect(cb?: ConnectCallback) {
+  async delayedReconnect(cb?: ConnectCallback): Promise<void> {
     return new Promise((resolve, reject) => {
       this._debug(`   [delayedReconnect] will reconnect after ${this._options.reconnectInterval} ms`);
       return setTimeout(async () => {
