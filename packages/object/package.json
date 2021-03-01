@@ -1,6 +1,6 @@
 {
   "name": "@utilities/object",
-  "version": "0.3.18",
+  "version": "0.3.19",
   "description": "Set of misc utilities for objects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
