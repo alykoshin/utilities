@@ -159,7 +159,7 @@ if (require.main === module) {
   const run = async () => {
     // const shutdown = new ShutdownMonitor({timeout: DEFAULT_TIMEOUT});
     const createTestHandler = (name, timeout, rjct=false) => {
-      const fn = /*async*/ () => {
+      const fn = /*async*/ (): Promise<void> => {
         // shutdown.debug(`${name} started`);
         return new Promise(
           (resolve, reject) => setTimeout(() => {

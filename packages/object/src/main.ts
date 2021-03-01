@@ -105,7 +105,7 @@ export function remap1_({ source, target, sourceKey, targetKey, transform }) {
 /**
  *
  */
-export function remap(o, map, options) {
+export function remap(o, map: {[key:string]:string}, options?:{inverted?:boolean}) {
   options = options || {};
   if (options.inverted === true) map = _.invert(map);
   //console.log('remap: o:', o);
