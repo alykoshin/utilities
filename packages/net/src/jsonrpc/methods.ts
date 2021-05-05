@@ -200,7 +200,7 @@ export const createErrorResponse = ({ request, code, message, data }: ErrorRespo
 }
 
 
-const validate = async (validator: Ajv.Ajv, schemaName: string, data: any, { mode }: { mode: 'throw'|'log'|'silent'}): Promise<boolean> => {
+const validate = async (validator: Ajv, schemaName: string, data: any, { mode }: { mode: 'throw'|'log'|'silent'}): Promise<boolean> => {
   try {
     // await messageValidator.addSchema(Schema, schemaName);        `
 
