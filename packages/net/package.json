@@ -12,8 +12,8 @@
   },
   "scripts": {
     "_npm-audit": "npm audit || echo '\n*** Please check warnings above ***\n' && npm audit --production --audit-level high && echo '\n*** npm audit reported no high-level vulnerabilities for production configuration ***\n' ",
-    "_deps-check": "npm-check-updates --error-level 2",
-    "_deps-update": "echo '* Updating packages versions... '; npm-check-updates -u --upgradeAll --error-level 1 && npm install",
+    "_deps-check": "npm-check-updates --errorLevel 2",
+    "_deps-update": "echo '* Updating packages versions... '; npm-check-updates -u --upgradeAll --errorLevel 1 && npm install",
     "_check-changes": "echo '* Checking if git directory is clean... '; bash -c '[[ -z $(git status -uno --porcelain) ]]'",
     "update-deps": "npm run _check-changes && npm run _deps-update && npm test && git commit -am 'updated deps'",
     "lint": "node_modules/.bin/eslint -f unix --ext .ts,.js,.jsx .",
