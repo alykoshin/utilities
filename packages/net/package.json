@@ -72,7 +72,7 @@
     "eventemitter2": "^6.4.4",
     "express": "^4.17.1",
     "json-schema-to-typescript": "^10.1.4",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.19",
     "mkdirp": "^1.0.4",
     "ws": "^7.4.5"
   },
