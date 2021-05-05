@@ -7,6 +7,48 @@ const debug = require('debug')('@utilities/fs');
 
 const ADD_PATH_VALUES = ['joinBase', 'joinSub', 'resolve'];
 
+/*
+
+Typescript definitions
+======================
+
+interface FileStat {
+  name: string
+  pathname: string
+
+  //stats
+  dev: number,
+  ino: number,
+  mode: number,
+  nlink: number,
+  uid: number,
+  gid: number,
+  rdev: number,
+  size: number,
+  blksize: number,
+  blocks: number,
+  atimeMs: number,
+  mtimeMs: number,
+  ctimeMs: number,
+  birthtimeMs: number,
+  atime: Date,
+  mtime: Date,
+  ctime: Date,
+  birthtime: Date
+  // dirent
+  isBlockDevice: boolean
+  isCharacterDevice: boolean
+  isDirectory: boolean
+  isFIFO: boolean
+  isFile: boolean
+  isSocket: boolean
+  isSymbolicLink: boolean
+}
+
+ */
+
+
+
 /**
  *
  * @param {string} baseDir
