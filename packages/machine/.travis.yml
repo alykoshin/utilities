@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "node"
+  - "stable"
+  - "latest"
+before_install: "npm run-script travis-before-install"
+script: "npm run-script travis-script"
+before_script: "npm run-script travis-before-script"
+after_script: "npm run-script travis-after-script"

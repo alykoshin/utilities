@@ -1,0 +1,76 @@
+{
+  "name": "@utilities/machine",
+  "version": "0.3.19",
+  "description": "Machine - yet another Finite State Automata",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist/**/*"
+  ],
+  "engines": {
+    "node": ">=12"
+  },
+  "scripts": {
+    "_npm-audit": "npm audit || echo '\n*** Please check warnings above ***\n' && npm audit --production --audit-level high && echo '\n*** npm audit reported no high-level vulnerabilities for production configuration ***\n' ",
+    "_deps-check": "npm-check-updates --errorLevel 2",
+    "_deps-update": "echo '* Updating packages versions... '; npm-check-updates -u --upgradeAll --error-level 1 && npm install",
+    "_check-changes": "echo '* Checking if git directory is clean... '; bash -c '[[ -z $(git status -uno --porcelain) ]]'",
+    "update-deps": "npm run _check-changes && npm run _deps-update && npm test && git commit -am 'updated deps'",
+    "lint": "node_modules/.bin/eslint -f unix --ext .ts,.js,.jsx .",
+    "inspect": "jsinspect --ignore 'coverage|test|dist'",
+    "pretest": "npm run lint && npm run inspect && npm run _npm-audit && npm run _deps-check",
+    "_test": "npm run _test-coverage && npm run _test-report",
+    "_test-coverage": "nyc ./node_modules/ts-mocha/bin/ts-mocha -- -R spec ./test/*",
+    "_test-report": "nyc report --reporter=html && nyc report --reporter=text-lcov > coverage/coverage.lcov",
+    "test": "npm run _test",
+    "__test": "echo \"Warning: no test specified\" && exit 0",
+    "___test": "echo \"Error: no test specified\" && exit 1",
+    "_commit": "git commit -am \"commit by 'npm run commit'\"",
+    "_push": "git push --follow-tags",
+    "commit-and-push": "npm run _commit && npm test && npm run _push",
+    "_publish": "npm publish --access public",
+    "_patch-release": "npm version patch && git commit -am 'npm version patch' && npm run _publish",
+    "_minor-release": "npm version minor && git commit -am 'npm version minor' && npm run _publish",
+    "_major-release": "npm version major && git commit -am 'npm version major' && npm run _publish",
+    "patch-release": "npm test && npm run _patch-release && npm run _push",
+    "minor-release": "npm test && npm run _minor-release && npm run _push",
+    "__major-release": "npm test && npm run _major-release && npm run _push",
+    "_coveralls": "cat ./coverage/coverage.lcov | ./node_modules/coveralls/bin/coveralls.js",
+    "travis-before-install": "",
+    "travis-before-script": "",
+    "travis-script": "npm run test",
+    "travis-after-script": "npm run _coveralls",
+    "build": "npm run clean:dist && npm run build:typescript",
+    "build:typescript": "node_modules/.bin/tsc",
+    "clean:dist": "rm -rf dist/*",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "string,utility,utilities"
+  ],
+  "author": "Alexander <alykoshin@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alykoshin/@utilities.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alykoshin/@utilities/issues"
+  },
+  "homepage": "https://github.com/alykoshin/@utilities",
+  "dependencies": {
+    "@types/node": "^14.14.31",
+    "@utilities/async": "^0.2.2",
+    "debug": "^4.3.1",
+    "ncu": "^0.2.1",
+    "ts-node": "^10.9.1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.16.1",
+    "@typescript-eslint/parser": "^4.16.1",
+    "eslint": "^7.21.0",
+    "jshint": "^2.12.0",
+    "jsinspect": "^0.12.7",
+    "typescript": "^4.2.2"
+  }
+}

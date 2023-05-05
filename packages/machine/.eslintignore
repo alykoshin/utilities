@@ -1,0 +1,4 @@
+**/node_modules
+coverage
+/dist/
+/@utilities/packages/machine/_demo/_examples_non_working
