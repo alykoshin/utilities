@@ -1,16 +1,16 @@
-[![npm version](https://badge.fury.io/js/@utilities/object.svg)](http://badge.fury.io/js/@utilities/object)
-[![Build Status](https://travis-ci.org/alykoshin/@utilities/object.svg)](https://travis-ci.org/alykoshin/@utilities/object)
-[![Coverage Status](https://coveralls.io/repos/alykoshin/@utilities/object/badge.svg?branch=master&service=github)](https://coveralls.io/github/alykoshin/@utilities/object?branch=master)
-[![Code Climate](https://codeclimate.com/github/alykoshin/@utilities/object/badges/gpa.svg)](https://codeclimate.com/github/alykoshin/@utilities/object)
-[![Inch CI](https://inch-ci.org/github/alykoshin/@utilities/object.svg?branch=master)](https://inch-ci.org/github/alykoshin/@utilities/object)
+[![npm version](https://badge.fury.io/js/@utilities/machine.svg)](http://badge.fury.io/js/@utilities/machine)
+[![Build Status](https://travis-ci.org/alykoshin/@utilities/machine.svg)](https://travis-ci.org/alykoshin/@utilities/machine)
+[![Coverage Status](https://coveralls.io/repos/alykoshin/@utilities/machine/badge.svg?branch=master&service=github)](https://coveralls.io/github/alykoshin/@utilities/machine?branch=master)
+[![Code Climate](https://codeclimate.com/github/alykoshin/@utilities/machine/badges/gpa.svg)](https://codeclimate.com/github/alykoshin/@utilities/machine)
+[![Inch CI](https://inch-ci.org/github/alykoshin/@utilities/machine.svg?branch=master)](https://inch-ci.org/github/alykoshin/@utilities/machine)
 
-[![Dependency Status](https://david-dm.org/alykoshin/@utilities/object/status.svg)](https://david-dm.org/alykoshin/@utilities/object#info=dependencies)
-[![devDependency Status](https://david-dm.org/alykoshin/@utilities/object/dev-status.svg)](https://david-dm.org/alykoshin/@utilities/object#info=devDependencies)
+[![Dependency Status](https://david-dm.org/alykoshin/@utilities/machine/status.svg)](https://david-dm.org/alykoshin/@utilities/machine#info=dependencies)
+[![devDependency Status](https://david-dm.org/alykoshin/@utilities/machine/dev-status.svg)](https://david-dm.org/alykoshin/@utilities/machine#info=devDependencies)
 
-[![Known Vulnerabilities](https://snyk.io/test/github/alykoshin/@utilities/object/badge.svg)](https://snyk.io/test/github/alykoshin/@utilities/object)
+[![Known Vulnerabilities](https://snyk.io/test/github/alykoshin/@utilities/machine/badge.svg)](https://snyk.io/test/github/alykoshin/@utilities/machine)
 
 
-# @utilities/object
+# @utilities/machine
 
 Set of misc utilities for objects
 
@@ -21,11 +21,18 @@ If you have different needs regarding the functionality, please add a [feature r
 ## Installation
 
 ```sh
-npm install --save @utilities/object
+npm install --save @utilities/machine
 ```
 
 ## Usage
 
+## Demo
+                                                           
+Several demos are in `./_demo/` subdirectory. Example: 
+
+```shell
+ts-node .\_demo\_examples\binaryAddition\fsa.t
+```
 
 ## Credits
 [Alexander](https://github.com/alykoshin/)
@@ -33,7 +40,7 @@ npm install --save @utilities/object
 
 # Links to package pages:
 
-[github.com](https://github.com/alykoshin/@utilities/object) &nbsp; [npmjs.com](https://www.npmjs.com/package/@utilities/object) &nbsp; [travis-ci.org](https://travis-ci.org/alykoshin/@utilities/object) &nbsp; [coveralls.io](https://coveralls.io/github/alykoshin/@utilities/object) &nbsp; [inch-ci.org](https://inch-ci.org/github/alykoshin/@utilities/object)
+[github.com](https://github.com/alykoshin/@utilities/machine) &nbsp; [npmjs.com](https://www.npmjs.com/package/@utilities/machine) &nbsp; [travis-ci.org](https://travis-ci.org/alykoshin/@utilities/machine) &nbsp; [coveralls.io](https://coveralls.io/github/alykoshin/@utilities/machine) &nbsp; [inch-ci.org](https://inch-ci.org/github/alykoshin/@utilities/machine)
 
 
 ## License
