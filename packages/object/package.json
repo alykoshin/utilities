@@ -1,6 +1,6 @@
 {
   "name": "@utilities/object",
-  "version": "0.3.19",
+  "version": "0.3.20",
   "description": "Set of misc utilities for objects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -48,14 +48,14 @@
     "prepare": "npm run build"
   },
   "jest": {
-      "preset": "ts-jest",
-      "testEnvironment": "node",
-      "transform": {
-        "node_modules/variables/.+\\.(j|t)sx?$": "ts-jest"
-      },
-      "transformIgnorePatterns": [
-        "node_modules/(?!variables/.*)"
-      ]
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "transform": {
+      "node_modules/variables/.+\\.(j|t)sx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!variables/.*)"
+    ]
   },
   "keywords": [
     "string,utility,utilities"
