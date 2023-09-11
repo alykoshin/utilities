@@ -322,7 +322,7 @@ describe('@utilities/object', () => {
 
     before(() => {
       loadJsonSync = object.loadJsonSync;
-      mkdirp(testDir);
+      mkdirp.sync(testDir);
     });
 
     it('is a function', function () {
@@ -355,7 +355,7 @@ describe('@utilities/object', () => {
 
     before(() => {
       saveJsonSync = object.saveJsonSync;
-      mkdirp(testDir);
+      mkdirp.sync(testDir);
     });
 
     it('is a function', function () {
@@ -491,7 +491,8 @@ describe('@utilities/object', () => {
             'baseDir': 'test-data',
             'basename': 'test',
             'extname': '',
-            'pathname': 'test-data/saveJsonSync/test',
+            // 'pathname': 'test-data/saveJsonSync/test',
+            'pathname': path.join('test-data','saveJsonSync','test'),
             'subDir': 'saveJsonSync'
           },
           'data': {
