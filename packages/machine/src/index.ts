@@ -7,275 +7,60 @@ https://www.npmjs.com/package/@opuscapita/fsm-workflow-core#automatic-conditions
  */
 
 import Debug from 'debug';
-const debug = Debug('machine');
-
 import {Deferred} from '@utilities/async';
 
-//
+import {
+  EINVALID_CURRENT_STATE,
+  EINVALID_EVENT,
+  EINVALID_FINAL_STATE,
+  EINVALID_START_STATE,
+  EINVALID_STATE,
+  EINVALID_STATE_ID_VALUE,
+  EINVALID_TRANSITION,
+  EINVALID_TRANSITION_ID,
+  EINVALID_TRANSITION_TO,
+  EMACHINE_ERROR,
+  ETRANSITION_REJECTION
+} from './errors';
+import type {Context, InputEvent, InputEventId, ResolvedInputEvent, Schema,} from "./types";
+import type {BaseStateId, ResolvedState, State, StateDefinition, States,} from "./States";
+import type {StateEnterHandler, StateExitHandler} from "./States";
+import type {
+  BaseTransitionId,
+  ResolvedTransitionContext,
+  ResolvedTransitionObject,
+  TransitionActionResult,
+  TransitionDefinition,
+  TransitionDefinitionObject
+} from "./Transitions";
+import {TransitionAfterHandler, TransitionBeforeHandler} from "./Transitions";
+import {validate} from "./validate";
 
-type InputEventId<StateId extends BaseStateId, TransitionId extends BaseTransitionId> = TransitionId
+export {State, States, Schema}
 
-interface InputEventObject<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-  id: InputEventId<StateId, TransitionId>
-  data?: any
-}
+export const debug = Debug('machine');
 
-interface ResolvedInputEvent<StateId extends BaseStateId, TransitionId extends BaseTransitionId> extends InputEventObject<StateId, TransitionId> {
-}
-
-type InputEvent<StateId extends BaseStateId, TransitionId extends BaseTransitionId> = InputEventId<StateId, TransitionId> | InputEventObject<StateId, TransitionId>
-
-//
-
-interface BaseTransitionHandlerArguments<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-  event: ResolvedInputEvent<StateId, TransitionId>
-  from: State<StateId, TransitionId>
-  // transition: TransitionDefinition<StateId, TransitionId>
-  to: State<StateId, TransitionId>
-  context: Context
-}
-
-interface UnresolvedTransitionHandlerArguments<StateId extends BaseStateId, TransitionId extends BaseTransitionId> extends BaseTransitionHandlerArguments<StateId,TransitionId> {
-  // from: State<StateId, TransitionId>,
-  transition: TransitionDefinition<StateId, TransitionId>,
-  // to: State<StateId, TransitionId>,
-  // context: Context,
-}
-
-interface ResolvedTransitionHandlerArguments<StateId extends BaseStateId, TransitionId extends BaseTransitionId> extends BaseTransitionHandlerArguments<StateId,TransitionId> {
-  // from: State<StateId, TransitionId>,
-  transition: ResolvedTransitionObject<StateId, TransitionId>,
-  // to: State<StateId, TransitionId>,
-  // context: Context,
-}
-
-// interface TransitionResolverArguments<StateId extends BaseStateId, TransitionId extends BaseTransitionId> extends TransitionHandlerData<StateId, TransitionId> {
-//   // from: State<StateId, TransitionId>,
-//   // transition: Transition<StateId, TransitionId>,
-//   to: undefined,
-//   context: Context,
-// }
-
-interface TransitionResolverFn<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-  (args: UnresolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<StateId>|StateId|undefined
-}
-
-interface StateExitHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-  (args: UnresolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<boolean>|boolean
-}
 
 //
 
-interface TransitionBeforeHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-  (args: ResolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<boolean>|boolean
-}
-
-interface StateEnterHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-  (args: ResolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<void>|void
-}
-
-interface TransitionAfterHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-  (args: ResolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<void>|void
-}
-
-// interface TransitionHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-//   (args: TransitionHandlerData<StateId, TransitionId>): Promise<void>
-// }
-// interface TransitionEvent { (): boolean }
-
-// Transitions
-
-type BaseTransitionId = string | number
-
-//
-//
-// interface StateExitHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-//   (args: UnresolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<boolean>|boolean
-// }
-//
-// interface TransitionBeforeHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-//   (args: UnresolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<boolean>|boolean
-// }
-
-interface TransitionActionHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-  (args: ResolvedTransitionHandlerArguments<StateId, TransitionId>): ActionResult<StateId, TransitionId>
-}
-
-type ActionResult<StateId extends BaseStateId, TransitionId extends BaseTransitionId> = Promise<any> | any
-
-// interface TransitionAfterHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-//   (args: ResolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<void>
-// }
-//
-// interface TransitionExecutionHandler<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-//   (args: ResolvedTransitionHandlerArguments<StateId, TransitionId>): Promise<any>
-// }
-//
-//
-
-interface BaseTransitionObject<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-  // id:      string
-  // to:      StateId
-
-  name?:   string
-  data?:   any
-
-  before?: TransitionBeforeHandler<StateId, TransitionId>
-  action?: TransitionActionHandler<StateId, TransitionId> | string | number // string for demo purposes and simple transducers
-  after?:  TransitionAfterHandler<StateId, TransitionId>
-}
-
-interface TransitionDefinitionObject<StateId extends BaseStateId, TransitionId extends BaseTransitionId> extends BaseTransitionObject<StateId, TransitionId> {
-  // id:      string
-  to:      StateId | TransitionResolverFn<StateId, TransitionId>
-
-  // name?:   string
-  // data?:   any
-  //
-  // before?: TransitionBeforeHandler<StateId, TransitionId>
-  // action?: TransitionActionHandler<StateId, TransitionId> | string | number // string for demo purposes
-  // after?:  TransitionAfterHandler<StateId, TransitionId>
-}
-
-interface ResolvedTransitionObject<StateId extends BaseStateId, TransitionId extends BaseTransitionId> extends BaseTransitionObject<StateId,TransitionId> {
-  id:      TransitionId
-  to:      StateId
-
-  // name?:   string
-  // data?:   any
-  //
-  // before?: TransitionBeforeHandler<StateId, TransitionId>
-  // action?: TransitionActionHandler<StateId, TransitionId> | string | number // string for demo purposes
-  // after?:  TransitionAfterHandler<StateId, TransitionId>
-}
-
-export type TransitionDefinition<StateId extends BaseStateId, TransitionId extends BaseTransitionId> =
-  StateId |
-  TransitionDefinitionObject<StateId, TransitionId> |
-  TransitionResolverFn<StateId, TransitionId>
-
-export type TransitionDefinitions<StateId extends BaseStateId, TransitionId extends BaseTransitionId> = {
-  [id in TransitionId]?: TransitionDefinition<StateId, TransitionId>;
-};
-
-// States
-
-type BaseStateId = string | number
-
-interface BaseStateObject<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-
-  transitions?: TransitionDefinitions<StateId, TransitionId>
-
-  id?:         StateId // if set, must be equal to the key of this state in states object
-  name?:       string
-  data?:       any
-
-  enter?:      StateEnterHandler<StateId, TransitionId>
-  exit?:       StateExitHandler<StateId, TransitionId>
-}
-
-interface StateDefinition<StateId extends BaseStateId, TransitionId extends BaseTransitionId> extends BaseStateObject<StateId, TransitionId> {
-  id?:         StateId // if set, must be equal to the key of this state in states object
-}
-
-interface ResolvedState<StateId extends BaseStateId, TransitionId extends BaseTransitionId> extends BaseStateObject<StateId, TransitionId> {
-  id:         StateId // if set, must be equal to the key of this state in states object
-}
-
-
-export type State<StateId extends BaseStateId, TransitionId extends BaseTransitionId> = StateDefinition<StateId, TransitionId>
-
-export type States<StateId extends BaseStateId, TransitionId extends BaseTransitionId> = {
-  [id in StateId]: State<StateId, TransitionId>
-}
-
-//
-
-export interface Schema<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-  initial?: StateId,
-  final?: StateId|StateId[],
-  states: States<StateId, TransitionId>,
-}
-
-//
-
-class EMACHINE_ERROR extends Error {
-  code: string
-  info?: any
-  constructor (msg?: string, info?: any, code?: string) {
-    // if (typeof info === 'undefined') {
-    //
-    // }
-    code = code || 'EMACHINE_ERROR'
-    super(msg || code);
-    this.code = code;
-    this.info = info;
-  }
-}
-
-class EINVALID_EVENT extends EMACHINE_ERROR {
-  constructor (msg?: string, info?: any, code?: string) { super(msg, info, code || 'EINVALID_EVENT'); }
-}
-
-
-class EINVALID_STATE extends EMACHINE_ERROR {
-  constructor (msg?: string, info?: any, code?: string) { super(msg, info, code || 'EINVALID_STATE'); }
-}
-
-export class EINVALID_CURRENT_STATE extends EINVALID_STATE {
-  constructor (msg?: string, info?: any, code?: string) { super(msg, info, code || 'EINVALID_CURRENT_STATE'); }
-}
-
-export class EINVALID_START_STATE extends EINVALID_STATE {
-  constructor (msg?: string, info?: any, code?: string) { super(msg, info, code || 'EINVALID_START_STATE'); }
-}
-
-export class EINVALID_FINAL_STATE extends EINVALID_STATE {
-  constructor (msg?: string, info?: any, code?: string) { super(msg, info, code || 'EINVALID_FINAL_STATE'); }
-}
-
-export class EINVALID_STATE_ID_VALUE extends EINVALID_STATE {
-  constructor (msg?: string, info?: any, code?: string) { super(msg, info, code || 'EINVALID_STATE_ID_VALUE'); }
-}
-
-//
-
-class EINVALID_TRANSITION extends EMACHINE_ERROR {
-  constructor (msg?: string, info?: any, code?: string) { super(msg, info, code || 'EINVALID_TRANSITION_ID'); }
-}
-
-export class EINVALID_TRANSITION_ID extends EINVALID_TRANSITION {
-  constructor (msg?: string, info?: any, code?: string) { super(msg, info, code || 'EINVALID_TRANSITION_ID'); }
-}
-
-export class EINVALID_TRANSITION_TO extends EINVALID_TRANSITION {
-  constructor (msg?: string, info?: any, code?: string) { super(msg, info, code || 'EINVALID_TRANSITION_TO'); }
-}
-
-export class ETRANSITION_REJECTION extends EINVALID_TRANSITION {
-  constructor (msg?: string, info?: any, code?: string) { super(msg, info, code || 'ETRANSITION_REJECTION'); }
-}
-
-//
-
-type SelectArray = { value: string, text: string }[];
-
-//
-
+/*
 export class BaseStateClass<StateId extends BaseStateId, TransitionId extends BaseTransitionId, DataModel, Options> {
-  machine: Machine<StateId,TransitionId>
+  machine: Machine<StateId, TransitionId>
   dataModel: DataModel
   options: Options
+
   // energyExpense: 1
-  constructor(machine: Machine<StateId,TransitionId>, dataModel: DataModel, options: Options) {
+  constructor(machine: Machine<StateId, TransitionId>, dataModel: DataModel, options: Options) {
     this.machine = machine;
     this.dataModel = dataModel;
     this.options = options;
   }
-  protected castEvent(event: InputEvent<StateId,TransitionId>) {
+
+  protected castEvent(event: InputEvent<StateId, TransitionId>) {
     return this.machine.transition(event);
   }
 }
+*/
 
 //
 
@@ -294,13 +79,20 @@ export class BaseStateClass<StateId extends BaseStateId, TransitionId extends Ba
 //   }
 // }
 
-class BaseMachine<StateId extends BaseStateId, TransitionId extends BaseTransitionId> {
-  protected _current: StateId
-  protected states: States<StateId, TransitionId>
+const stateToText = (state) => `${state.id}` + (state.name ? ` "${state.name}"` : ``)
 
-  constructor({ states, initial }: { states: States<StateId, TransitionId>, initial?: StateId }) {
+interface BaseMachineConstructorArguments<S extends BaseStateId, T extends BaseTransitionId> {
+  states: States<S, T>
+  initial?: S
+}
+
+class BaseMachine<S extends BaseStateId, T extends BaseTransitionId> {
+  protected _current: S
+  public _states: States<S, T>
+
+  constructor({states, initial}: BaseMachineConstructorArguments<S, T>) {
     this._current = initial;
-    this.states = states;
+    this._states = states;
   }
 
   // public getState(stateId: StateId): State<StateId, TransitionId>|never {
@@ -315,27 +107,43 @@ class BaseMachine<StateId extends BaseStateId, TransitionId extends BaseTransiti
 
 //
 
-type Context = any;
-
-//
-
-interface MachineConstructorArguments<StateId extends BaseStateId, TransitionId extends BaseTransitionId> extends Schema<StateId,TransitionId> {
+interface MachineConstructorArguments<S extends BaseStateId, T extends BaseTransitionId> extends Schema<S, T> {
   context?: Context,
+  validation?: boolean,
 }
 
 
-export class Machine<StateId extends BaseStateId, TransitionId extends BaseTransitionId> extends BaseMachine<StateId,TransitionId> {
-  protected readonly DEFAULT_START_STATE_NAME = <StateId> 'start';
-  protected readonly DEFAULT_FINAL_STATE_NAMES = <StateId[]> ['final'];
-
+export class Machine<S extends BaseStateId, T extends BaseTransitionId> extends BaseMachine<S, T> {
+  validation: boolean = true;
+  protected readonly DEFAULT_START_STATE_NAME = <S>'start';
+  protected readonly DEFAULT_FINAL_STATE_NAMES = <S[]>['final'];
   // protected states: States<StateId, TransitionId>
-  // protected _current: StateId = this.DEFAULT_START_STATE_NAME
-  public get current(): StateId { return this._current }
-  protected _initial: StateId = this.DEFAULT_START_STATE_NAME
-  protected _final: StateId[] = this.DEFAULT_FINAL_STATE_NAMES
-  public get final(): StateId[] { return this._final }
+  public _initial: S = this.DEFAULT_START_STATE_NAME
   protected _context: Context;
-  protected _deferredExecute: Deferred< ActionResult<StateId, TransitionId>, EMACHINE_ERROR >
+  protected _deferredExecute: Deferred<TransitionActionResult<S, T>, EMACHINE_ERROR>
+
+  constructor({states, initial, final, context, validation = true}: MachineConstructorArguments<S, T>) {
+    super({states, initial});
+    if (!states) throw new Error('parameter "states" must be defined.');
+    this._states = states;   // state definitions
+    this._initial = initial ?? <S>this.DEFAULT_START_STATE_NAME;
+    this._final = Array.isArray(final)
+      ? final
+      : final
+        ? [final]
+        : <S[]>this.DEFAULT_FINAL_STATE_NAMES;
+    this._current = /*current ||*/ this._initial;
+    this._context = /*current ||*/ context;
+    this.validation = validation;
+    debug(`[constructor] initial: ${initial}, final: [${this._final.join(',')}]`);
+  }
+
+  // protected _current: StateId = this.DEFAULT_START_STATE_NAME
+  public get current(): S {
+    return this._current
+  }
+
+  public _final: S[] = this.DEFAULT_FINAL_STATE_NAMES
 
   // reachable (fsm)
   // calculate all states can reach each other states. the result is in the form of {STATE1: {STATE2: [event path from S1 to S2]}}
@@ -344,94 +152,40 @@ export class Machine<StateId extends BaseStateId, TransitionId extends BaseTrans
   // return the list of states that cannot reach another state.
   //
   // livelock (fsm, [terminal])
-  // get list of states that cannot reach a terminal state.
+  // get a list of states that cannot reach a terminal state.
 
-  constructor({ states, initial, final, context }: MachineConstructorArguments<StateId,TransitionId>) {
-    super({ states, initial });
-    if (!states) throw new Error('parameter "states" must be defined.');
-    this.states  = states;   // state definitions
-    this._initial = initial ?? <StateId> this.DEFAULT_START_STATE_NAME;
-    this._final = Array.isArray( final )
-      ? final
-      : final
-        ? [ final ]
-        : <StateId[]> this.DEFAULT_FINAL_STATE_NAMES;
-    this._current = /*current ||*/ this._initial;
-    this._context = /*current ||*/ context;
-    debug(`[constructor] initial: ${initial}, final: [${this._final.join(',')}]`);
+  public get final(): S[] {
+    return this._final
   }
 
-  public init() {
+  public async init(): Promise<void> {
     this._current = this._initial;
     this._deferredExecute = null;
+    if (this.validation) {
+      await validate(this);
+    }
   }
 
-  public async execute(): Promise<ActionResult<StateId, TransitionId>> {
-    this.init();
+  public async execute(): Promise<TransitionActionResult<S, T>> {
+    await this.init();
     this._deferredExecute = new Deferred();
     return this._deferredExecute.promise;
   }
 
-  protected _getState(stateId: StateId, E?: typeof EINVALID_STATE): State<StateId, TransitionId>|never {
-    if (typeof E === 'undefined') E = EINVALID_STATE;
-    const state = this.states[stateId];
-    if (!state) throw new E(`stateId: ${stateId}`, stateId);
-    return state;
-  }
-
-  protected getCurrentState(stateId: StateId, E?: typeof EINVALID_STATE): State<StateId, TransitionId>|never {
-    if (typeof E === 'undefined') E = EINVALID_CURRENT_STATE;
-    const stateDefinition = this._getState(this._current, E);
-    return this._resolveState(stateId, stateDefinition);
-  }
-
-  public getState(stateId: StateId, E?: typeof EINVALID_STATE): ResolvedState<StateId, TransitionId>|never {
+  public getState(stateId: S, E?: typeof EINVALID_STATE): ResolvedState<S, T> | never {
     if (typeof E === 'undefined') E = EINVALID_STATE;
     const stateDefinition = this._getState(stateId, E);
     return this._resolveState(stateId, stateDefinition);
   }
 
-  protected _resolveState(stateId: StateId, state: StateDefinition<StateId, TransitionId>): ResolvedState<StateId, TransitionId> {
-    if ('id' in state) {
-      if (state.id !== stateId) throw new EINVALID_STATE_ID_VALUE();
-    } else {
-      state.id = stateId;
-    }
-    return <ResolvedState<StateId, TransitionId>> state;
-  }
-
-  //
-
-  protected _getStateTransition(state: State<StateId, TransitionId>, transitionId: TransitionId, E?: typeof EINVALID_TRANSITION ): TransitionDefinition<StateId, TransitionId>|never {
-    if (typeof E === 'undefined') E = EINVALID_TRANSITION_ID;
-    const transition = state?.transitions[transitionId];
-    if (!transition) throw new E(`transitionId: ${transitionId}`, {state, transitionId});
-    return transition;
-  }
-
-  public getTransition(stateId: StateId, transitionId: TransitionId): TransitionDefinition<StateId, TransitionId> {
+  public getTransition(stateId: S, transitionId: T): TransitionDefinition<S, T> {
     const state = this._getState(stateId);
     return this._getStateTransition(state, transitionId);
   }
 
-  // const resolveTo = async (transitionTo: StateId | TransitionResolverFn<StateId, TransitionId>): Promise< StateId > => {
-  protected async _resolveTransitionTo ({ event, from, transition }: { event: ResolvedInputEvent<StateId,TransitionId>, from: State<StateId,TransitionId>, transition: TransitionDefinitionObject<StateId,TransitionId> }): Promise< StateId > {
-    if (typeof transition.to === 'function') {
-      return transition.to({
-        event,
-        from,
-        transition: transition,
-        to: undefined,
-        context: this._context,
-      });
-    }
-    return transition.to;
-  }
+  async _resolveTransition(event: ResolvedInputEvent<S, T>, from: State<S, T>, transitionId: T, transition: TransitionDefinition<S, T>): Promise<ResolvedTransitionObject<S, T>> {
 
-
-  async _resolveTransition(event: ResolvedInputEvent<StateId, TransitionId>, from: State<StateId,TransitionId>, transitionId: TransitionId, transition: TransitionDefinition<StateId,TransitionId>): Promise< ResolvedTransitionObject<StateId,TransitionId> > {
-
-    let resolvedTransition: ResolvedTransitionObject<StateId,TransitionId>;
+    let resolvedTransition: ResolvedTransitionObject<S, T>;
 
     switch (typeof transition) {
       case 'string':
@@ -439,7 +193,7 @@ export class Machine<StateId extends BaseStateId, TransitionId extends BaseTrans
       case 'boolean':
       case 'symbol':
       case 'bigint': {
-        const transitionTo: StateId = transition;
+        const transitionTo: S = transition;
         resolvedTransition = {
           id: transitionId,
           to: transitionTo,
@@ -447,11 +201,11 @@ export class Machine<StateId extends BaseStateId, TransitionId extends BaseTrans
         break;
       }
       case 'object': {
-        const transitionTo: StateId = await this._resolveTransitionTo({ event, from, transition });
+        const transitionTo: S = await this._resolveTransitionTo({event, from, transition});
         resolvedTransition = {
           ...transition,
-          to: transitionTo,
           id: transitionId,
+          to: transitionTo,
         };
         // transitionObject = <TransitionDefinitionObject<StateId,TransitionId>> transition;
         break;
@@ -472,69 +226,121 @@ export class Machine<StateId extends BaseStateId, TransitionId extends BaseTrans
     return resolvedTransition
   }
 
+  async _execCancel(ctx: ResolvedTransitionContext<S, T>): Promise<void> {
+    throw new ETRANSITION_REJECTION(`Transition ${ctx.transition.id} not allowed by from.exit()`);
+    // return Promise.reject(new ETRANSITION_REJECTION(`Transition ${id} not allowed by from.exit()`));
+    // return this._current;
+  }
 
-  async _executeTransition({ event, from, transition, to, context }: ResolvedTransitionHandlerArguments<StateId, TransitionId>): Promise< ActionResult<StateId,TransitionId> > {
+  // async _execStateExit(ctx: ResolvedTransitionContext<S, T>): Promise<void> {
+  //   if (typeof ctx.from.exit === 'function') {
+  //     const allowed = await ctx.from.exit(ctx);
+  //     if (allowed === false) {
+  //       debug(`[transition] from:exit reject from: "${this._current}" transition: "${ctx.transition.id}" to: "${ctx.transition.to}"`);
+  //       await this._execCancel(ctx);
+  //     }
+  //   }
+  // }
+  //
+  // async _execTransitionBefore(ctx: ResolvedTransitionContext<S, T>): Promise<void> {
+  //   if (typeof ctx.transition.before === 'function') {
+  //     const allowed = await ctx.transition.before(ctx);
+  //     if (allowed === false) {
+  //       debug(`[transition] transition:before reject from: "${this._current}" transition: "${ctx.transition.id}" to: "${ctx.transition.to}"`);
+  //       await this._execCancel(ctx);
+  //       // throw new ETRANSITION_REJECTION(`Transition ${ctx.transition.id} not allowed by transition.before()`);
+  //       // // return Promise.reject(new ETRANSITION_REJECTION(`Transition ${id} not allowed by transition.before()`));
+  //       // // return this._current;
+  //     }
+  //   }
+  // }
 
+  async _execPreMethod(method: StateExitHandler<S, T> | TransitionBeforeHandler<S, T> | undefined, ctx: ResolvedTransitionContext<S, T>): Promise<void> {
+    // if (typeof ctx.transition.after === 'function') {
+    //   await ctx.transition.after(ctx);
+    // }
+    if (typeof method === 'function') {
+      const allowed = await method(ctx);
+      if (allowed === false) {
+        debug(`[transition] from:exit or transition:before reject from: "${this._current}" transition: "${ctx.transition.id}" to: "${ctx.transition.to}"`);
+        await this._execCancel(ctx);
+        // throw new ETRANSITION_REJECTION(`Transition ${ctx.transition.id} not allowed by transition.before()`);
+        // // return Promise.reject(new ETRANSITION_REJECTION(`Transition ${id} not allowed by transition.before()`));
+        // // return this._current;
+      }
+    }
+  }
+
+  // async __resolve(action: )
+
+  async _execTransitionAction(ctx: ResolvedTransitionContext<S, T>): Promise<TransitionActionResult<S, T>> {
     let result = undefined;
 
-    // execute from.exit()
+    if (typeof ctx.transition.action === 'function') {
+      result = await ctx.transition.action(ctx);
 
-    if (typeof from.exit === 'function') {
-      if (await from.exit({ event, from, transition, to, context }) === false) {
-        debug(`[transition] from:exit:reject from: "${this._current}" transition: "${transition.id}" to: "${transition.to}"`);
-        throw new ETRANSITION_REJECTION(`Transition ${transition.id} not allowed by from.exit()`);
-        // return Promise.reject(new ETRANSITION_REJECTION(`Transition ${id} not allowed by from.exit()`));
-        // return this._current;
-      }
-    }
-
-    // execute transition.before()
-
-    if (typeof transition.before === 'function') {
-      if (await transition.before({ event, from, transition, to, context }) === false) {
-        debug(`[transition] transition:before:reject from: "${this._current}" transition: "${transition.id}" to: "${transition.to}"`);
-        throw new ETRANSITION_REJECTION(`Transition ${transition.id} not allowed by transition.before()`);
-        // return Promise.reject(new ETRANSITION_REJECTION(`Transition ${id} not allowed by transition.before()`));
-        // return this._current;
-      }
-    }
-
-    // execute transition.action
-
-    if (typeof transition.action === 'function') {
-      result = await transition.action({ event, from, transition, to, context });
-
-    } else if (['string', 'number', 'undefined'].indexOf(typeof transition.action) >= 0) {
-      result = transition.action;
-      debug(`[transition] action: "${transition.action}"`);
+    } else if (['string', 'number', 'undefined'].indexOf(typeof ctx.transition.action) >= 0) {
+      result = ctx.transition.action;
+      debug(`[transition] action: "${ctx.transition.action}"`);
 
     } else {
-      throw new EINVALID_TRANSITION(`Invalid typeof transition action: "${typeof transition.action}"`)
+      throw new EINVALID_TRANSITION(`Invalid transition action type: "${typeof ctx.transition.action}"`)
 
     }
+    return result;
+  }
 
-    this._current = transition.to;
-
-    // execute transition.after
-
-    if (typeof transition.after === 'function') {
-      await transition.after({ event, from, transition, to, context });
+  async _execPostMethod(method: TransitionAfterHandler<S, T> | StateEnterHandler<S, T> | undefined, ctx: ResolvedTransitionContext<S, T>): Promise<void> {
+    if (typeof ctx.transition.after === 'function') {
+      await ctx.transition.after(ctx);
     }
+  }
 
-    // execute to.enter
+  // async _execPostMethod2(method: 'transition.after'|'to.enter', ctx: ResolvedTransitionContext<S, T>): Promise<void> {
+  //   if (typeof ctx.transition.after === 'function') {
+  //     await ctx.transition.after(ctx);
+  //   }
+  // }
 
-    if (typeof to.enter === 'function') {
-      await to.enter({ event, from, transition, to, context });
-    }
+  // async _execTransitionAfter(ctx: ResolvedTransitionContext<S, T>): Promise<void> {
+  //   // if (typeof ctx.transition.after === 'function') {
+  //   //   await ctx.transition.after(ctx);
+  //   // }
+  //   return this._execPostMethod(ctx.transition.after, ctx);
+  //   // return this._execPostMethod2('transition.after', ctx);
+  // }
+  //
+  // async _execStateEnter(ctx: ResolvedTransitionContext<S, T>): Promise<void> {
+  //   // if (typeof ctx.to.enter === 'function') {
+  //   //   await ctx.to.enter(ctx);
+  //   // }
+  //   return this._execPostMethod(ctx.to.enter, ctx);
+  // }
+
+  async _executeTransition(ctx: ResolvedTransitionContext<S, T>): Promise<TransitionActionResult<S, T>> {
+
+    // await this._execStateExit(ctx);
+    // await this._execTransitionBefore(ctx);
+    await this._execPreMethod(ctx.from.exit, ctx);
+    await this._execPreMethod(ctx.transition.before, ctx);
+
+    const result = await this._execTransitionAction(ctx);
+
+    this._current = ctx.transition.to;
+
+    // await this._execTransitionAfter(ctx);
+    // await this._execStateEnter(ctx);
+    await this._execPostMethod(ctx.transition.after, ctx);
+    await this._execPostMethod(ctx.to.enter, ctx);
 
     return result;
   }
 
   //
 
-  _resolveInputEvent(event: InputEvent<StateId,TransitionId>): ResolvedInputEvent<StateId, TransitionId> {
+  _resolveInputEvent(event: InputEvent<S, T>): ResolvedInputEvent<S, T> {
 
-    let resolvedEvent:  ResolvedInputEvent<StateId, TransitionId>;
+    let resolvedEvent: ResolvedInputEvent<S, T>;
 
     switch (typeof event) {
       case 'string':
@@ -542,7 +348,7 @@ export class Machine<StateId extends BaseStateId, TransitionId extends BaseTrans
       case 'boolean':
       case 'symbol':
       case 'bigint':
-        const eventId: InputEventId<StateId, TransitionId> = event;
+        const eventId: InputEventId<S, T> = event;
         resolvedEvent = {
           id: eventId,
         };
@@ -565,79 +371,13 @@ export class Machine<StateId extends BaseStateId, TransitionId extends BaseTrans
     return resolvedEvent;
   }
 
-
-  /**
-   * check that all transitions are to defined states.
-   */
-  public async validate(): Promise< Machine<StateId,TransitionId> > {
-
-    // check we have state for start id
-
-    const initial = this._getState(this._initial, EINVALID_START_STATE);
-    debug(`[validate] initial: ${initial.id}`);
-
-    // check we have all states for final ids
-
-    this._final.forEach(finalStateId => {
-      const finalState = this.getState(finalStateId, EINVALID_FINAL_STATE);
-      debug(`[validate] finalState: ${finalState.id}`);
-    })
-
-    // for each state for each transition ensure target state exists
-
-    for (const stateIdKey of Object.keys(this.states)) {
-      debug(`[validate] ${stateIdKey}`);
-
-      //
-
-      const fromStateId = <StateId> stateIdKey;
-      const fromState: ResolvedState<StateId, TransitionId> = this.getState(fromStateId);
-
-      //
-
-      if (Array.isArray(fromState?.transitions)) {
-        for (const transitionIdKey of Object.keys(fromState.transitions)) {
-
-          const transitionId = <TransitionId> transitionIdKey;
-
-          // let s = `     \\--> ${transitionId.padEnd(15)}`
-          const transition = this._getStateTransition( fromState, transitionId );
-          let transitionObject: TransitionDefinitionObject<StateId,TransitionId>;
-
-          if (typeof transition === 'function') {
-            debug(`[validate]     \\--> ${(transitionId as string).padEnd(15)} --> function() /ignored during validation/`);
-          }
-
-          const fakeResolvedEvent = { id: transitionId };
-          const resolvedTransition = await this._resolveTransition(fakeResolvedEvent, fromState, transitionId,transition);
-
-          const toStateId = resolvedTransition.to;
-          const toState: ResolvedState<StateId, TransitionId> = this.getState(toStateId, EINVALID_TRANSITION_TO);
-
-          debug(`[validate]     \\--> ${(transitionId as string).padEnd(15)} --> ${toState.id}`);
-
-        }
-      } else {
-        debug(`[validate]     /no outputs/`);
-      }
-
-    }
-    return this;
-  }
-
-
-  public async transition(originalEvent: InputEvent<StateId,TransitionId>): Promise< ActionResult<StateId,TransitionId> > {
-
-    const stateToText = (state) => `${state.id}` + (state.name ? ` "${state.name}"` : ``)
-
-    //
+  async prepareTransition(originalEvent: InputEvent<S, T>): Promise<ResolvedTransitionContext<S, T>> {
     const resolvedEvent = this._resolveInputEvent(originalEvent);
     const eventId = resolvedEvent.id;
 
-
     const context = this._context;
 
-    const fromState = this.getCurrentState(this._current);
+    const fromState = this._getCurrentState(this._current);
 
     const transitionDefinition = this._getStateTransition(fromState, eventId);
     const resolvedTransition = await this._resolveTransition(resolvedEvent, fromState, eventId, transitionDefinition);
@@ -646,7 +386,13 @@ export class Machine<StateId extends BaseStateId, TransitionId extends BaseTrans
 
     debug(`[transition] from: "${stateToText(fromState)}" transition: "${eventId}" to: "${stateToText(toState)}"`);
 
-    const result = await this._executeTransition({ event: resolvedEvent, from: fromState, transition: resolvedTransition, to: toState, context });
+    return {event: resolvedEvent, from: fromState, transition: resolvedTransition, to: toState, context};
+  }
+
+  public async transition(originalEvent: InputEvent<S, T>): Promise<TransitionActionResult<S, T>> {
+    const ctx = await this.prepareTransition(originalEvent);
+
+    const result = await this._executeTransition(ctx);
 
     // if we came to one of `final` states, resolve `execute` promise (if set)
 
@@ -659,6 +405,55 @@ export class Machine<StateId extends BaseStateId, TransitionId extends BaseTrans
 
     // return this._current;
     return Promise.resolve(result);
+  }
+
+  public _getState(stateId: S, E?: typeof EINVALID_STATE): State<S, T> | never {
+    if (typeof E === 'undefined') E = EINVALID_STATE;
+    const state = this._states[stateId];
+    if (!state) throw new E(`stateId: ${stateId}`, stateId);
+    return state;
+  }
+
+  protected _getCurrentState(stateId: S, E?: typeof EINVALID_STATE): State<S, T> | never {
+    if (typeof E === 'undefined') E = EINVALID_CURRENT_STATE;
+    const stateDefinition = this._getState(this._current, E);
+    return this._resolveState(stateId, stateDefinition);
+  }
+
+  //
+
+  protected _resolveState(stateId: S, state: StateDefinition<S, T>): ResolvedState<S, T> {
+    if ('id' in state) {
+      if (state.id !== stateId) throw new EINVALID_STATE_ID_VALUE();
+    } else {
+      state.id = stateId;
+    }
+    return <ResolvedState<S, T>>state;
+  }
+
+  public _getStateTransition(state: State<S, T>, transitionId: T, E?: typeof EINVALID_TRANSITION): TransitionDefinition<S, T> | never {
+    if (typeof E === 'undefined') E = EINVALID_TRANSITION_ID;
+    const transition = state?.transitions?.[transitionId];
+    if (!transition) throw new E(`transitionId: ${transitionId}`, {state, transitionId});
+    return transition;
+  }
+
+  // const resolveTo = async (transitionTo: StateId | TransitionResolverFn<StateId, TransitionId>): Promise< StateId > => {
+  protected async _resolveTransitionTo({event, from, transition}: {
+    event: ResolvedInputEvent<S, T>,
+    from: State<S, T>,
+    transition: TransitionDefinitionObject<S, T>
+  }): Promise<S> {
+    if (typeof transition.to === 'function') {
+      return transition.to({
+        event,
+        from,
+        transition: transition,
+        to: undefined,
+        context: this._context,
+      });
+    }
+    return transition.to;
   }
 
 
@@ -927,12 +722,6 @@ export class Machine<StateId extends BaseStateId, TransitionId extends BaseTrans
 // module.exports._ensureStateDefined       = _ensureStateDefined;
 // module.exports._ensureStateAllowed       = _ensureStateAllowed;
 // module.exports._ensureTransitionAllowed  =  _ensureTransitionAllowed;
-
-
-
-
-
-
 
 
 //const t = async() => {}

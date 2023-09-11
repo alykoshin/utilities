@@ -96,9 +96,9 @@ const schema: Schema<MainStateIds,EventIds> = {
 async function run() {
   const machine = new Machine(schema);
 
-  console.log('validating...')
-  machine.validate();
-  console.log('validated.')
+  // console.log('validating...')
+  // machine.validate();
+  // console.log('validated.')
 
   setInterval(async () => {
     await machine.transition('timer');

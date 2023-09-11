@@ -1,14 +1,13 @@
 import * as path from 'path';
-import _ from 'lodash';
-const debug = require('debug')('bootstrapper');
-
-import * as util from 'util';
-const {asyncForEach,setTimeoutAsPromised} = require('@utilities/async');
-const {sanitizeArray} = require('@utilities/array');
-
 //const Dependency = require('./Dependency');
 //const Dependencies = require('./Dependencies');
-import {HandlerFn, NameToOneTimeHandlerMap as Dependencies, HandlerFullData} from './Dependencies';
+import {NameToOneTimeHandlerMap as Dependencies} from './Dependencies';
+
+const debug = require('debug')('bootstrapper');
+
+const {asyncForEach, setTimeoutAsPromised} = require('@utilities/async');
+const {sanitizeArray} = require('@utilities/array');
+
 const {WatchdogTimer, WatchdogCounter, EWATCHDOG} = require('../../');
 
 class EPRIORITY_NOT_FOUND {
@@ -24,33 +23,26 @@ export interface BootstrapperThis {
 //
 
 
-export class Bootstrapper extends Dependencies {
+type PhaseDependencies<PhaseId> = { name: PhaseId, dependsOn?: PhaseId[] } []
+
+export class Bootstrapper<PhaseId extends string> extends Dependencies<PhaseId> {
   readonly _logger;
 
-  constructor(phases?, {timeout,logger=console,context={},defaultAction}:{timeout?: number, logger?, context?: any, defaultAction?: string}={}) {
+  constructor(phases?: PhaseDependencies<PhaseId>, {timeout, logger = console, context = {}, defaultAction}: {
+    timeout?: number,
+    logger?,
+    context?: any,
+    defaultAction?: PhaseId,
+  } = {}) {
     super({timeout, defaultAction});
     //this._timeout  = timeout;
-    this._logger   = logger.child
-      ? logger.child({ module: 'bootstrapper' })
+    this._logger = logger.child
+      ? logger.child({module: 'bootstrapper'})
       : logger;
 
-    this._context  = context;
+    this._context = context;
 
-    //console.log('phases:', phases)
-    //sanitizeArray(phases).forEach(phase => //typeof phase === 'string'
-    //                                       /*?*/ this.add(phase)
-    //                                       //: this.add(phase)
-    //);
     this.add(sanitizeArray(phases));
-
-    //this.register(priorities);
-
-    // Object.defineProperty(this, 'context', {
-    //   get() { return this._context; },
-    //   //set(newValue) { this._context = newValue; },
-    //   enumerable: true,
-    //   configurable: true
-    // });
 
   }
 
@@ -58,7 +50,7 @@ export class Bootstrapper extends Dependencies {
     return this._context;
   }
 
-  runAt(nameTo: string, ...rest) {
+  runAt(nameTo: PhaseId, ...rest) {
     return this.addTo(nameTo, ...rest);
   }
 
@@ -67,7 +59,7 @@ export class Bootstrapper extends Dependencies {
   }
 
   // setSignals (sigs: string[]) {
-  setSignals (sigs: NodeJS.Signals[]) {
+  setSignals(sigs: NodeJS.Signals[]) {
     const logger = this._logger; // console;
     const DEFAULT_SIGNALS: NodeJS.Signals[] = [
       'SIGINT',  // Ctrl+C
@@ -102,7 +94,7 @@ if (module === require.main) {
     console.log('process.env.DEBUG:', process.env.DEBUG);
 
     //const createTestActionFn = (name) => async (context, prio) => new Promise(resolve => {
-    const createTestActionFn = function (name)  {
+    const createTestActionFn = function (name) {
       return async function (this: BootstrapperThis, name_, handler, ...args) {
         return new Promise(resolve => {
           //console.log('2222222222222222', this);
@@ -116,8 +108,8 @@ if (module === require.main) {
           console.log(line2);
           setTimeout(() => {
             console.log(' '.repeat(line1.length) + `[${name_}:${name}] (${args.join(',')}) > finished`);
-            const result    = `result: ${name}`;
-            this.context[ name ] = result;
+            const result = `result: ${name}`;
+            this.context[name] = result;
             resolve(result);
           }, 500);
         });
@@ -142,16 +134,16 @@ if (module === require.main) {
 
     const x = new Bootstrapper();
     //x.add('a', ['b','c','d'], (name, handler) => { console.log(`Entered a-"${name}" handler: ${JSON.stringify(handler)}`); })
-    x.add('a', ['b','c','d'], createTestActionFn(/*.call({xxx:'yyy'}, */'a'));
+    x.add('a', ['b', 'c', 'd'], createTestActionFn(/*.call({xxx:'yyy'}, */'a'));
 
-    x.add('b', [],            createTestActionFn('b') );
-    x.add('c', ['e','f'],     createTestActionFn('c') );
-    x.add('d', [],            createTestActionFn('d') );
+    x.add('b', [], createTestActionFn('b'));
+    x.add('c', ['e', 'f'], createTestActionFn('c'));
+    x.add('d', [], createTestActionFn('d'));
 
-    x.add('e', [],            createTestActionFn('e') );
-    x.add('f', ['e'],         createTestActionFn('f') );
+    x.add('e', [], createTestActionFn('e'));
+    x.add('f', ['e'], createTestActionFn('f'));
     //x.add('g', [], createTestActionFn('g') )
-    x.addTo('d', 'g', [], createTestActionFn('g') );
+    x.addTo('d', 'g', [], createTestActionFn('g'));
 
 
     await x.execute('a', 'arg1', 'arg2')
@@ -193,23 +185,40 @@ if (module === require.main) {
 }
 
 
+const startPhases = [
+  'initialize',
+  'backend',
+  'frontend',
+  'bootstrap',
+] as const;
+export type StartPhase = typeof startPhases[number];
+
+
 // predefined bootstrap sequence
-export const bootstrap: Bootstrapper = new Bootstrapper([
-  { name: 'initialize' },                                            // read configs, init loggers, schedulers etc
-  { name: 'backend',   dependsOn: [ 'initialize' ] },                // prepare connections to backends
-  { name: 'frontend',  dependsOn: [ 'initialize', 'backend' ] },     // start to serve incoming requests
-  { name: 'bootstrap', dependsOn: [ 'initialize', 'backend', 'frontend' ] },
+export const bootstrap = new Bootstrapper<StartPhase>([
+  {name: 'initialize'},                                            // read configs, init loggers, schedulers etc
+  {name: 'backend', dependsOn: ['initialize']},                    // prepare connections to backends
+  {name: 'frontend', dependsOn: ['initialize', 'backend']},        // start to serve incoming requests
+  {name: 'bootstrap', dependsOn: ['initialize', 'backend', 'frontend']},
 ], {
   defaultAction: 'bootstrap',
 });
-export const startup: Bootstrapper = bootstrap;
+export const startup = bootstrap;
+
+const shutdownPhases = [
+  'suspend',
+  'stop',
+  'exit',
+  'shutdown',
+] as const;
+export type ShutdownPhases = typeof shutdownPhases[number];
 
 // predefined shutdown sequence
-export const shutdown: Bootstrapper = new Bootstrapper([
-  { name: 'suspend',  dependsOn: [                           ] }, // pause to server incoming requests
-  { name: 'stop',     dependsOn: [ /*'suspend',*/            ] }, // stop and free resources
-  { name: 'exit',     dependsOn: [ /*'suspend', 'stop'*/     ] }, // last priority, running predefined exit actions
-  { name: 'shutdown', dependsOn: [ 'suspend', 'stop', 'exit' ] }  // will execute it in the order
+export const shutdown = new Bootstrapper<ShutdownPhases>([
+  {name: 'suspend', dependsOn: []}, // pause to server incoming requests
+  {name: 'stop', dependsOn: [ /*'suspend',*/]}, // stop and free resources
+  {name: 'exit', dependsOn: [ /*'suspend', 'stop'*/]}, // last priority, running predefined exit actions
+  {name: 'shutdown', dependsOn: ['suspend', 'stop', 'exit']}  // will execute it in the order
 ], {
   defaultAction: 'shutdown',
   context: bootstrap.context, // both use same shared context
@@ -225,7 +234,7 @@ const ERROR_EXIT_CODE = 1;
  * @param {number} successExitCode
  * @return {Promise<void>}
  */
-export const doShutdown = async (successExitCode:number=0): Promise<void> =>  {
+export const doShutdown = async (successExitCode: number = 0): Promise<void> => {
 
   if (shutdown.running) {
     shutdown._logger.warn(`* shutdown is already running, ignoring consequent requests`);
@@ -233,7 +242,8 @@ export const doShutdown = async (successExitCode:number=0): Promise<void> =>  {
   }
 
   shutdown._logger.info(`* initiating shutdown...`);
-  /*await*/ shutdown.run('shutdown')
+  /*await*/
+  shutdown.run('shutdown')
     .then((res) => {
       shutdown._logger.info(`* shutdown sequence has been finished with success, exiting`);
       process.exit(successExitCode);
@@ -256,48 +266,54 @@ export const doShutdown = async (successExitCode:number=0): Promise<void> =>  {
 // type myCallbackType = (arg1: string, arg2: boolean) => number;
 // interface myCallbackInterface { (arg1: string, arg2: boolean): number };
 
-interface SimpleActionConstructorArgs { defaultDependsOn?: string[] }
+interface SimpleActionConstructorArgs {
+  defaultDependsOn?: string[]
+}
 
-interface SimpleActionHandler { (this: BootstrapperThis, context: any): Promise<any> }
+interface SimpleActionHandler {
+  (this: BootstrapperThis, context: any): Promise<any>
+}
+
 // type SimpleActionHandler = async function (this: BootstrapperThis, context: any) => Promise<any>;
 
-export type SimpleActionClass = (new(SimpleActionConstructorArgs?)=>SimpleAction)
+export type SimpleActionClass = (new(SimpleActionConstructorArgs?) => SimpleAction)
 
 export class SimpleAction {
   activityName: string;
-  protected _defaultDependsOn: string[];
-
   onInitialize: SimpleActionHandler;
   onSuspend: SimpleActionHandler;
+  protected _defaultDependsOn: string[];
 
-  constructor ({ defaultDependsOn }: SimpleActionConstructorArgs={}) {
+  constructor({defaultDependsOn}: SimpleActionConstructorArgs = {}) {
     this._defaultDependsOn = defaultDependsOn;
   }
 
-  _getActivityName(module: NodeJS.Module): string {
-    if (this.activityName) {
-      return this.activityName;
+  _getDefaultActivityName(): string {
+    const pathname: string = module.filename;
+    const dirname: string = path.dirname(module.filename);
+    const upDir: string = path.resolve(dirname, '..');
+    return this.constructor.name + '/' +
+      path.relative(upDir, dirname) + '/' +
+      path.basename(pathname, '.js');
+  }
 
-    } else {
-      const pathname: string = module.filename;
-      const dirname:  string = path.dirname(module.filename);
-      const upDir:    string = path.resolve(dirname, '..');
-      return this.constructor.name + '/' +
-        path.relative(upDir, dirname) + '/' +
-        path.basename(pathname, '.js');
-    }
+  _getActivityName(module: NodeJS.Module): string {
+    return this.activityName
+      ? this.activityName
+      : this._getDefaultActivityName();
   }
 
 
   // overload
-  registerHandler(bootstrapper: Bootstrapper, stateName: string, method: SimpleActionHandler): void
-  registerHandler(bootstrapper: Bootstrapper, stateName: string, activityName: string, method: SimpleActionHandler): void
-  registerHandler(bootstrapper: Bootstrapper, stateName: string, activityName: string, dependsOn: string[], method: SimpleActionHandler): void
+  registerHandler(bootstrapper: Bootstrapper<any>, stateName: string, /*                                      */ method: SimpleActionHandler): void;
+  registerHandler(bootstrapper: Bootstrapper<any>, stateName: string, activityName: string, /*                */ method: SimpleActionHandler): void;
+  registerHandler(bootstrapper: Bootstrapper<any>, stateName: string, /*                 */ dependsOn: string[], method: SimpleActionHandler): void;
+  registerHandler(bootstrapper: Bootstrapper<any>, stateName: string, activityName: string, dependsOn: string[], method: SimpleActionHandler): void;
   // implementation
   registerHandler(
-    bootstrapper: Bootstrapper,
+    bootstrapper: Bootstrapper<any>,
     stateName: string,
-    ...args: (string|string[]|SimpleActionHandler)[]
+    ...args: (string | string[] | SimpleActionHandler)[]
     // arg4: string|string[]|SimpleActionHandler,
     // arg5?: SimpleActionHandler,
   ): void {
@@ -305,7 +321,7 @@ export class SimpleAction {
     let activityName: string;
     let dependsOn: string[] = this._defaultDependsOn || [];
 
-    args.forEach((a: string|string[]|SimpleActionHandler) => {
+    args.forEach((a: string | string[] | SimpleActionHandler) => {
       if (typeof a === 'string') activityName = a;
       else if (Array.isArray(a)) dependsOn = a;
       else if (typeof a === 'function') method = a;
@@ -328,8 +344,8 @@ export class SimpleAction {
     const activityName = this._getActivityName(module);
     console.log(`SimpleAction: ${this.constructor.name} register ${activityName}`);
 
-    this.registerHandler(bootstrap, 'initialize', activityName, this.onInitialize );
-    this.registerHandler(shutdown,  'suspend',    activityName, this.onSuspend )
+    this.registerHandler(bootstrap, 'initialize', activityName, this.onInitialize);
+    this.registerHandler(shutdown, 'suspend', activityName, this.onSuspend)
   };
 
 }

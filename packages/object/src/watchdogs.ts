@@ -91,7 +91,7 @@ export class WatchdogCounter extends AbstractWatchdog {
 
 
 export class WatchdogTimer extends AbstractWatchdog {
-  timer: NodeJS.Timer
+  timer: NodeJS.Timeout
 
   constructor (options={}) {
     super(options);

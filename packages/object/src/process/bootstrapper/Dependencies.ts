@@ -1,9 +1,10 @@
 const util = require('util');
 const assert = require('assert');
-import * as _ from  'lodash';
+import * as _ from 'lodash';
+
 const {sanitizeArray} = require('@utilities/array');
-const {asyncForEach}  = require('@utilities/async');
-const {joinNonEmpty}  = require('@utilities/string');
+const {asyncForEach} = require('@utilities/async');
+const {joinNonEmpty} = require('@utilities/string');
 
 import {SimpleObjectMap} from "./SimpleObjectMap";
 
@@ -11,38 +12,37 @@ const {WatchdogTimer, WatchdogCounter} = require('../../');
 const debug = require('debug')('bootstrapper');
 
 
-export type HandlerName  = string;
-export type HandlerFn    = (this, name: string, handler?: HandlerData, ...args: any[]) => Promise<any>;
-export type DependsOn    = string[];
-export type HandlerState = 'init'|'done'|'run';
+// export type HandlerName = string;
+export type HandlerFn<N> = (this, name: N, handler?: HandlerData<N>, ...args: any[]) => Promise<any>;
+export type DependsOn<N> = N[];
+export type HandlerState = 'init' | 'done' | 'run';
 
 
-interface HandlerData {
-  fn?: HandlerFn,
-  dependsOn?: DependsOn,
+interface HandlerData<N> {
+  fn?: HandlerFn<N>,
+  dependsOn?: DependsOn<N>,
   state?: HandlerState,
 }
 
-interface NamedHandlerInternalStructure {
-  name: HandlerName
-  data: HandlerData
+interface NamedHandlerInternalStructure<N> {
+  name: N
+  data: HandlerData<N>
 }
 
-export interface HandlerFullData extends HandlerData {
-  name: HandlerName,
+export interface HandlerFullData<K> extends HandlerData<K> {
+  name: K,
   // dependsOn?: DependsOn,
   // fn?: HandlerFn,
   // state?: HandlerState,
 }
 
-type HandlerDataPartial = Partial<HandlerFullData>
+type HandlerDataPartial<N> = Partial<HandlerFullData<N>>
 
-type InputHandlerSingleArgument = HandlerName | HandlerFn | DependsOn;
-type InputHandlerArguments      = InputHandlerSingleArgument[];
+type InputHandlerSingleArgument<N> = N | HandlerFn<N> | DependsOn<N>;
+type InputHandlerArguments<N> = InputHandlerSingleArgument<N> [];
 
 
-const DEFAULT_TIMEOUT     = 30*1000;
-const DEFAULT_ACTION_NAME = 'run';
+const DEFAULT_TIMEOUT = 30 * 1000;
 
 
 //class NamedArray {
@@ -72,49 +72,59 @@ const DEFAULT_ACTION_NAME = 'run';
 //}
 
 
-type HandlerMapDataOnly = {
+// type HandlerMapDataOnly<K> = {
+//   [key: K]: any
+// }
+
+
+export type HandlerName = number|string|symbol
+
+type HandlerMapDataOnly<K extends HandlerName> = Record<K, any>
+
+interface HandlerMapDataWithFn<K,T> {
+  fn?: HandlerFn<K>
+
   [key: string]: any
 }
 
-interface HandlerMapDataWithFn {
-  fn?: HandlerFn
-  [key: string]: any
+interface HandlerMapDataInternal<N,T> {
+  name: N
+  data: HandlerMapDataWithFn<N,T>
 }
 
-interface HandlerMapDataInternal {
-  name: HandlerName
-  data: HandlerMapDataWithFn
-}
+export class NameToHandlerWithDataMap<N extends string> extends SimpleObjectMap<N, HandlerMapDataWithFn<N,any>> {
 
-export class NameToHandlerWithDataMap extends SimpleObjectMap {
+  _addNamedHandler(
+    origName: N,
+    {fn, ...data}: HandlerMapDataWithFn<N,any>
+  ): HandlerMapDataInternal<N,any> {
 
-  _addNamedHandler (
-    origName: HandlerName,
-    { fn, ...data }: HandlerMapDataWithFn
-  ): HandlerMapDataInternal {
-
-    // sanitize and check name
-    const name = (typeof origName === 'undefined')
-      ? joinNonEmpty([
+    const getDefaultName = (fn: HandlerFn<N>) => {
+      return joinNonEmpty([
           fn?.name ?? 'temp',
           _.uniqueId(),
         ],
         '_'
       )
+    }
+
+    // sanitize and check name
+    const name = (typeof origName === 'undefined')
+      ? getDefaultName(fn)
       : origName;
 
     assert(typeof name === 'string', 'Name must be string');
 
     // sanitize and check fn
-    assert(['function','undefined'].indexOf(typeof fn)>=0 ,'must be function or undefined');
+    assert(['function', 'undefined'].indexOf(typeof fn) >= 0, 'must be function or undefined');
 
     // store
-    return super._addNamedData(name, { fn, ...data });
+    return super._addNamedData(name, {fn, ...data});
   }
 
-  async _executeHandler (name: HandlerName, ...args: any[]): Promise<any> {
+  async _executeHandler(name: N, ...args: any[]): Promise<any> {
     //debug(`[${name}/_executeHandler`);
-    const handler: HandlerMapDataWithFn = this.get(name);
+    const handler: HandlerMapDataWithFn<N,any> = this.get(name);
     const result = await handler.fn.call(this, name, handler, ...args);
     //debug(`[${name}/_executeHandler, result: ${util.inspect(result, {depth:1})}`);
     return result;
@@ -123,30 +133,35 @@ export class NameToHandlerWithDataMap extends SimpleObjectMap {
 }
 
 
-export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
+export class NameToOneTimeHandlerMap<N extends string> extends NameToHandlerWithDataMap<N> {
+  protected _current: string | null;
   private readonly _timeout: number;
-  private readonly _defaultAction: string;
-  protected _current: string|null;
-  protected _running: boolean;
-  protected _context: any;
+  private readonly _defaultAction: N;
 
-  constructor ({ timeout=DEFAULT_TIMEOUT, defaultAction=DEFAULT_ACTION_NAME }: { timeout?: number, defaultAction?: string }) {
+  constructor({timeout = DEFAULT_TIMEOUT, defaultAction}: {
+    timeout?: number,
+    defaultAction?: N
+  }) {
     super();
     this._timeout = timeout;
     this._defaultAction = defaultAction;
-    this._running   = false;
-    this._current   = null;
+    this._running = false;
+    this._current = null;
   }
+
+  protected _running: boolean;
 
   get running(): boolean {
     return this._running;
   }
 
+  protected _context: any;
+
   get context(): any {
     return this._context;
   }
 
-  _add ({ name, fn, dependsOn }: HandlerDataPartial): NamedHandlerInternalStructure {
+  _add({name, fn, dependsOn}: HandlerDataPartial<N>): NamedHandlerInternalStructure<N> {
 
     dependsOn = sanitizeArray(dependsOn);
 
@@ -157,15 +172,15 @@ export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
     });
   }
 
-  addOne (...args: (InputHandlerSingleArgument|HandlerDataPartial)[]): NamedHandlerInternalStructure {
-    let handler: HandlerDataPartial = {};
+  addOne(...args: (InputHandlerSingleArgument<N> | HandlerDataPartial<N>)[]): NamedHandlerInternalStructure<N> {
+    let handler: HandlerDataPartial<N> = {};
     debug('addOne(): args:', args)
     args.forEach(a => {
       if (typeof a === 'string') handler.name = a;
       else if (typeof a === 'function') handler.fn = a;
       else if (Array.isArray(a)) handler.dependsOn = a;
-      else if (typeof a === 'undefined' || a === 'null') { /* skip */}
-      else handler = a;//this._add( a ); // object
+      else if (typeof a === 'undefined' || a === null) { /* skip */
+      } else handler = a;//this._add( a ); // object
       //else throw new Error(`Unexpected typeof: ${typeof a}, value: ${JSON.stringify(a)}`);
     });
     // console.log('addOne:', handler)
@@ -174,30 +189,31 @@ export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
 
 
   // @ts--ignore:
-  add (...argHandlers: (InputHandlerSingleArgument | HandlerDataPartial)[]): NamedHandlerInternalStructure | NamedHandlerInternalStructure[] {
+  add(...argHandlers: (InputHandlerSingleArgument<N> | HandlerDataPartial<N>)[]): NamedHandlerInternalStructure<N> | NamedHandlerInternalStructure<N>[] {
     //console.log('>>>>>>>>>>>>> add: argHandlers:', argHandlers);
-    if ( argHandlers.length === 1 && Array.isArray(argHandlers[0]) ) {
-      const results: NamedHandlerInternalStructure[] = [];
-      argHandlers[ 0 ].forEach(
-        (handler: InputHandlerSingleArgument) => results.push( this.addOne(handler) )
+    if (argHandlers.length === 1 && Array.isArray(argHandlers[0])) {
+      const results: NamedHandlerInternalStructure<N>[] = [];
+      const handlers: InputHandlerSingleArgument<N>[] = argHandlers[0];
+      handlers.forEach(
+        (handler) => results.push(this.addOne(handler))
       );
       return results;
 
     } else {
-      const result:NamedHandlerInternalStructure = this.addOne(...argHandlers);
+      const result: NamedHandlerInternalStructure<N> = this.addOne(...argHandlers);
       return result;
     }
   }
 
-  addTo(nameTo: string, ...argHandlers): HandlerFullData|HandlerFullData[] {
+  addTo(nameTo: N, ...argHandlers): HandlerFullData<N> | HandlerFullData<N>[] {
     assert(typeof nameTo === 'string', 'nameTo must be string');
     //console.log('>>>>>>>>>>>>> add: nameTo:', nameTo, ', argHandlers:', argHandlers);
     //console.log('>>> rests', argHandlers)
 
-    const handler: HandlerFullData|HandlerFullData[] = this.add(...argHandlers);
+    const handler: HandlerFullData<N> | HandlerFullData<N>[] = this.add(...argHandlers);
 
     //console.log('>>> handler', handler);
-    const handlerTo: HandlerFullData = this.get(nameTo);
+    const handlerTo = this.get(nameTo);
     if (Array.isArray(handler)) {
       handlerTo.dependsOn = handlerTo.dependsOn.concat(handler.map(h => h.name));
     } else {
@@ -206,42 +222,42 @@ export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
     return handler;
   }
 
-  _ensureNotRunning(name: HandlerName) {
+  _ensureNotRunning(name: N) {
     if (this._isRun(name)) throw new Error(`handler named "${name}" is already running`);
   }
 
-  _setState(name: HandlerName, state: HandlerState): void {
+  _setState(name: N, state: HandlerState): void {
     const handler = this.get(name);
     handler.state = state;
   }
 
-  _setDone(name: HandlerName) {
+  _setDone(name: N) {
     return this._setState(name, 'done');
   }
 
-  _setRunning(name: HandlerName) {
+  _setRunning(name: N) {
     return this._setState(name, 'run');
   }
 
-  _getState(name: HandlerName): HandlerState {
+  _getState(name: N): HandlerState {
     const handler = this.get(name);
     return handler.state;
   }
 
-  _isDone(name: HandlerName): boolean {
+  _isDone(name: N): boolean {
     return this._getState(name) === 'done';
   }
 
-  _isRun(name: HandlerName): boolean {
+  _isRun(name: N): boolean {
     return this._getState(name) === 'run';
   }
 
-  async _executeDependencies (name: HandlerName, ...args) {
+  async _executeDependencies(name: N, ...args) {
     debug(`[${name}/exec/deps] enter: args: ${JSON.stringify(args)}`);
-    const handler: HandlerData = this.get(name);
+    const handler: HandlerData<N> = this.get(name);
     let allHandlersPromised;
 
-    if (handler.dependsOn && handler.dependsOn.length>0)  {
+    if (handler.dependsOn && handler.dependsOn.length > 0) {
       //debug(`[${name}/exec/deps] before asyncForEach`);
 
       allHandlersPromised = await asyncForEach(handler.dependsOn, async (dependencyName) => {
@@ -250,16 +266,6 @@ export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
         //debug(`[${name}/exec/deps] 2 -> ${dependencyName}`);
         return result;
       });
-      //debug(`[${name}/exec/deps] 0`);
-      //if (handler.dependsOn[0]) await this._execute(handler.dependsOn[0], ...args)
-      //debug(`[${name}/exec/deps] 1`);
-      //if (handler.dependsOn[1]) await this._execute(handler.dependsOn[1], ...args)
-      //debug(`[${name}/exec/deps] 2`);
-      //if (handler.dependsOn[2]) await this._execute(handler.dependsOn[2], ...args)
-      //debug(`[${name}/exec/deps] 3`);
-      //if (handler.dependsOn[3]) await this._execute(handler.dependsOn[3], ...args)
-      //debug(`[${name}/exec/deps] 4`);
-      //if (handler.dependsOn[4]) await this._execute(handler.dependsOn[4], ...args)
 
       //debug(`[${name}/exec/deps] 222`);
     } else {
@@ -272,7 +278,7 @@ export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
     return allHandlersPromised;
   }
 
-  async _executeSelf (name: HandlerName, ...args) {
+  async _executeSelf(name: N, ...args) {
     let watchdog/*: WatchdogTimer*/;
 
     const finishSelf = (msg: string) => {
@@ -283,7 +289,7 @@ export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
       this._current = null;
     };
 
-    const handler: HandlerData = this.get(name);
+    const handler = this.get(name);
     debug(`[${name}/exec/self] enter: ${JSON.stringify(handler)}`);
     this._current = name;
 
@@ -291,10 +297,9 @@ export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
 
     if (typeof handler.fn === 'undefined') return finishSelf(`[${name}/exec/self] handler is not set, skipping`);
 
-
     //console.log('starting watchdog');
-    watchdog = new WatchdogTimer({ name, timeout: this._timeout });
-    const timeoutPromise   = watchdog.start({ name });
+    watchdog = new WatchdogTimer({name, timeout: this._timeout});
+    const timeoutPromise = watchdog.start({name});
     const executionPromise = super._executeHandler(name, ...args);
     //console.log('000000000000000000',this._getState(name));
 
@@ -321,7 +326,7 @@ export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
     //const result = await super._executeHandler(name, ...args);
   }
 
-  async _execute(name?: HandlerName, ...args) {
+  async _execute(name?: N, ...args) {
     //debug(`[${name}/exec] enter: `,this.get(name));
     const validName = (!name) ? this._defaultAction : name;
 
@@ -330,8 +335,6 @@ export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
     this._setRunning(validName);
 
     //debug(`[${name}/exec/1]: ${JSON.stringify(this.get(name))}`);
-
-
 
     return this._executeDependencies(validName, ...args)
       .then((r) => {
@@ -342,7 +345,7 @@ export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
         return r;
       })
       .then((r) => {
-        const result =  this._executeSelf(validName, ...args);
+        const result = this._executeSelf(validName, ...args);
         //debug(`[${name}/exec/3]`);
         //debug(`[${name}/exec] exit: ${JSON.stringify(this.get(name))}`);
 
@@ -355,7 +358,7 @@ export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
 
   }
 
-  async execute (...args) {
+  async execute(...args) {
     this._running = true;
     debug(`execute:enter ${JSON.stringify(args)}`);
 
@@ -371,6 +374,6 @@ export class NameToOneTimeHandlerMap extends NameToHandlerWithDataMap {
 }
 
 
-export type Dependencies = NameToOneTimeHandlerMap;
+export type Dependencies<HandlerName extends string> = NameToOneTimeHandlerMap<HandlerName>;
 // module.exports = NameToOneTimeHandlerMap;
 

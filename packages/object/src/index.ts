@@ -16,6 +16,8 @@ export * from './process/bootstrapper/';
 export * from './process/Application';
 export * from './process/ShutdownMonitor';
 
+export * from './script-scopes/';
+
 //
 
 export * from './misc';
