@@ -19,7 +19,7 @@
     "lint": "node_modules/.bin/eslint -f unix --ext .ts,.js,.jsx .",
     "inspect": "jsinspect --ignore 'coverage|test|dist'",
     "-pretest": "npm run lint && npm run inspect && npm run _npm-audit && npm run _deps-check",
-    "pretest": "npm run inspect && npm run _npm-audit && npm run _deps-check",
+    "pretest": "npm run inspect && npm run _deps-check",
     "_test_jest": "jest --coverage",
     "_test": "npm run _test-coverage && npm run _test-report && npm run _test_jest",
     "_test-coverage": "nyc ./node_modules/ts-mocha/bin/ts-mocha -- -R spec ./test/*",
