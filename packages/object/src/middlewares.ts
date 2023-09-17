@@ -54,11 +54,11 @@ type Ctx = any
 
 export class Middleware {
   protected ctx: Ctx
-  protected _debug: Debug
+  protected _debug: Debug.Debugger
   protected _count: number;
 
   constructor() {
-    this._debug = new Debug('middleware');
+    this._debug = Debug('middleware');
     this._count = 0;
   }
 
