@@ -49,7 +49,7 @@ export interface HandlerStructure {
 const DEBUG_NAME = 'ShutdownMonitor';
 
 export class ShutdownMonitor {
-  /*protected*/ debug: Debug
+  /*protected*/ debug: Debug.Debugger
   protected options: ShutdownMonitorOptions
   protected terminating: boolean
   protected handlers: HandlerStructure[] = [];

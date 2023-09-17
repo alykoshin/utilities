@@ -61,7 +61,7 @@ export interface DebuggableObjectOptions extends NamedObjectOptions {
 }
 
 export class DebuggableObject extends NamedObject {
-  protected readonly debug: Debug
+  protected readonly debug: Debug.Debugger
 
   constructor(options: Partial<DebuggableObjectOptions>) {
     super(options);
