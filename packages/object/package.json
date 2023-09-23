@@ -84,7 +84,7 @@
     "ts-jest": "^29.1.1"
   },
   "devDependencies": {
-    "@types/debug": "^4.1.8",
+    "@types/debug": "^4.1.9",
     "@types/jest": "^29.5.5",
     "@types/mocha": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^6.7.2",
@@ -93,7 +93,7 @@
     "chai-arrays": "^2.2.0",
     "chai-things": "^0.2.0",
     "coveralls": "^3.1.1",
-    "eslint": "^8.49.0",
+    "eslint": "^8.50.0",
     "jshint": "^2.13.6",
     "jsinspect": "^0.12.7",
     "mocha": "^10.2.0",
