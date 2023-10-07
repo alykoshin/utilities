@@ -18,7 +18,7 @@ abstract class GenericScope<T> {
 
 export class Scope<T> extends GenericScope<T> {
   _scope: ScopeObject<T>;
-  constructor(scope?: ScopeObject<T> = {}) {
+  constructor(scope: ScopeObject<T> = {}) {
     super();
     this._scope = scope;
   }
