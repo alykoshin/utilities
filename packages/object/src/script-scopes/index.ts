@@ -18,7 +18,7 @@ abstract class GenericScope<T> {
 
 export class Scope<T> extends GenericScope<T> {
   _scope: ScopeObject<T>;
-  constructor(scope: ScopeObject<T>) {
+  constructor(scope?: ScopeObject<T> = {}) {
     super();
     this._scope = scope;
   }
@@ -38,10 +38,23 @@ export class Scopes<T> extends GenericScope<T> {
   copy(): Scopes<T> {
     return new Scopes(this._scopes);
   }
-  push = (scope: Scope<T> | ScopeObject<T>): Scopes<T> => {
-    scope instanceof Scope
-      ? this._scopes.push(scope)
-      : this._scopes.push(new Scope(scope));
+  new = (map?: ScopeObject<T>): Scopes<T> => {
+    const scope = map ? new Scope<T>(map) : new Scope<T>();
+    this._scopes.push(scope);
+    // it's not obvious what to expect here as a result
+    // the new Scope or all the Scopes
+    // maybe it's better to return `void`
+    // though typechecking will prevent errors
+    return this;
+  };
+  push = (scopeOrMap: Scope<T> | ScopeObject<T>): Scopes<T> => {
+    scopeOrMap instanceof Scope
+      ? this._scopes.push(scopeOrMap)
+      : this.new(scopeOrMap);
+    // it's not obvious what to expect here as a result
+    // the added Scope or all the Scopes
+    // maybe it's better to return `void`
+    // though typechecking will prevent errors
     return this;
   };
   pop = (): Scope<T> => {
